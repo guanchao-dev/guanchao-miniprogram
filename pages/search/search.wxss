@@ -1,0 +1,13 @@
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  padding: 16rpx;
+  margin-bottom: 24rpx;
+}
+
+.search-box input {
+  flex: 1;
+  height: 64rpx;
+  padding: 0 16rpx;
+}

@@ -1,0 +1,26 @@
+.species-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.species-cell {
+  width: 48%;
+  box-sizing: border-box;
+  overflow: hidden;
+  margin-bottom: 18rpx;
+}
+
+.species-thumb {
+  display: block;
+  width: 100%;
+  height: 200rpx;
+  background: #F3FBFA;
+}
+
+.species-name {
+  padding: 14rpx 18rpx 16rpx;
+  font-size: 28rpx;
+  font-weight: 800;
+  line-height: 1.3;
+}

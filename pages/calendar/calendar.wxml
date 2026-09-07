@@ -1,0 +1,13 @@
+<view class="page">
+  <view class="page-content">
+    <picker mode="date" fields="month" value="{{month}}" bindchange="onMonth">
+      <view class="card list-card">{{month}} ｜ 点此切换月份</view>
+    </picker>
+    <view class="empty-tip" wx:if="{{!days.length}}">暂无日历数据</view>
+    <view class="card list-card" wx:for="{{days}}" wx:key="date">
+      <view class="list-title">{{item.date}}</view>
+      <view class="list-meta">低潮 {{item.lowText}} ｜ 高潮 {{item.highText}}</view>
+      <view class="list-meta" wx:if="{{item.observeHint}}">{{item.observeHint}}</view>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,15 @@
+<view class="page">
+  <view class="page-content">
+    <view class="chip-row">
+      <view class="chip {{scene === item.id ? 'active' : ''}}" wx:for="{{scenes}}" wx:key="id" data-id="{{item.id}}" bindtap="onScene">{{item.name}}</view>
+    </view>
+    <view class="empty-tip" wx:if="{{!list.length}}">暂无装备建议</view>
+    <view class="card list-card" wx:for="{{list}}" wx:key="name">
+      <view class="list-title">{{item.name}}</view>
+      <view class="list-meta">{{item.why}}</view>
+      <view class="chip-row" wx:if="{{item.isMust}}">
+        <text class="chip active">必带</text>
+      </view>
+    </view>
+  </view>
+</view>

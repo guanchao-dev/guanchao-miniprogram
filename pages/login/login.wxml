@@ -1,0 +1,18 @@
+<view class="page memphis-bg login-page">
+  <view class="memphis-layer">
+    <view class="geo-circle lg" style="top: 20rpx; right: -40rpx; background:#34B8C5;"></view>
+    <view class="geo-square" style="bottom: 80rpx; left: -30rpx; background:#F6D081;"></view>
+  </view>
+
+  <view class="page-content">
+    <view class="login-hero">
+      <image class="login-mascot" src="/assets/badges/crab-cloud.png" mode="aspectFit"></image>
+      <view class="login-title">欢迎来到观潮</view>
+      <view class="login-sub">使用微信登录，同步探索记录和成就。</view>
+    </view>
+
+    <view class="card login-card">
+      <view class="btn login-btn" bindtap="onWechatLogin">{{loading ? '登录中...' : '微信一键登录'}}</view>
+    </view>
+  </view>
+</view>

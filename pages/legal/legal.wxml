@@ -1,0 +1,20 @@
+<view class="page">
+  <view class="page-content">
+    <view class="card list-card" wx:if="{{legal.userAgreementUrl}}">
+      <view class="list-title">用户协议</view>
+      <view class="list-meta">{{legal.userAgreementUrl}}</view>
+      <view class="btn full-btn" data-url="{{legal.userAgreementUrl}}" bindtap="copyUrl">复制链接</view>
+    </view>
+    <view class="card list-card" wx:if="{{legal.privacyPolicyUrl}}">
+      <view class="list-title">隐私政策</view>
+      <view class="list-meta">{{legal.privacyPolicyUrl}}</view>
+      <view class="btn full-btn" data-url="{{legal.privacyPolicyUrl}}" bindtap="copyUrl">复制链接</view>
+    </view>
+    <view class="card list-card" wx:if="{{legal.childrenRuleUrl}}">
+      <view class="list-title">儿童个人信息保护规则</view>
+      <view class="list-meta">{{legal.childrenRuleUrl}}</view>
+      <view class="btn full-btn" data-url="{{legal.childrenRuleUrl}}" bindtap="copyUrl">复制链接</view>
+    </view>
+    <view class="empty-tip" wx:if="{{!legal.userAgreementUrl && !legal.privacyPolicyUrl && !legal.childrenRuleUrl}}">暂无法规文本</view>
+  </view>
+</view>

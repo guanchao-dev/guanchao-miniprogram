@@ -1,0 +1,27 @@
+# ===== 微信开发者工具个人配置（各开发者本地不同，勿提交）=====
+project.private.config.json
+
+# ===== 依赖与构建产物 =====
+node_modules/
+miniprogram_npm/
+
+# ===== 设计源文件（体积大，通过网盘 / GitHub Release 单独分发，不占用 git 历史）=====
+resources/
+assets/raw/
+assets/sketch/
+assets/sketch-imgs/
+assets/_crops/
+
+# ===== 操作系统 =====
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ===== 编辑器 / IDE =====
+.idea/
+.vscode/
+*.swp
+
+# ===== 日志与临时文件 =====
+*.log
+*.tmp.png

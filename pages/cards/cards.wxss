@@ -1,0 +1,21 @@
+.empty {
+  padding: 80rpx 20rpx;
+  color: #6B7C8A;
+  text-align: center;
+}
+
+.card-item {
+  margin-bottom: 18rpx;
+  padding: 24rpx;
+}
+
+.card-name {
+  font-size: 32rpx;
+  font-weight: 850;
+}
+
+.card-meta {
+  margin-top: 8rpx;
+  color: #6B7C8A;
+  font-size: 22rpx;
+}

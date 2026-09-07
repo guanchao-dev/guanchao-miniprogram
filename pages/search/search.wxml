@@ -1,0 +1,19 @@
+<view class="page">
+  <view class="page-content">
+    <view class="card search-box">
+      <input placeholder="搜索点位 / 图鉴" value="{{keyword}}" bindinput="onInput" confirm-type="search" bindconfirm="onSearch" />
+      <view class="btn" bindtap="onSearch">搜索</view>
+    </view>
+    <view class="empty-tip" wx:if="{{!spots.length && !species.length && searched}}">没有找到相关内容</view>
+    <view class="section-head" wx:if="{{spots.length}}"><text class="section-title">赶海点</text></view>
+    <view class="card list-card" wx:for="{{spots}}" wx:key="id" data-id="{{item.id}}" bindtap="openSpot">
+      <view class="list-title">{{item.name}}</view>
+      <view class="list-meta">{{item.city}} {{item.observeHint}}</view>
+    </view>
+    <view class="section-head" wx:if="{{species.length}}"><text class="section-title">图鉴</text></view>
+    <view class="card list-card" wx:for="{{species}}" wx:key="id" data-id="{{item.id}}" bindtap="openWiki">
+      <view class="list-title">{{item.name}}</view>
+      <view class="list-meta">{{item.summary}}</view>
+    </view>
+  </view>
+</view>

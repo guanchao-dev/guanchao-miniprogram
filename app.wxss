@@ -1,0 +1,265 @@
+page {
+  --navy: #184D97;
+  --blue: #1888BF;
+  --teal: #34B8C5;
+  --mint: #A7D9C7;
+  --yellow: #F6D081;
+  --cream: #F6E9D3;
+  --ink: #1C1C1C;
+  --muted: #6B7C8A;
+  --card: #FFFFFF;
+  --bg: #FFFFFF;
+  --shadow: 3rpx 3rpx 0 rgba(28, 28, 28, 0.85);
+  background: var(--bg);
+  color: var(--ink);
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+  font-size: 28rpx;
+}
+
+.page {
+  min-height: 100vh;
+  padding: 24rpx 28rpx 48rpx;
+  box-sizing: border-box;
+  position: relative;
+  overflow: hidden;
+  background: var(--bg);
+}
+
+.memphis-bg {
+  background: var(--bg);
+}
+
+.memphis-layer {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.page-content {
+  position: relative;
+  z-index: 2;
+}
+
+.dot,
+.geo-circle,
+.geo-square,
+.geo-star {
+  position: absolute;
+  z-index: 0;
+  pointer-events: none;
+  box-shadow: none !important;
+  border: 0 !important;
+  filter: blur(14rpx);
+  opacity: 0.45;
+}
+
+.dot,
+.geo-circle {
+  border-radius: 50%;
+}
+
+.geo-circle.sm {
+  width: 90rpx;
+  height: 90rpx;
+  filter: blur(14rpx);
+}
+
+.geo-circle.md {
+  width: 160rpx;
+  height: 160rpx;
+  filter: blur(18rpx);
+}
+
+.geo-circle.lg {
+  width: 240rpx;
+  height: 240rpx;
+  filter: blur(24rpx);
+}
+
+.geo-square {
+  width: 140rpx;
+  height: 140rpx;
+  transform: rotate(14deg);
+  filter: blur(16rpx);
+  opacity: 0.4;
+}
+
+.geo-square.sm {
+  width: 100rpx;
+  height: 100rpx;
+  filter: blur(14rpx);
+}
+
+.geo-star {
+  width: 120rpx;
+  height: 120rpx;
+  background: #F6D081;
+  transform: rotate(45deg);
+  filter: blur(16rpx);
+  opacity: 0.42;
+}
+
+.geo-star.blue { background: #1888BF; }
+.geo-star.teal { background: #34B8C5; }
+.geo-star.navy { background: #184D97; opacity: 0.28; }
+.geo-star.lg {
+  width: 170rpx;
+  height: 170rpx;
+  filter: blur(20rpx);
+}
+
+.dot {
+  width: 70rpx;
+  height: 70rpx;
+  background: rgba(24, 77, 151, 0.22);
+  filter: blur(12rpx);
+}
+
+.card {
+  position: relative;
+  z-index: 2;
+  background: var(--card);
+  border: 4rpx solid var(--ink);
+  border-radius: 28rpx;
+  box-shadow: var(--shadow);
+}
+
+.section-head {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 36rpx 4rpx 18rpx;
+}
+
+.section-title {
+  font-size: 34rpx;
+  font-weight: 800;
+}
+
+.section-more {
+  color: var(--blue);
+  font-size: 24rpx;
+  font-weight: 650;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 6rpx 14rpx;
+  border: 3rpx solid var(--ink);
+  border-radius: 999rpx;
+  font-size: 20rpx;
+  font-weight: 700;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 28rpx;
+  height: 64rpx;
+  border: 3rpx solid var(--ink);
+  border-radius: 999rpx;
+  background: var(--yellow);
+  color: var(--ink);
+  font-size: 24rpx;
+  font-weight: 750;
+  box-shadow: 3rpx 3rpx 0 rgba(28, 28, 28, 0.85);
+}
+
+.btn::after {
+  border: 0;
+}
+
+.empty-tip {
+  padding: 80rpx 20rpx;
+  color: var(--muted);
+  text-align: center;
+  font-size: 26rpx;
+}
+
+.list-card {
+  margin-bottom: 18rpx;
+  padding: 22rpx;
+}
+
+.list-title {
+  font-size: 32rpx;
+  font-weight: 850;
+}
+
+.list-meta {
+  margin-top: 8rpx;
+  color: var(--muted);
+  font-size: 22rpx;
+  line-height: 1.5;
+}
+
+.chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+  margin-bottom: 20rpx;
+}
+
+.chip {
+  padding: 8rpx 18rpx;
+  border: 3rpx solid #1C1C1C;
+  border-radius: 999rpx;
+  font-size: 22rpx;
+  font-weight: 700;
+  background: #FFFFFF;
+}
+
+.chip.active {
+  background: #1878FF;
+  color: #FFFFFF;
+}
+
+.cover {
+  width: 100%;
+  height: 280rpx;
+  border: 3rpx solid #1C1C1C;
+  border-radius: 20rpx;
+  background: #F3FBFA;
+}
+
+.full-btn {
+  width: 100%;
+  height: 80rpx;
+  margin-top: 24rpx;
+  background: #1878FF;
+  color: #FFFFFF;
+  box-sizing: border-box;
+}
+
+.ghost-btn {
+  background: #FFFFFF;
+  color: #1C1C1C;
+}
+
+.note {
+  width: 100%;
+  min-height: 180rpx;
+  margin-top: 16rpx;
+  padding: 16rpx;
+  box-sizing: border-box;
+  border: 3rpx solid #1C1C1C;
+  border-radius: 16rpx;
+  font-size: 26rpx;
+}
+
+.faq-item {
+  margin-top: 18rpx;
+}
+
+.quiz-options {
+  margin-top: 12rpx;
+}

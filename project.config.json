@@ -1,0 +1,120 @@
+{
+  "description": "观潮海洋素养微信小程序演示版",
+  "packOptions": {
+    "ignore": [
+      {
+        "value": "docs",
+        "type": "folder"
+      },
+      {
+        "value": "resources",
+        "type": "folder"
+      },
+      {
+        "value": "tools",
+        "type": "folder"
+      },
+      {
+        "value": "assets/raw",
+        "type": "folder"
+      },
+      {
+        "value": "assets/sketch",
+        "type": "folder"
+      },
+      {
+        "value": "assets/sketch-imgs",
+        "type": "folder"
+      },
+      {
+        "value": "assets/_crops",
+        "type": "folder"
+      },
+      {
+        "value": "assets/icons/home",
+        "type": "folder"
+      },
+      {
+        "value": "assets/icons/medal-*",
+        "type": "glob"
+      },
+      {
+        "value": "assets/icons/mascot-*",
+        "type": "glob"
+      },
+      {
+        "value": "assets/icons/achievement-*",
+        "type": "glob"
+      },
+      {
+        "value": "assets/icons/hero-*",
+        "type": "glob"
+      },
+      {
+        "value": "assets/icons/rank-*",
+        "type": "glob"
+      },
+      {
+        "value": "assets/badges/hero-*",
+        "type": "glob"
+      },
+      {
+        "value": "assets/achieve/section-*",
+        "type": "glob"
+      },
+      {
+        "value": "assets/tab/achievement*",
+        "type": "glob"
+      },
+      {
+        "value": ".md",
+        "type": "suffix"
+      },
+      {
+        "value": ".sketch",
+        "type": "suffix"
+      },
+      {
+        "value": ".py",
+        "type": "suffix"
+      },
+      {
+        "value": ".tmp.png",
+        "type": "suffix"
+      },
+      {
+        "value": ".zip",
+        "type": "suffix"
+      }
+    ],
+    "include": []
+  },
+  "setting": {
+    "urlCheck": false,
+    "es6": true,
+    "enhance": true,
+    "useCompilerPlugins": [
+      "typescript"
+    ],
+    "postcss": true,
+    "minified": false,
+    "compileHotReLoad": true,
+    "coverView": true,
+    "showShadowRootInWxmlPanel": true,
+    "babelSetting": {
+      "ignore": [],
+      "disablePlugins": [],
+      "outputPath": ""
+    }
+  },
+  "compileType": "miniprogram",
+  "libVersion": "3.5.5",
+  "appid": "wx6af244f2692b007f",
+  "projectname": "guanchao-demo",
+  "simulatorType": "wechat",
+  "condition": {},
+  "editorSetting": {
+    "tabIndent": "insertSpaces",
+    "tabSize": 2
+  }
+}

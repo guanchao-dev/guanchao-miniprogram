@@ -1,0 +1,34 @@
+<view class="explore-page">
+  <view class="explore-bar">
+    <view class="explore-title">{{venue.name}}</view>
+    <view class="explore-meta">已驱散 {{percentText}} ｜ {{statusText}}</view>
+    <view class="btn-row">
+      <view class="btn" wx:if="{{!exploring && !result.sessionId}}" bindtap="onStart">开始探索</view>
+      <view class="btn ghost" wx:if="{{!exploring && !result.sessionId}}" bindtap="onScan">扫码解锁</view>
+      <view class="btn danger" wx:if="{{exploring}}" bindtap="onStop">结束并上传</view>
+    </view>
+    <view class="hint">定位只在探索中使用。结束后删除路线，只保留网格。地图底部的来源和审图号请不要遮挡。</view>
+  </view>
+
+  <map
+    id="exploreMap"
+    class="explore-map"
+    latitude="{{latitude}}"
+    longitude="{{longitude}}"
+    scale="{{scale}}"
+    polyline="{{polyline}}"
+    polygons="{{polygons}}"
+    subkey="{{mapKey}}"
+    show-location="{{exploring}}"
+    enable-poi="{{true}}"
+    enable-building="{{false}}"
+  ></map>
+
+  <view class="card result-card" wx:if="{{result.sessionId}}">
+    <view class="list-title">{{result.venueName}}</view>
+    <view class="list-meta">探索进度 {{percentText}}</view>
+    <view class="list-meta" wx:if="{{result.badgeTitle}}">徽章：{{result.badgeTitle}}</view>
+    <view class="btn full-btn" bindtap="onShare">分享探索卡</view>
+  </view>
+  <unlock-popup id="unlockPopup"></unlock-popup>
+</view>
