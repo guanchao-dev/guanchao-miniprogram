@@ -1,0 +1,394 @@
+.home-page {
+  padding-top: 20rpx;
+}
+
+.top-row {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  gap: 16rpx;
+  align-items: center;
+}
+
+.place-chip,
+.search-chip {
+  display: flex;
+  align-items: center;
+  border: 3rpx solid #1C1C1C;
+  border-radius: 999rpx;
+  background: #FFFFFF;
+  box-shadow: 3rpx 3rpx 0 rgba(28, 28, 28, 0.85);
+}
+
+.place-chip {
+  padding: 10rpx 18rpx;
+  gap: 8rpx;
+  font-size: 22rpx;
+  font-weight: 700;
+}
+
+.search-chip {
+  flex: 1;
+  justify-content: space-between;
+  padding: 10rpx 18rpx;
+  color: #6B7C8A;
+  font-size: 22rpx;
+}
+
+.place-icon,
+.search-icon {
+  width: 40rpx;
+  height: 40rpx;
+}
+
+.hero {
+  display: flex;
+  align-items: center;
+  margin-top: 28rpx;
+  min-height: 320rpx;
+  padding: 32rpx 24rpx 32rpx 28rpx;
+  overflow: hidden;
+  background: linear-gradient(135deg, #F7FCFF, #D8F3F6);
+}
+
+.hero-copy {
+  position: relative;
+  z-index: 2;
+  width: 52%;
+  flex-shrink: 0;
+}
+
+.hero-kicker {
+  color: #1888BF;
+  font-size: 22rpx;
+  font-weight: 700;
+}
+
+.hero-title {
+  margin-top: 4rpx;
+  font-size: 44rpx;
+  font-weight: 850;
+  line-height: 1.25;
+}
+
+.hero-kicker + .hero-title {
+  margin-top: 12rpx;
+}
+
+.hero-desc {
+  margin: 14rpx 0 24rpx;
+  color: #6B7C8A;
+  font-size: 22rpx;
+}
+
+.hero-visual {
+  position: relative;
+  z-index: 2;
+  flex: 1;
+  height: 260rpx;
+  margin-left: 8rpx;
+}
+
+.hero-blob {
+  position: absolute;
+  right: 8rpx;
+  top: 24rpx;
+  width: 200rpx;
+  height: 200rpx;
+  border: 4rpx solid #1C1C1C;
+  border-radius: 40% 50% 45% 55%;
+  background: #34B8C5;
+  box-shadow: 3rpx 3rpx 0 rgba(28, 28, 28, 0.85);
+  transform: rotate(8deg);
+}
+
+.hero-dot-a {
+  position: absolute;
+  top: 10rpx;
+  right: 24rpx;
+  width: 28rpx;
+  height: 28rpx;
+  border: 3rpx solid #1C1C1C;
+  border-radius: 50%;
+  background: #F6D081;
+}
+
+.hero-dot-b {
+  position: absolute;
+  left: 12rpx;
+  bottom: 36rpx;
+  width: 18rpx;
+  height: 18rpx;
+  border-radius: 50%;
+  background: #184D97;
+  border: 3rpx solid #1C1C1C;
+}
+
+.hero-squiggle {
+  position: absolute;
+  left: 20rpx;
+  top: 48rpx;
+  width: 46rpx;
+  height: 14rpx;
+  border-radius: 999rpx;
+  background: #A7D9C7;
+  border: 3rpx solid #1C1C1C;
+  transform: rotate(-18deg);
+}
+
+.hero-mascot {
+  position: absolute;
+  right: -4rpx;
+  bottom: -8rpx;
+  width: 240rpx;
+  height: 240rpx;
+  z-index: 2;
+}
+
+.tide {
+  position: relative;
+  z-index: 2;
+  margin-top: 24rpx;
+  padding: 24rpx;
+}
+
+.tide-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.tide-chart {
+  position: relative;
+  height: 280rpx;
+  margin-top: 18rpx;
+  overflow: hidden;
+  border-radius: 20rpx;
+  background: #F3FBFA;
+  border: 3rpx solid #1C1C1C;
+}
+
+.tide-canvas {
+  width: 100%;
+  height: 100%;
+}
+
+.feature-row {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: space-between;
+  padding: 24rpx 16rpx 20rpx;
+}
+
+.feature {
+  width: 23%;
+  text-align: center;
+  font-size: 20rpx;
+  font-weight: 650;
+}
+
+.feature-bubble {
+  width: 96rpx;
+  height: 96rpx;
+  margin: 0 auto 10rpx;
+  border: 3rpx solid #1C1C1C;
+  border-radius: 50%;
+  box-shadow: 3rpx 3rpx 0 rgba(28, 28, 28, 0.85);
+  overflow: hidden;
+  background: #F6E9D3;
+}
+
+.feature-bubble image {
+  width: 100%;
+  height: 100%;
+}
+
+.feature-bubble.mint { background: #D8F4EE; }
+.feature-bubble.sky { background: #D6EEF8; }
+.feature-bubble.yellow { background: #FBECC8; }
+.feature-bubble.pink { background: #E4F2FF; }
+
+.quiz-scroll {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  white-space: nowrap;
+}
+
+.quiz-row {
+  display: inline-flex;
+  gap: 18rpx;
+  padding-bottom: 8rpx;
+}
+
+.quiz-card {
+  position: relative;
+  z-index: 2;
+  width: 200rpx;
+  height: 240rpx;
+  padding: 14rpx;
+  border: 4rpx solid #1C1C1C;
+  border-radius: 28rpx;
+  box-shadow: 3rpx 3rpx 0 rgba(28, 28, 28, 0.85);
+  box-sizing: border-box;
+  text-align: center;
+  background-clip: padding-box;
+}
+
+.quiz-card image {
+  width: 140rpx;
+  height: 140rpx;
+  margin-top: 4rpx;
+  border-radius: 20rpx;
+}
+
+.quiz-card text {
+  display: block;
+  margin-top: 10rpx;
+  font-size: 24rpx;
+  font-weight: 750;
+}
+
+.ai-row {
+  display: flex;
+  gap: 14rpx;
+}
+
+.ai-card {
+  flex: 1;
+  padding: 18rpx 10rpx 16rpx;
+  text-align: center;
+}
+
+.ai-emoji {
+  display: block;
+  font-size: 36rpx;
+}
+
+.ai-name {
+  display: block;
+  margin-top: 8rpx;
+  font-size: 22rpx;
+  font-weight: 800;
+}
+
+.ai-desc {
+  display: block;
+  margin-top: 4rpx;
+  color: #6B7C8A;
+  font-size: 18rpx;
+}
+
+.advice-box {
+  margin-top: 16rpx;
+  padding: 18rpx;
+  border: 3rpx solid #1C1C1C;
+  border-radius: 20rpx;
+  background: #F3FAFF;
+}
+
+.advice-title {
+  display: block;
+  font-size: 28rpx;
+  font-weight: 850;
+}
+
+.advice-body,
+.advice-extra,
+.advice-disc,
+.candidate-reason,
+.ai-hint,
+.obs {
+  display: block;
+  margin-top: 8rpx;
+  color: #4F6787;
+  font-size: 24rpx;
+  line-height: 1.55;
+}
+
+.advice-disc,
+.ai-hint {
+  color: #8A7A6B;
+  font-size: 20rpx;
+}
+
+.ai-mask {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32rpx 24rpx;
+  background: rgba(11, 31, 56, 0.56);
+}
+
+.ai-modal {
+  width: 100%;
+  max-height: 80vh;
+  overflow: hidden;
+  border: 4rpx solid #1C1C1C;
+  border-radius: 32rpx;
+  background: #EAF3FF;
+}
+
+.ai-modal-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24rpx 28rpx 8rpx;
+  font-size: 32rpx;
+  font-weight: 850;
+}
+
+.ai-close {
+  font-size: 44rpx;
+  font-weight: 300;
+}
+
+.ai-modal-body {
+  max-height: 68vh;
+  padding: 8rpx 28rpx 28rpx;
+  box-sizing: border-box;
+}
+
+.guess-photo {
+  width: 100%;
+  height: 220rpx;
+  margin-bottom: 8rpx;
+  border-radius: 16rpx;
+  background: #fff;
+}
+
+.candidate {
+  margin-top: 14rpx;
+  padding: 16rpx;
+  border-radius: 16rpx;
+  background: rgba(255, 255, 255, 0.86);
+}
+
+.candidate-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.candidate-name {
+  font-size: 28rpx;
+  font-weight: 800;
+}
+
+.candidate-tag {
+  padding: 4rpx 12rpx;
+  border-radius: 999rpx;
+  background: #D6EAF8;
+  color: #1878FF;
+  font-size: 20rpx;
+}
+
+.card-title {
+  display: block;
+  font-size: 36rpx;
+  font-weight: 900;
+}

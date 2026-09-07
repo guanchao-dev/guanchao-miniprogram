@@ -1,0 +1,28 @@
+<view class="unlock-mask" wx:if="{{visible}}" catchtouchmove="noop">
+  <view class="unlock-close" bindtap="onClose">×</view>
+  <view class="unlock-copy">
+    <view class="unlock-kicker">恭喜你成功解锁徽章！</view>
+    <view class="unlock-name">
+      <text class="wing">❧</text>
+      <text>【{{medal.title}}】</text>
+      <text class="wing">❧</text>
+    </view>
+    <view class="unlock-desc">{{medal.description}}</view>
+  </view>
+
+  <view class="unlock-stage">
+    <view
+      class="spark {{burst ? 'go' : ''}}"
+      wx:for="{{sparks}}"
+      wx:key="i"
+      style="--deg: {{item.deg}}deg; --delay: {{item.delay}}ms; --dist: {{item.dist}}rpx; --size: {{item.size}}rpx; background: {{item.color}};"
+    ></view>
+    <view class="burst-ring {{burst ? 'go' : ''}}"></view>
+    <view class="burst-ring late {{burst ? 'go' : ''}}"></view>
+    <view class="unlock-badge">
+      <image src="{{medal.icon}}" mode="aspectFit"></image>
+    </view>
+  </view>
+
+  <view class="unlock-btn" bindtap="onView">立即查看</view>
+</view>

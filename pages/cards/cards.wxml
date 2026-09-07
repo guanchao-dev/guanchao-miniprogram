@@ -1,0 +1,9 @@
+<view class="page memphis-bg">
+  <view class="page-content">
+    <view class="empty" wx:if="{{!list.length}}">还没有图鉴卡，去首页拍一张「今日发现」吧</view>
+    <view class="card-item card" wx:for="{{list}}" wx:key="id" data-id="{{item.id}}" bindtap="onOpen">
+      <view class="card-name">{{item.title}}</view>
+      <view class="card-meta">{{item.spotName}} · {{item.observedAt}}</view>
+    </view>
+  </view>
+</view>

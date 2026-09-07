@@ -1,0 +1,26 @@
+<view class="page">
+  <view class="page-content">
+    <view class="card list-card">
+      <image wx:if="{{coverSrc}}" class="cover" src="{{coverSrc}}" mode="aspectFill" data-url="{{coverUrl}}" bindtap="onPreviewPhoto"></image>
+      <view class="list-title">{{item.name}}</view>
+      <view class="list-meta" wx:if="{{akaText}}">又名 {{akaText}}</view>
+      <view class="list-meta">外形：{{item.look}}</view>
+      <view class="list-meta">栖息：{{item.habitat}}</view>
+      <view class="list-meta">观察：{{item.observeTip}}</view>
+      <view class="list-meta">安全：{{item.safetyTip}}</view>
+      <view class="list-meta" wx:if="{{item.source}}">来源：{{item.source}}</view>
+      <view class="btn full-btn" bindtap="onFavorite">{{item.favorited ? '已收藏' : '收藏图鉴'}}</view>
+      <view class="btn full-btn ghost-btn" bindtap="onUploadPhoto">上传我的照片</view>
+    </view>
+
+    <view class="card list-card" wx:if="{{photos.length}}">
+      <view class="list-title">我的照片</view>
+      <view class="photo-grid">
+        <view class="photo-item" wx:for="{{photos}}" wx:key="photoId" wx:for-item="photo">
+          <image class="photo-thumb" src="{{photo.coverSrc}}" mode="aspectFill" data-url="{{photo.coverUrl}}" bindtap="onPreviewPhoto"></image>
+          <view class="photo-del" data-id="{{photo.photoId}}" bindtap="onDeletePhoto">删除</view>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

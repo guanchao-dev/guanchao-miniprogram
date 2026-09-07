@@ -1,0 +1,130 @@
+<view class="page memphis-bg home-page">
+  <view class="memphis-layer">
+    <view class="geo-circle lg" style="top: 40rpx; right: -40rpx; background:#F6D081;"></view>
+    <view class="geo-square" style="bottom: 160rpx; left: -30rpx; background:#34B8C5;"></view>
+  </view>
+
+  <view class="page-content">
+    <view class="top-row">
+      <view class="place-chip" bindtap="goSpots">
+        <image class="place-icon" src="/assets/home/home-pin.png" mode="aspectFit"></image>
+        <text>{{place}}</text>
+      </view>
+      <view class="search-chip" bindtap="onSearch">
+        <text>搜索潮汐 / 点位</text>
+        <image class="search-icon" src="/assets/home/home-search.png" mode="aspectFit"></image>
+      </view>
+    </view>
+
+    <view class="hero card">
+      <view class="hero-copy">
+        <view class="hero-kicker">观潮 · 今日</view>
+        <view class="hero-title">跟潮汐一起</view>
+        <view class="hero-title">出发探索</view>
+        <view class="hero-desc">{{heroDesc}}</view>
+        <view class="btn" bindtap="goAchieve">查看成就</view>
+      </view>
+      <view class="hero-visual">
+        <view class="hero-blob"></view>
+        <view class="hero-dot-a"></view>
+        <view class="hero-dot-b"></view>
+        <view class="hero-squiggle"></view>
+        <image class="hero-mascot" src="/assets/home/home-hero-mascot.png" mode="aspectFit"></image>
+      </view>
+    </view>
+
+    <view class="section-head">
+      <text class="section-title">AI 探索</text>
+      <text class="section-more">{{loggedIn ? '已登录' : '登录后可拍照'}}</text>
+    </view>
+    <view class="ai-row">
+      <view class="ai-card card" bindtap="onGuess">
+        <text class="ai-emoji">📷</text>
+        <text class="ai-name">拍一张猜一猜</text>
+        <text class="ai-desc">对照图鉴，不是鉴定</text>
+      </view>
+      <view class="ai-card card" bindtap="onRefreshAdvice">
+        <text class="ai-emoji">🌊</text>
+        <text class="ai-name">出门建议</text>
+        <text class="ai-desc">把潮汐讲成人话</text>
+      </view>
+      <view class="ai-card card" bindtap="goDiscover">
+        <text class="ai-emoji">📒</text>
+        <text class="ai-name">今日发现</text>
+        <text class="ai-desc">生成一张图鉴卡</text>
+      </view>
+    </view>
+
+    <view class="tide card">
+      <view class="tide-head">
+        <text class="section-title">当前潮汐高度</text>
+        <text class="tag" style="background:#F6D081;">{{tideTag}}</text>
+      </view>
+      <view class="advice-box" wx:if="{{advice.headline}}">
+        <text class="advice-title">{{advice.headline}}</text>
+        <text class="advice-body">{{advice.body}}</text>
+        <text class="advice-extra" wx:if="{{advice.weatherLine}}">{{advice.weatherLine}}</text>
+        <text class="advice-extra" wx:if="{{advice.safetyLine}}">{{advice.safetyLine}}</text>
+        <text class="advice-disc">{{advice.disclaimer}}</text>
+      </view>
+      <view class="tide-chart">
+        <canvas type="2d" id="tideCanvas" class="tide-canvas"></canvas>
+      </view>
+    </view>
+
+    <view class="section-head">
+      <text class="section-title">快捷入口</text>
+    </view>
+    <view class="feature-row card">
+      <view
+        class="feature"
+        wx:for="{{features}}"
+        wx:key="title"
+        data-title="{{item.title}}"
+        bindtap="onFeature"
+      >
+        <view class="feature-bubble {{item.tone}}">
+          <image src="{{item.icon}}" mode="aspectFit"></image>
+        </view>
+        <text>{{item.title}}</text>
+      </view>
+    </view>
+
+    <view class="section-head">
+      <text class="section-title">海洋科普闯关</text>
+      <text class="section-more" bindtap="goAchieve">去解锁 ›</text>
+    </view>
+    <scroll-view class="quiz-scroll" scroll-x enhanced show-scrollbar="{{false}}">
+      <view class="quiz-row">
+        <view class="quiz-card" wx:for="{{quizzes}}" wx:key="id" data-id="{{item.id}}" bindtap="onQuiz" style="background: {{item.color}};">
+          <image src="{{item.icon}}" mode="aspectFit"></image>
+          <text>{{item.title}}</text>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <view class="ai-mask" wx:if="{{showGuess}}" bindtap="closeGuess" catchtouchmove="noop">
+    <view class="ai-modal" catchtap="noop">
+      <view class="ai-modal-head">
+        <text>小螃蟹猜一猜</text>
+        <text class="ai-close" bindtap="closeGuess">×</text>
+      </view>
+      <scroll-view scroll-y class="ai-modal-body">
+        <image wx:if="{{guessImage}}" class="guess-photo" src="{{guessImage}}" mode="aspectFit"></image>
+        <text class="ai-hint">这可能是下面几种，请打开图鉴再看一眼，不要只信我。</text>
+        <view class="candidate" wx:for="{{guess.candidates}}" wx:key="rank" data-item="{{item}}" bindtap="openWiki">
+          <view class="candidate-top">
+            <text class="candidate-name">{{item.name}}</text>
+            <text class="candidate-tag">{{item.confidenceLabel}}</text>
+          </view>
+          <text class="candidate-reason">{{item.reason}}</text>
+        </view>
+        <text class="advice-extra" wx:if="{{guess.observeTip}}">{{guess.observeTip}}</text>
+        <text class="advice-extra" wx:if="{{guess.safetyTip}}">{{guess.safetyTip}}</text>
+        <text class="advice-disc">{{guess.disclaimer}}</text>
+      </scroll-view>
+    </view>
+  </view>
+  <unlock-popup id="unlockPopup"></unlock-popup>
+</view>

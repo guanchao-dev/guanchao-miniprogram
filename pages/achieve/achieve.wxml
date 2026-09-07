@@ -1,0 +1,207 @@
+<view class="page memphis-bg achieve-page">
+  <view class="memphis-layer">
+    <view class="geo-circle lg" style="top: 40rpx; right: -40rpx; background:#F6D081;"></view>
+    <view class="geo-square" style="bottom: 120rpx; left: -20rpx; background:#A7D9C7;"></view>
+  </view>
+
+  <view class="page-content">
+    <view class="hero">
+      <view class="hero-copy">
+        <view class="hero-title">每一次探索</view>
+        <view class="hero-title">都是荣耀的印记</view>
+        <view class="hero-sub">收集勋章，记录你的海洋足迹</view>
+      </view>
+      <view class="hero-visual">
+        <view class="hero-blob"></view>
+        <view class="hero-ring"></view>
+        <view class="hero-dot-a"></view>
+        <view class="hero-dot-b"></view>
+        <view class="hero-bar"></view>
+        <image class="hero-mascot" src="/assets/achieve/achieve-hero-mascot.png" mode="aspectFit"></image>
+      </view>
+    </view>
+
+    <view class="progress card">
+      <view class="progress-top">
+        <view class="progress-copy">
+          <view class="progress-num">{{score}} <text>/ {{total}}</text></view>
+          <view class="progress-label">已解锁成就 · 完成度 {{percent}}%</view>
+        </view>
+        <view class="tag" style="background:#F6D081;">成就总览</view>
+      </view>
+      <view class="bar-track">
+        <view class="bar-fill" style="width: {{percent}}%;"></view>
+      </view>
+      <view class="milestones">
+        <text>初露锋芒</text>
+        <text>渐入佳境</text>
+        <text>成就大师</text>
+        <text>完美收藏</text>
+      </view>
+    </view>
+
+    <view class="section-head">
+      <text class="section-title">勋章墙</text>
+      <text class="section-more">已解锁 {{unlockedCount}} / {{medalTotal}}</text>
+    </view>
+
+    <view class="medal-wall card">
+      <scroll-view class="medal-scroll" scroll-y enhanced show-scrollbar="{{false}}">
+        <view class="medal-grid">
+          <view
+            class="medal-card {{item.locked ? 'locked' : ''}}"
+            wx:for="{{medals}}"
+            wx:key="id"
+            data-index="{{index}}"
+            bindtap="onMedal"
+          >
+            <view class="medal-tag" style="background: {{item.tagBg}}; color: {{item.tagColor}};">{{item.tag}}</view>
+            <image class="medal-icon" src="{{item.icon}}" mode="aspectFit"></image>
+            <text class="medal-name">{{item.locked ? '???' : item.title}}</text>
+          </view>
+        </view>
+      </scroll-view>
+    </view>
+
+    <view class="bottom-row">
+      <view class="level-card card">
+        <image class="level-medal" src="/assets/badges/medal-wing.png" mode="aspectFit"></image>
+        <view class="level-title">Lv.24 海洋探索家</view>
+        <view class="mini-bar"><view style="width: 64%;"></view></view>
+        <view class="btn level-btn" bindtap="goHome">继续探索</view>
+      </view>
+
+      <view class="rank-card card">
+        <view class="rank-title">好友排行</view>
+        <view class="rank-item {{item.me ? 'me' : ''}}" wx:for="{{friends}}" wx:key="name">
+          <image src="{{item.avatar}}" mode="aspectFill"></image>
+          <view class="rank-meta">
+            <text class="rank-name">{{item.name}}</text>
+            <text class="rank-level">{{item.level}}</text>
+          </view>
+          <text class="rank-score">{{item.score}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view
+    class="medal-modal-mask"
+    wx:if="{{showMedalModal}}"
+    bindtap="closeMedal"
+    catchtouchmove="noop"
+  >
+    <view class="medal-modal" catchtap="noop">
+      <view class="modal-actions">
+        <view class="modal-action share-action" bindtap="openSharePanel">
+          <image class="modal-share-icon" src="/assets/icons/share-lucide.png" mode="aspectFit"></image>
+        </view>
+        <view class="modal-action close-action" bindtap="closeMedal">×</view>
+      </view>
+
+      <scroll-view class="modal-scroll" scroll-y>
+        <view class="modal-heading">
+          <text class="modal-title">{{selectedMedal.displayTitle}}</text>
+          <text
+            class="modal-rarity"
+            style="background: {{selectedMedal.tagBg}}; color: {{selectedMedal.tagColor}};"
+          >{{selectedMedal.tag}}</text>
+        </view>
+
+        <view class="modal-intro">
+          <view class="modal-medal-wrap {{selectedMedal.locked ? 'is-locked' : ''}}">
+            <image class="modal-medal-image" src="{{selectedMedal.icon}}" mode="aspectFit"></image>
+          </view>
+          <text class="modal-description">{{selectedMedal.description}}</text>
+        </view>
+
+        <view class="modal-section">
+          <text class="modal-section-title">解锁条件</text>
+          <view
+            class="requirement"
+            wx:for="{{selectedMedal.requirements}}"
+            wx:key="text"
+          >
+            <view class="requirement-check {{item.done ? 'done' : ''}}">{{item.done ? '✓' : ''}}</view>
+            <text>{{item.text}}</text>
+          </view>
+        </view>
+
+        <view class="modal-section reward-section">
+          <text class="modal-section-title">解锁奖励</text>
+          <view class="reward-list">
+            <view class="reward-item">
+              <text class="reward-star">★</text>
+              <text>x{{selectedMedal.starReward}}</text>
+            </view>
+            <view class="reward-item">
+              <view class="reward-shell">◆</view>
+              <text>x{{selectedMedal.shellReward}}</text>
+            </view>
+          </view>
+        </view>
+      </scroll-view>
+    </view>
+  </view>
+
+  <view
+    class="share-panel-mask"
+    wx:if="{{showSharePanel}}"
+    bindtap="closeSharePanel"
+    catchtouchmove="noop"
+  >
+    <view class="share-panel" catchtap="noop">
+      <view class="share-panel-head">
+        <view class="share-panel-title">
+          <image src="/assets/icons/share-lucide.png" mode="aspectFit"></image>
+          <text>分享成就</text>
+        </view>
+        <view class="share-panel-close" bindtap="closeSharePanel">×</view>
+      </view>
+
+      <scroll-view class="share-panel-scroll" scroll-y>
+        <view class="share-achievement-card">
+          <image src="{{selectedMedal.icon}}" mode="aspectFit"></image>
+          <view>
+            <text class="share-achievement-status">{{selectedMedal.locked ? '待解锁成就' : '已解锁成就'}}</text>
+            <text class="share-achievement-name">{{selectedMedal.displayTitle}}</text>
+          </view>
+        </view>
+
+        <view class="share-copy-card">
+          <text>{{shareText}}</text>
+          <view class="share-refresh" bindtap="refreshShareCopy">↻</view>
+        </view>
+
+        <view class="share-copy-button" bindtap="copyShareText">
+          <view class="copy-symbol">
+            <view></view>
+          </view>
+          <text>复制分享文案</text>
+        </view>
+
+        <view class="share-channel-list">
+          <view class="share-channel">
+            <view class="channel-icon wechat-icon">
+              <view class="wechat-bubble wechat-bubble-large"></view>
+              <view class="wechat-bubble wechat-bubble-small"></view>
+              <button class="channel-hit" open-type="share"></button>
+            </view>
+            <text>微信好友</text>
+          </view>
+
+          <view class="share-channel" data-channel="QQ" bindtap="shareToExternal">
+            <view class="channel-icon qq-icon">Q</view>
+            <text>QQ</text>
+          </view>
+
+          <view class="share-channel" data-channel="微博" bindtap="shareToExternal">
+            <view class="channel-icon weibo-icon">博</view>
+            <text>微博</text>
+          </view>
+        </view>
+      </scroll-view>
+    </view>
+  </view>
+  <unlock-popup id="unlockPopup"></unlock-popup>
+</view>

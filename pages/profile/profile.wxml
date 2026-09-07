@@ -1,0 +1,66 @@
+<view class="profile-page memphis-bg">
+  <view class="memphis-layer">
+    <view class="geo-circle lg" style="top: 20rpx; right: -50rpx; background:#34B8C5;"></view>
+    <view class="geo-star lg" style="bottom: 200rpx; left: -30rpx;"></view>
+  </view>
+
+  <view class="page-content">
+    <view class="profile-hero">
+      <view class="user-row" bindtap="goLogin">
+        <image class="avatar" src="{{user.avatar}}" mode="aspectFit"></image>
+        <view class="user-meta">
+          <view class="user-name">{{user.name}}</view>
+          <view class="level-pill">{{user.level}}</view>
+        </view>
+      </view>
+
+      <view class="stats card">
+        <view class="stat" wx:for="{{stats}}" wx:key="label" data-label="{{item.label}}" bindtap="onStat">
+          <view class="stat-value">{{item.value}}</view>
+          <view class="stat-label">{{item.label}}</view>
+        </view>
+      </view>
+    </view>
+
+    <view class="page profile-body">
+      <view class="section-head">
+        <text class="section-title">我的观潮记录</text>
+        <text class="section-more" bindtap="goAchieve">成就墙 ›</text>
+      </view>
+      <view class="record-card card">
+        <view
+          class="record"
+          wx:for="{{records}}"
+          wx:key="title"
+          data-title="{{item.title}}"
+          bindtap="onItem"
+        >
+          <view class="record-icon {{item.tone}}">
+            <image src="{{item.icon}}" mode="aspectFit"></image>
+          </view>
+          <text>{{item.title}}</text>
+        </view>
+      </view>
+
+      <view class="section-head">
+        <text class="section-title">更多服务</text>
+      </view>
+      <view class="menu-card card">
+        <view
+          class="menu-item"
+          wx:for="{{menus}}"
+          wx:key="title"
+          data-title="{{item.title}}"
+          bindtap="onItem"
+        >
+          <image src="{{item.icon}}" mode="aspectFit"></image>
+          <text>{{item.title}}</text>
+          <text class="arrow">›</text>
+        </view>
+      </view>
+
+      <view class="version">观潮 · 最初版 0.3.0</view>
+    </view>
+  </view>
+  <unlock-popup id="unlockPopup"></unlock-popup>
+</view>

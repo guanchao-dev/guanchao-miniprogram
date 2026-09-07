@@ -1,0 +1,30 @@
+.ghost-btn {
+  background: #FFFFFF;
+  color: #1C1C1C;
+}
+
+.photo-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+  margin-top: 16rpx;
+}
+
+.photo-item {
+  width: 200rpx;
+}
+
+.photo-thumb {
+  width: 200rpx;
+  height: 200rpx;
+  border: 3rpx solid #1C1C1C;
+  border-radius: 16rpx;
+  background: #F3FBFA;
+}
+
+.photo-del {
+  margin-top: 8rpx;
+  text-align: center;
+  font-size: 22rpx;
+  color: #E53935;
+}

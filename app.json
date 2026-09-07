@@ -1,0 +1,78 @@
+{
+  "pages": [
+    "pages/home/home",
+    "pages/community/community",
+    "pages/achieve/achieve",
+    "pages/profile/profile",
+    "pages/community-search/community-search",
+    "pages/community-detail/community-detail",
+    "pages/community-publish/community-publish",
+    "pages/community-user/community-user",
+    "pages/login/login",
+    "pages/discover/discover",
+    "pages/cards/cards",
+    "pages/search/search",
+    "pages/calendar/calendar",
+    "pages/spots/spots",
+    "pages/spot-detail/spot-detail",
+    "pages/explore/explore",
+    "pages/wiki/wiki",
+    "pages/wiki-detail/wiki-detail",
+    "pages/gear/gear",
+    "pages/quiz/quiz",
+    "pages/checkin/checkin",
+    "pages/help/help",
+    "pages/settings/settings",
+    "pages/legal/legal"
+  ],
+  "window": {
+    "navigationBarTitleText": "观潮",
+    "navigationBarBackgroundColor": "#FFFFFF",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#FFFFFF",
+    "backgroundTextStyle": "light"
+  },
+  "tabBar": {
+    "color": "#9AA6B4",
+    "selectedColor": "#087CFF",
+    "backgroundColor": "#FFFFFF",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/home/home",
+        "text": "首页",
+        "iconPath": "assets/tab/home.png",
+        "selectedIconPath": "assets/tab/home-active.png"
+      },
+      {
+        "pagePath": "pages/community/community",
+        "text": "社区",
+        "iconPath": "assets/tab/community.png",
+        "selectedIconPath": "assets/tab/community-active.png"
+      },
+      {
+        "pagePath": "pages/achieve/achieve",
+        "text": "成就",
+        "iconPath": "assets/tab/achieve.png",
+        "selectedIconPath": "assets/tab/achieve-active.png"
+      },
+      {
+        "pagePath": "pages/profile/profile",
+        "text": "我的",
+        "iconPath": "assets/tab/profile.png",
+        "selectedIconPath": "assets/tab/profile-active.png"
+      }
+    ]
+  },
+  "permission": {
+    "scope.userLocation": {
+      "desc": "用于查找附近赶海点；仅在你点击开始探索后，在场地内记录探索网格"
+    }
+  },
+  "requiredPrivateInfos": ["getLocation", "onLocationChange"],
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
+  "usingComponents": {
+    "unlock-popup": "/components/unlock-popup/unlock-popup"
+  }
+}

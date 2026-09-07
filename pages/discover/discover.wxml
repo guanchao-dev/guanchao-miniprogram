@@ -1,0 +1,65 @@
+<view class="page memphis-bg discover-page">
+  <view class="page-content">
+    <block wx:if="{{!card.id}}">
+      <view class="card form-card">
+        <view class="field-label">观察照片</view>
+        <view class="photo-box" bindtap="choosePhoto">
+          <image wx:if="{{photoPath}}" class="photo" src="{{photoPath}}" mode="aspectFill"></image>
+          <view wx:else class="photo-placeholder">
+            <text>点击拍照或从相册选择</text>
+            <text class="photo-hint">生成图鉴卡必需</text>
+          </view>
+        </view>
+
+        <view class="field-label">地点</view>
+        <view class="readonly">{{place}}</view>
+
+        <view class="row">
+          <view class="col">
+            <view class="field-label">日期</view>
+            <picker mode="date" value="{{date}}" bindchange="onDate">
+              <view class="picker">{{date}}</view>
+            </picker>
+          </view>
+          <view class="col">
+            <view class="field-label">时间</view>
+            <picker mode="time" value="{{time}}" bindchange="onTime">
+              <view class="picker">{{time}}</view>
+            </picker>
+          </view>
+        </view>
+
+        <view class="field-label">潮汐</view>
+        <input class="input" value="{{tideText}}" bindinput="onTide" placeholder="例如：潮高 0.8 米 · 退潮中" />
+
+        <view class="field-label">补充观察（选填）</view>
+        <textarea
+          class="textarea"
+          value="{{userNote}}"
+          bindinput="onNote"
+          maxlength="80"
+          placeholder="你看到了什么？例如：石头缝里有好多小白点"
+        />
+
+        <view class="btn submit-btn" bindtap="onSubmit">{{submitting ? '生成中...' : '生成今日发现'}}</view>
+      </view>
+    </block>
+
+    <block wx:else>
+      <view class="card result-card">
+        <image class="result-cover" src="{{coverSrc}}" mode="aspectFill"></image>
+        <view class="result-title">{{card.title}}</view>
+        <view class="result-meta">{{card.spotName}} · {{card.tideLine}}</view>
+        <view class="obs-title">三句观察</view>
+        <view class="obs" wx:for="{{card.observations}}" wx:key="*this">{{index + 1}}. {{item}}</view>
+        <view class="safety" wx:if="{{card.safetyTip}}">安全提醒：{{card.safetyTip}}</view>
+        <view class="disc">{{card.disclaimer}}</view>
+        <view class="action-row">
+          <view class="btn action-btn" bindtap="onFavorite">{{card.favorited ? '已收藏' : '收藏'}}</view>
+          <view class="btn action-btn share-btn" bindtap="onShare">分享</view>
+        </view>
+      </view>
+    </block>
+  </view>
+  <unlock-popup id="unlockPopup"></unlock-popup>
+</view>

@@ -1,0 +1,49 @@
+<view class="page community-detail">
+  <view class="page-content">
+    <swiper wx:if="{{note.imageUrls.length}}" class="swiper" indicator-dots>
+      <swiper-item wx:for="{{note.imageUrls}}" wx:key="*this">
+        <image class="swiper-img" src="{{item}}" mode="aspectFill" data-url="{{item}}" bindtap="preview"></image>
+      </swiper-item>
+    </swiper>
+
+    <view class="card list-card">
+      <view class="list-title">{{note.title}}</view>
+      <view class="content">{{note.content}}</view>
+      <view class="chip-row" wx:if="{{note.topics.length}}">
+        <text class="chip" wx:for="{{note.topics}}" wx:key="id" data-name="{{item.name}}" bindtap="onTopic"># {{item.name}}</text>
+      </view>
+      <view class="list-meta" wx:if="{{note.spot.name}}">地点：{{note.spot.name}}</view>
+      <view class="list-meta" wx:if="{{note.species.name}}" data-id="{{note.species.id}}" bindtap="openWiki">图鉴：{{note.species.name}} ›</view>
+      <view class="list-meta disc">{{note.disclaimer}}</view>
+    </view>
+
+    <view class="card list-card author-card" bindtap="openAuthor">
+      <image class="author-avatar" src="{{note.author.avatarUrl}}" mode="aspectFill"></image>
+      <view class="author-meta">
+        <view class="list-title">{{note.author.nickname}}</view>
+        <view class="list-meta">Lv.{{note.author.level}} {{note.author.title}}</view>
+      </view>
+      <view class="btn" wx:if="{{!note.author.me}}" catchtap="onFollow">{{note.author.followed ? '已关注' : '关注'}}</view>
+    </view>
+
+    <view class="card list-card">
+      <view class="list-title">评论 {{comments.length}}</view>
+      <view class="empty-tip" wx:if="{{!comments.length}}">来写第一条友善评论吧</view>
+      <view class="cmt" wx:for="{{comments}}" wx:key="id">
+        <view class="cmt-name">{{item.author.nickname}}</view>
+        <view class="cmt-body">{{item.content}}</view>
+      </view>
+      <view class="cmt-bar">
+        <input class="cmt-input" value="{{draft}}" placeholder="友善讨论，不留联系方式" bindinput="onDraft" confirm-type="send" bindconfirm="onComment" />
+        <view class="btn" bindtap="onComment">发送</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="action-bar">
+    <view class="action" bindtap="onLike">{{note.liked ? '♥' : '♡'}} {{note.likeCount}}</view>
+    <view class="action" bindtap="onFavorite">{{note.favorited ? '已收藏' : '收藏'}} {{note.favoriteCount}}</view>
+    <view class="action" bindtap="onShare">分享</view>
+  </view>
+  <unlock-popup id="unlockPopup"></unlock-popup>
+</view>
