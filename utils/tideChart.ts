@@ -4,15 +4,6 @@ export type TidePoint = {
   type?: string
 }
 
-export const DEMO_TIDE_POINTS: TidePoint[] = [
-  { time: '06:20', heightM: 0.32, type: 'low' },
-  { time: '09:10', heightM: 1.05, type: 'rising' },
-  { time: '12:10', heightM: 1.86, type: 'high' },
-  { time: '16:20', heightM: 0.58, type: 'low' },
-  { time: '18:40', heightM: 2.04, type: 'high' },
-  { time: '22:30', heightM: 0.74, type: 'falling' }
-]
-
 function toPoints(raw: any[]): TidePoint[] {
   return (raw || [])
     .map((item) => ({
@@ -25,7 +16,8 @@ function toPoints(raw: any[]): TidePoint[] {
 
 export function normalizeTidePoints(raw: any[]): TidePoint[] {
   const points = toPoints(raw)
-  return points.length >= 2 ? points : DEMO_TIDE_POINTS
+  // 数据不足就返回空，由页面显示转圈/空态，不塞演示曲线
+  return points.length >= 2 ? points : []
 }
 
 function addCurve(ctx: any, pts: Array<{ x: number, y: number }>): void {
@@ -57,11 +49,37 @@ function localExtremes(mapped: Array<{ x: number, y: number, p: TidePoint }>): n
   return idx
 }
 
-export function drawTideChart(page: any, points: TidePoint[], currentHeightM?: number): void {
+export function drawTideChart(page: any, points: TidePoint[], currentHeightM?: number, opts?: {
+  canvasId?: string
+  dark?: boolean
+}): void {
+  const canvasId = (opts && opts.canvasId) || '#tideCanvas'
+  const dark = !!(opts && opts.dark)
+  const theme = dark
+    ? {
+        bg: '#152238',
+        grid: 'rgba(255,255,255,0.08)',
+        area: 'rgba(46, 196, 182, 0.28)',
+        line: '#2EC4B6',
+        text: '#8AA4BE',
+        now: '#F6D081',
+        high: '#F4A51C',
+        low: '#2EC4B6'
+      }
+    : {
+        bg: '#F3FBFA',
+        grid: '#D7E8E4',
+        area: 'rgba(52, 184, 197, 0.22)',
+        line: '#1888BF',
+        text: '#6B7C8A',
+        now: '#F4A51C',
+        high: '#184D97',
+        low: '#34B8C5'
+      }
   const query = page && page.createSelectorQuery
     ? page.createSelectorQuery()
     : wx.createSelectorQuery()
-  query.select('#tideCanvas')
+  query.select(canvasId)
     .fields({ node: true, size: true })
     .exec((res: any[]) => {
       const target = res && res[0]
@@ -94,10 +112,10 @@ export function drawTideChart(page: any, points: TidePoint[], currentHeightM?: n
         p
       }))
 
-      ctx.fillStyle = '#F3FBFA'
+      ctx.fillStyle = theme.bg
       ctx.fillRect(0, 0, width, height)
 
-      ctx.strokeStyle = '#D7E8E4'
+      ctx.strokeStyle = theme.grid
       ctx.lineWidth = 1
       for (let i = 0; i <= 3; i++) {
         const y = padT + (chartH / 3) * i
@@ -113,13 +131,13 @@ export function drawTideChart(page: any, points: TidePoint[], currentHeightM?: n
       addCurve(ctx, area)
       ctx.lineTo(area[area.length - 1].x, padT + chartH)
       ctx.closePath()
-      ctx.fillStyle = 'rgba(52, 184, 197, 0.22)'
+      ctx.fillStyle = theme.area
       ctx.fill()
 
       ctx.beginPath()
       ctx.moveTo(mapped[0].x, mapped[0].y)
       addCurve(ctx, mapped.slice(1).length ? [mapped[0]].concat(mapped.slice(1)) : mapped)
-      ctx.strokeStyle = '#1888BF'
+      ctx.strokeStyle = theme.line
       ctx.lineWidth = 3
       ctx.lineJoin = 'round'
       ctx.lineCap = 'round'
@@ -135,28 +153,27 @@ export function drawTideChart(page: any, points: TidePoint[], currentHeightM?: n
         ctx.arc(pt.x, pt.y, 5, 0, Math.PI * 2)
         ctx.fill()
         ctx.lineWidth = 2
-        ctx.strokeStyle = pt.p.type === 'high' ? '#184D97' : '#34B8C5'
+        ctx.strokeStyle = pt.p.type === 'high' ? theme.high : theme.low
         ctx.stroke()
       })
 
       if (currentHeightM != null && !Number.isNaN(Number(currentHeightM))) {
         const y = padT + (1 - (Number(currentHeightM) - minH) / span) * chartH
         ctx.setLineDash([5, 4])
-        ctx.strokeStyle = '#F4A51C'
+        ctx.strokeStyle = theme.now
         ctx.lineWidth = 1.5
         ctx.beginPath()
         ctx.moveTo(padL, y)
         ctx.lineTo(width - padR, y)
         ctx.stroke()
         ctx.setLineDash([])
-        ctx.fillStyle = '#C48A2A'
+        ctx.fillStyle = theme.now
         ctx.font = '10px sans-serif'
         ctx.fillText(`现在 ${Number(currentHeightM).toFixed(1)}m`, padL, Math.max(12, y - 6))
       }
 
-      // 垂直「现在」参考线：后端返回 ±12h 窗口，当前时刻位于图表水平中点
       ctx.setLineDash([3, 3])
-      ctx.strokeStyle = 'rgba(244, 165, 28, 0.55)'
+      ctx.strokeStyle = dark ? 'rgba(246, 208, 129, 0.45)' : 'rgba(244, 165, 28, 0.55)'
       ctx.lineWidth = 1
       ctx.beginPath()
       ctx.moveTo(padL + chartW / 2, padT)
@@ -164,7 +181,7 @@ export function drawTideChart(page: any, points: TidePoint[], currentHeightM?: n
       ctx.stroke()
       ctx.setLineDash([])
 
-      ctx.fillStyle = '#6B7C8A'
+      ctx.fillStyle = theme.text
       ctx.font = '10px sans-serif'
       ctx.textAlign = 'center'
       const labelStep = Math.max(1, Math.ceil(mapped.length / 6))

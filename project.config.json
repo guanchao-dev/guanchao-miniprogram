@@ -1,7 +1,11 @@
 {
-  "description": "观潮海洋素养微信小程序演示版",
+  "description": "寻潮记海洋素养微信小程序演示版",
   "packOptions": {
     "ignore": [
+      {
+        "value": ".git",
+        "type": "folder"
+      },
       {
         "value": "docs",
         "type": "folder"
@@ -12,6 +16,30 @@
       },
       {
         "value": "tools",
+        "type": "folder"
+      },
+      {
+        "value": "assets/home",
+        "type": "folder"
+      },
+      {
+        "value": "assets/badges",
+        "type": "folder"
+      },
+      {
+        "value": "assets/profile",
+        "type": "folder"
+      },
+      {
+        "value": "assets/achieve",
+        "type": "folder"
+      },
+      {
+        "value": "assets/icons",
+        "type": "folder"
+      },
+      {
+        "value": "assets/maps",
         "type": "folder"
       },
       {
@@ -97,7 +125,7 @@
       "typescript"
     ],
     "postcss": true,
-    "minified": false,
+    "minified": true,
     "compileHotReLoad": true,
     "coverView": true,
     "showShadowRootInWxmlPanel": true,
@@ -105,7 +133,17 @@
       "ignore": [],
       "disablePlugins": [],
       "outputPath": ""
-    }
+    },
+    "compileWorklet": false,
+    "uglifyFileName": false,
+    "uploadWithSourceMap": true,
+    "packNpmManually": false,
+    "packNpmRelationList": [],
+    "minifyWXSS": true,
+    "minifyWXML": true,
+    "localPlugins": false,
+    "disableUseStrict": false,
+    "condition": false
   },
   "compileType": "miniprogram",
   "libVersion": "3.5.5",
@@ -116,5 +154,6 @@
   "editorSetting": {
     "tabIndent": "insertSpaces",
     "tabSize": 2
-  }
+  },
+  "simulatorPluginLibVersion": {}
 }

@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "关于我们",
+  "usingComponents": {
+    "watch-ball": "/components/watch-ball/watch-ball"
+  }
+}

@@ -18,3 +18,5 @@
     <view class="empty-tip" wx:if="{{!legal.userAgreementUrl && !legal.privacyPolicyUrl && !legal.childrenRuleUrl}}">暂无法规文本</view>
   </view>
 </view>
+
+<watch-ball />

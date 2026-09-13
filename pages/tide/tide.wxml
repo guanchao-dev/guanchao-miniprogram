@@ -1,0 +1,79 @@
+<view class="page memphis-bg tide-page">
+  <view class="memphis-layer">
+    <view class="geo-circle md" style="top: 30rpx; left: -50rpx; background:#34B8C5;"></view>
+    <view class="geo-square sm" style="bottom: 120rpx; right: -36rpx; background:#F6D081;"></view>
+  </view>
+
+  <view class="page-content">
+    <view class="tide-top">
+      <view class="status">
+        <text class="status-item">时间 {{now}}</text>
+        <text class="status-item status-trend">{{trendText}}</text>
+        <text class="status-item status-height">潮高 {{heightText}}</text>
+      </view>
+      <picker mode="selector" range="{{spotNames}}" value="{{spotIndex}}" bindchange="onSpotChange">
+        <view class="spot-pick">{{spotName}} ▾</view>
+      </picker>
+    </view>
+
+    <view class="card chart-card">
+      <canvas type="2d" id="tideCanvas" class="tide-canvas"></canvas>
+      <view class="legend">
+        <text class="leg teal">白天潮汐</text>
+        <text class="leg gold">现在</text>
+      </view>
+    </view>
+
+    <view class="card weather" wx:if="{{weather.text}}">
+      <text>天气 {{weather.text}}</text>
+      <text wx:if="{{weather.tempC != null}}">气温 {{weather.tempC}}℃</text>
+      <text wx:if="{{weather.windDir}}">{{weather.windDir}}风 {{weather.windScale}} 级</text>
+      <text wx:if="{{weather.waveHint}}">浪 {{weather.waveHint}}</text>
+    </view>
+
+    <scroll-view class="date-strip" scroll-x enhanced show-scrollbar="{{false}}">
+      <view
+        class="date-chip {{item.current ? 'on' : ''}}"
+        wx:for="{{dates}}"
+        wx:key="date"
+        data-date="{{item.date}}"
+        bindtap="onPickDate"
+      >
+        <text class="date-day">{{item.day}}</text>
+        <text class="date-week">{{item.week}}</text>
+      </view>
+    </scroll-view>
+
+    <view class="nav-row">
+      <view class="nav-btn" bindtap="onPrevDay">前一天</view>
+      <view class="nav-mid">{{date}}</view>
+      <view class="nav-btn" bindtap="onNextDay">后一天</view>
+    </view>
+
+    <view class="card block">
+      <view class="block-title">涨退潮情况</view>
+      <view class="phase" wx:for="{{phases}}" wx:key="range">
+        <text class="phase-time">{{item.range}}</text>
+        <text class="phase-tag {{item.rising ? 'up' : 'down'}}">{{item.label}}</text>
+        <text class="phase-delta">{{item.delta}}</text>
+      </view>
+    </view>
+
+    <view class="card block">
+      <view class="block-title">满潮 / 干潮</view>
+      <view class="table-head">
+        <text>潮况</text>
+        <text>时间</text>
+        <text>潮高</text>
+      </view>
+      <view class="table-row" wx:for="{{table}}" wx:key="time">
+        <text>{{item.kind}}</text>
+        <text>{{item.time}}</text>
+        <text>{{item.height}}</text>
+      </view>
+      <view class="empty" wx:if="{{!table.length}}">暂无高潮低潮标注，曲线仍可供参考</view>
+    </view>
+  </view>
+</view>
+
+<watch-ball />

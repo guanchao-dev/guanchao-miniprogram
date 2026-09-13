@@ -1,0 +1,11 @@
+<view
+  wx:if="{{visible}}"
+  class="watch-ball {{snapping ? 'is-snap' : ''}}"
+  style="left: {{ballLeft}}px; top: {{ballTop}}px;"
+  catchtouchstart="onTouchStart"
+  catchtouchmove="onTouchMove"
+  catchtouchend="onTouchEnd"
+>
+  <image class="watch-ball-icon" src="https://www.blueakaiwu.cn/api/v1/static/assets/badges/crab-hero.png" mode="aspectFit"></image>
+  <text class="watch-ball-time">{{duration}}</text>
+</view>

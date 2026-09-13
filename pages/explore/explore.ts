@@ -28,7 +28,7 @@ Page({
     percentText: '0%',
     statusText: '等待开始',
     result: {},
-    shareTitle: '来观潮一起探索潮间带',
+    shareTitle: '来寻潮记一起探索潮间带',
     mapKey: TENCENT_MAP_KEY
   },
 

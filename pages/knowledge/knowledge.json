@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "知识科普",
+  "usingComponents": {
+    "watch-ball": "/components/watch-ball/watch-ball"
+  }
+}

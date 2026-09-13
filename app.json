@@ -1,32 +1,35 @@
 {
   "pages": [
     "pages/home/home",
-    "pages/community/community",
     "pages/achieve/achieve",
     "pages/profile/profile",
-    "pages/community-search/community-search",
-    "pages/community-detail/community-detail",
-    "pages/community-publish/community-publish",
-    "pages/community-user/community-user",
+    "pages/profile-edit/profile-edit",
     "pages/login/login",
     "pages/discover/discover",
     "pages/cards/cards",
     "pages/search/search",
     "pages/calendar/calendar",
+    "pages/tide/tide",
     "pages/spots/spots",
+    "pages/spot-guide/spot-guide",
     "pages/spot-detail/spot-detail",
     "pages/explore/explore",
+    "pages/light-map/light-map",
     "pages/wiki/wiki",
     "pages/wiki-detail/wiki-detail",
+    "pages/knowledge/knowledge",
     "pages/gear/gear",
     "pages/quiz/quiz",
     "pages/checkin/checkin",
-    "pages/help/help",
+    "pages/checkin-form/checkin-form",
     "pages/settings/settings",
+    "pages/faq/faq",
+    "pages/about/about",
+    "pages/compliance/compliance",
     "pages/legal/legal"
   ],
   "window": {
-    "navigationBarTitleText": "观潮",
+    "navigationBarTitleText": "寻潮记",
     "navigationBarBackgroundColor": "#FFFFFF",
     "navigationBarTextStyle": "black",
     "backgroundColor": "#FFFFFF",
@@ -45,12 +48,6 @@
         "selectedIconPath": "assets/tab/home-active.png"
       },
       {
-        "pagePath": "pages/community/community",
-        "text": "社区",
-        "iconPath": "assets/tab/community.png",
-        "selectedIconPath": "assets/tab/community-active.png"
-      },
-      {
         "pagePath": "pages/achieve/achieve",
         "text": "成就",
         "iconPath": "assets/tab/achieve.png",
@@ -66,11 +63,12 @@
   },
   "permission": {
     "scope.userLocation": {
-      "desc": "用于查找附近赶海点；仅在你点击开始探索后，在场地内记录探索网格"
+      "desc": "用于计算你到青岛赶海点的距离；开始探索后仅在场地内记录网格"
     }
   },
   "requiredPrivateInfos": ["getLocation", "onLocationChange"],
   "style": "v2",
+  "lazyCodeLoading": "requiredComponents",
   "sitemapLocation": "sitemap.json",
   "usingComponents": {
     "unlock-popup": "/components/unlock-popup/unlock-popup"

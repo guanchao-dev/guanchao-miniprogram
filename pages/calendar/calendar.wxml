@@ -1,13 +1,76 @@
 <view class="page">
   <view class="page-content">
-    <picker mode="date" fields="month" value="{{month}}" bindchange="onMonth">
-      <view class="card list-card">{{month}} ｜ 点此切换月份</view>
-    </picker>
-    <view class="empty-tip" wx:if="{{!days.length}}">暂无日历数据</view>
-    <view class="card list-card" wx:for="{{days}}" wx:key="date">
-      <view class="list-title">{{item.date}}</view>
-      <view class="list-meta">低潮 {{item.lowText}} ｜ 高潮 {{item.highText}}</view>
-      <view class="list-meta" wx:if="{{item.observeHint}}">{{item.observeHint}}</view>
+    <view class="cal-header card">
+      <view class="cal-nav" catchtap="goPrevMonth">‹</view>
+      <picker mode="date" fields="month" value="{{month}}" bindchange="onMonth">
+        <view class="cal-month">{{monthText}}</view>
+      </picker>
+      <view class="cal-nav" catchtap="goNextMonth">›</view>
+    </view>
+
+    <view
+      class="card cal-card"
+      bindtouchstart="onTouchStart"
+      bindtouchend="onTouchEnd"
+    >
+      <view class="page-loading" wx:if="{{loading}}">
+        <view class="spinner"></view>
+        <text>加载中…</text>
+      </view>
+      <block wx:else>
+        <view class="cal-week cal-head">
+          <view class="cal-weekday" wx:for="{{weekLabels}}" wx:key="*this">{{item}}</view>
+        </view>
+
+        <view class="cal-week" wx:for="{{weeks}}" wx:key="index" wx:for-item="week">
+          <view
+            class="cal-cell {{cell && cell.isToday ? 'today' : ''}}"
+            wx:for="{{week}}"
+            wx:key="index"
+            wx:for-item="cell"
+            data-date="{{cell.date}}"
+            bindtap="onTapDay"
+          >
+            <block wx:if="{{cell}}">
+              <view class="cal-day">{{cell.day}}</view>
+              <view class="cal-low" wx:if="{{cell.lowText}}">退 {{cell.lowText}}</view>
+              <view class="cal-high" wx:if="{{cell.highText}}">涨 {{cell.highText}}</view>
+              <view class="cal-hint" wx:if="{{cell.observeHint}}">{{cell.observeHint}}</view>
+            </block>
+          </view>
+        </view>
+      </block>
+    </view>
+
+    <view class="cal-legend">
+      <text class="legend-item"><text class="dot low"></text>退潮（建议赶海）</text>
+      <text class="legend-item"><text class="dot high"></text>涨潮</text>
+    </view>
+    <view class="cal-swipe-tip">← 左右滑动可切换月份，点某天可设提醒 →</view>
+
+    <view class="section-head" wx:if="{{reminders.length}}">
+      <text class="section-title">我的提醒</text>
+    </view>
+    <view class="card list-card" wx:for="{{reminders}}" wx:key="id">
+      <view class="remind-row">
+        <view class="remind-meta">
+          <view class="list-title">{{item.dateText}}</view>
+          <view class="list-meta">提前到 {{item.notifyText}} 通知</view>
+        </view>
+        <view class="btn remind-del" data-id="{{item.id}}" catchtap="onDeleteReminder">取消</view>
+      </view>
     </view>
   </view>
+
+  <view class="remind-mask" wx:if="{{showRemind}}" bindtap="closeRemind" catchtouchmove="noop"></view>
+  <view class="remind-sheet" wx:if="{{showRemind}}">
+    <view class="remind-title">{{selectedDate}} 设置提醒</view>
+    <picker mode="time" value="{{remindTime}}" bindchange="onRemindTime">
+      <view class="remind-time">提醒时间 <text class="remind-val">{{remindTime}}</text></view>
+    </picker>
+    <view class="remind-sub">会在该时间前 1 小时发消息提醒</view>
+    <view class="btn remind-btn" bindtap="confirmRemind">{{reminding ? '设置中...' : '设置提醒'}}</view>
+  </view>
 </view>
+
+<watch-ball />

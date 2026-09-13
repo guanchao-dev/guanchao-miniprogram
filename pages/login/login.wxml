@@ -6,13 +6,31 @@
 
   <view class="page-content">
     <view class="login-hero">
-      <image class="login-mascot" src="/assets/badges/crab-cloud.png" mode="aspectFit"></image>
-      <view class="login-title">欢迎来到观潮</view>
+      <image class="login-mascot" src="https://www.blueakaiwu.cn/api/v1/static/assets/badges/crab-cloud.png" mode="aspectFit"></image>
+      <view class="login-title">欢迎来到寻潮记</view>
       <view class="login-sub">使用微信登录，同步探索记录和成就。</view>
     </view>
 
     <view class="card login-card">
+      <view class="profile-row">
+        <button class="avatar-btn" open-type="chooseAvatar" bindchooseavatar="onChooseAvatar">
+          <image class="avatar-img" src="{{avatarPreview || defaultAvatar}}" mode="aspectFill"></image>
+          <text class="avatar-tip">{{avatarPreview ? '已选择头像' : '点击用微信头像'}}</text>
+        </button>
+        <input
+          class="nickname-input"
+          type="nickname"
+          placeholder="点击填写昵称"
+          value="{{nickname}}"
+          bindinput="onNickname"
+          bindblur="onNickname"
+        />
+      </view>
+      <view class="login-note">头像和昵称可以不填，之后在「我的」里也能改。</view>
+
       <view class="btn login-btn" bindtap="onWechatLogin">{{loading ? '登录中...' : '微信一键登录'}}</view>
     </view>
   </view>
 </view>
+
+<watch-ball />

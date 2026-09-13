@@ -1,20 +1,40 @@
 import { authApi, contentApi } from '../../services/api'
-import { clearSession, requireLogin } from '../../utils/auth'
+import { clearSession, isLoggedIn, requireLogin } from '../../utils/auth'
 import { showError, toast } from '../../utils/format'
 
 Page({
   data: {
-    version: ''
+    version: '',
+    loggedIn: false
   },
 
   onShow() {
+    this.setData({ loggedIn: isLoggedIn() })
     contentApi.legal()
       .then((legal) => this.setData({ version: (legal && legal.version) || '' }))
       .catch(() => {})
   },
 
+  goLogin() {
+    wx.navigateTo({ url: '/pages/login/login' })
+  },
+
   openPrivacy() {
     wx.navigateTo({ url: '/pages/legal/legal' })
+  },
+
+  onLogout() {
+    wx.showModal({
+      title: '退出登录',
+      content: '确认退出当前账号吗？',
+      confirmText: '退出',
+      success: (res) => {
+        if (!res.confirm) return
+        clearSession()
+        this.setData({ loggedIn: false })
+        toast('已退出')
+      }
+    })
   },
 
   onConsent() {
@@ -48,6 +68,7 @@ Page({
         authApi.deleteAccount()
           .then(() => {
             clearSession()
+            this.setData({ loggedIn: false })
             toast('已注销')
             setTimeout(() => wx.switchTab({ url: '/pages/profile/profile' }), 400)
           })

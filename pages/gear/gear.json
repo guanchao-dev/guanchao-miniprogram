@@ -1,3 +1,6 @@
 {
-  "navigationBarTitleText": "赶海装备"
+  "navigationBarTitleText": "赶海装备",
+  "usingComponents": {
+    "watch-ball": "/components/watch-ball/watch-ball"
+  }
 }

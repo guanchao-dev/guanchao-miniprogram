@@ -1,3 +1,6 @@
 {
-  "navigationBarTitleText": "海洋图鉴"
+  "navigationBarTitleText": "海洋图鉴",
+  "usingComponents": {
+    "watch-ball": "/components/watch-ball/watch-ball"
+  }
 }

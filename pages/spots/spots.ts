@@ -9,6 +9,7 @@ function distanceText(m: any): string {
 
 Page({
   data: {
+    loading: true,
     list: []
   },
 
@@ -17,6 +18,7 @@ Page({
   },
 
   load() {
+    this.setData({ loading: true })
     const apply = (params: Record<string, any>) => {
       contentApi.spots(params)
         .then((res) => {
@@ -31,7 +33,11 @@ Page({
             }))
           })
         })
-        .catch((err) => showError(err, '点位加载失败'))
+        .catch((err) => {
+          this.setData({ list: [] })
+          showError(err, '点位加载失败')
+        })
+        .finally(() => this.setData({ loading: false }))
     }
 
     wx.getLocation({

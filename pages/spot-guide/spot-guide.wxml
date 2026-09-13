@@ -1,0 +1,83 @@
+<view class="page memphis-bg">
+  <view class="memphis-layer">
+    <view class="geo-circle lg" style="top: 20rpx; right: -40rpx; background:#34B8C5;"></view>
+    <view class="geo-square" style="bottom: 180rpx; left: -30rpx; background:#F6D081;"></view>
+  </view>
+
+  <view class="page-content">
+    <view class="intro card">按热度排列青岛赶海点。距离根据你的当前位置估算，不保存轨迹。</view>
+    <view class="page-loading" wx:if="{{loading}}">
+      <view class="spinner"></view>
+      <text>加载中…</text>
+    </view>
+    <view class="empty-tip" wx:elif="{{!list.length}}">暂无赶海点</view>
+    <view class="spot-item card" wx:for="{{list}}" wx:key="id" data-id="{{item.id}}" bindtap="onOpen">
+      <view class="item-rank">{{index + 1}}</view>
+      <image class="item-icon" src="{{item.icon}}" mode="aspectFit"></image>
+      <view class="item-body">
+        <view class="item-name">{{item.name}}</view>
+        <view class="item-meta">热度 {{item.heat}} · {{item.distanceText}}</view>
+      </view>
+      <text class="item-arrow">›</text>
+    </view>
+  </view>
+
+  <view class="mask" wx:if="{{showDetail}}" bindtap="closeDetail" catchtouchmove="noop">
+    <view class="sheet" catchtap="noop">
+      <view class="sheet-head">
+        <text>{{detail.name}}</text>
+        <text class="sheet-close" bindtap="closeDetail">×</text>
+      </view>
+      <scroll-view scroll-y class="sheet-body">
+        <swiper wx:if="{{photos.length}}" class="pano" indicator-dots circular>
+          <swiper-item wx:for="{{photos}}" wx:key="*this">
+            <image class="pano-img" src="{{item}}" mode="aspectFill" data-url="{{item}}" bindtap="previewPhoto"></image>
+          </swiper-item>
+        </swiper>
+        <view class="pano-fallback" wx:else>
+          <image src="{{detail.icon}}" mode="aspectFit"></image>
+          <text>暂无全景照片</text>
+        </view>
+
+        <view class="info-row">
+          <text class="info-k">距离</text>
+          <text class="info-v">{{detail.distanceText}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-k">开放</text>
+          <text class="info-v">{{detail.openTime}}</text>
+        </view>
+
+        <view class="block-title">今日潮汐</view>
+        <text class="tide-summary">{{tideSummary}}</text>
+        <view class="tide-table" wx:if="{{tideRows.length}}">
+          <view class="tide-row" wx:for="{{tideRows}}" wx:key="time">
+            <text>{{item.time}}</text>
+            <text>{{item.label}}</text>
+            <text>{{item.height}}</text>
+          </view>
+        </view>
+
+        <view class="block-title">可能遇到</view>
+        <view class="chip-row">
+          <text
+            class="chip {{item.id ? 'active' : ''}}"
+            wx:for="{{detail.species}}"
+            wx:key="name"
+            data-id="{{item.id}}"
+            bindtap="openSpecies"
+          >{{item.name}}</text>
+        </view>
+        <text class="hint">{{detail.observeHint}}</text>
+
+        <view class="chip-row" wx:if="{{detail.safetyTags.length}}">
+          <text class="chip" wx:for="{{detail.safetyTags}}" wx:key="*this">{{item}}</text>
+        </view>
+
+        <view class="btn full-btn" bindtap="goExplore">开始探索</view>
+      </scroll-view>
+    </view>
+  </view>
+</view>
+
+<watch-ball />

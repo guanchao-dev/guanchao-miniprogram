@@ -20,7 +20,7 @@ Page({
     card: {},
     coverSrc: '',
     aiGenerating: false,
-    shareTitle: '我在观潮留下一张今日发现',
+    shareTitle: '我在寻潮记留下一张今日发现',
     sharePath: '/pages/home/home'
   },
 
@@ -81,7 +81,7 @@ Page({
     this.setData({
       card: card || {},
       aiGenerating: !!(card && card.id && !card.aiImageReady),
-      shareTitle: card && card.title ? `我在观潮留下一张「${card.title}」` : '我在观潮留下一张今日发现',
+      shareTitle: card && card.title ? `我在寻潮记留下一张「${card.title}」` : '我在寻潮记留下一张今日发现',
       sharePath: card && card.id ? `/pages/discover/discover?id=${card.id}` : '/pages/home/home'
     })
     if (card && card.aiImageReady && card.coverUrl) {
