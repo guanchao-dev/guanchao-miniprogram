@@ -17,7 +17,7 @@
         <view class="hero-dot-a"></view>
         <view class="hero-dot-b"></view>
         <view class="hero-bar"></view>
-        <image class="hero-mascot" src="/assets/achieve/achieve-hero-mascot.png" mode="aspectFit"></image>
+        <image class="hero-mascot" src="https://www.blueakaiwu.cn/api/v1/static/assets/achieve/achieve-hero-mascot.png" mode="aspectFit"></image>
       </view>
     </view>
 
@@ -46,7 +46,12 @@
     </view>
 
     <view class="medal-wall card">
-      <scroll-view class="medal-scroll" scroll-y enhanced show-scrollbar="{{false}}">
+      <view class="page-loading" wx:if="{{medalLoading}}">
+        <view class="spinner"></view>
+        <text>加载中…</text>
+      </view>
+      <view class="empty-tip" wx:elif="{{!medals.length}}">暂无勋章</view>
+      <scroll-view wx:else class="medal-scroll" scroll-y enhanced show-scrollbar="{{false}}">
         <view class="medal-grid">
           <view
             class="medal-card {{item.locked ? 'locked' : ''}}"
@@ -65,14 +70,14 @@
 
     <view class="bottom-row">
       <view class="level-card card">
-        <image class="level-medal" src="/assets/badges/medal-wing.png" mode="aspectFit"></image>
+        <image class="level-medal" src="https://www.blueakaiwu.cn/api/v1/static/assets/badges/medal-wing.png" mode="aspectFit"></image>
         <view class="level-title">Lv.24 海洋探索家</view>
         <view class="mini-bar"><view style="width: 64%;"></view></view>
-        <view class="btn level-btn" bindtap="goHome">继续探索</view>
+        <view class="btn level-btn" bindtap="goLightMap">继续探索</view>
       </view>
 
       <view class="rank-card card">
-        <view class="rank-title">好友排行</view>
+        <view class="rank-title">排行榜</view>
         <view class="rank-item {{item.me ? 'me' : ''}}" wx:for="{{friends}}" wx:key="name">
           <image src="{{item.avatar}}" mode="aspectFill"></image>
           <view class="rank-meta">
@@ -81,6 +86,11 @@
           </view>
           <text class="rank-score">{{item.score}}</text>
         </view>
+        <view class="page-loading" wx:if="{{boardLoading}}">
+          <view class="spinner"></view>
+          <text>加载中…</text>
+        </view>
+        <view class="rank-empty" wx:elif="{{!friends.length}}">暂无排行数据</view>
       </view>
     </view>
   </view>
@@ -94,7 +104,7 @@
     <view class="medal-modal" catchtap="noop">
       <view class="modal-actions">
         <view class="modal-action share-action" bindtap="openSharePanel">
-          <image class="modal-share-icon" src="/assets/icons/share-lucide.png" mode="aspectFit"></image>
+          <image class="modal-share-icon" src="https://www.blueakaiwu.cn/api/v1/static/assets/icons/share-lucide.png" mode="aspectFit"></image>
         </view>
         <view class="modal-action close-action" bindtap="closeMedal">×</view>
       </view>
@@ -153,7 +163,7 @@
     <view class="share-panel" catchtap="noop">
       <view class="share-panel-head">
         <view class="share-panel-title">
-          <image src="/assets/icons/share-lucide.png" mode="aspectFit"></image>
+          <image src="https://www.blueakaiwu.cn/api/v1/static/assets/icons/share-lucide.png" mode="aspectFit"></image>
           <text>分享成就</text>
         </view>
         <view class="share-panel-close" bindtap="closeSharePanel">×</view>
@@ -205,3 +215,5 @@
   </view>
   <unlock-popup id="unlockPopup"></unlock-popup>
 </view>
+
+<watch-ball />

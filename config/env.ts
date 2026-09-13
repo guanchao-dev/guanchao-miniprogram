@@ -3,7 +3,7 @@
  * 开发者工具模拟器可用 127.0.0.1。
  * 真机预览请改成电脑局域网 IP，例如 http://192.168.1.12:8000/api/v1
  */
-export const BASE_URL = 'http://42.193.99.114:8000/api/v1'
+export const BASE_URL = 'https://www.blueakaiwu.cn/api/v1'
 
 export const DEFAULT_SPOT_ID = 'spot_qd_shilaoren'
 

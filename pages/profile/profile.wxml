@@ -7,60 +7,58 @@
   <view class="page-content">
     <view class="profile-hero">
       <view class="user-row" bindtap="goLogin">
-        <image class="avatar" src="{{user.avatar}}" mode="aspectFit"></image>
+        <image class="avatar" src="{{user.avatar}}" mode="aspectFit" catchtap="goEditProfile"></image>
         <view class="user-meta">
           <view class="user-name">{{user.name}}</view>
           <view class="level-pill">{{user.level}}</view>
-        </view>
-      </view>
-
-      <view class="stats card">
-        <view class="stat" wx:for="{{stats}}" wx:key="label" data-label="{{item.label}}" bindtap="onStat">
-          <view class="stat-value">{{item.value}}</view>
-          <view class="stat-label">{{item.label}}</view>
         </view>
       </view>
     </view>
 
     <view class="page profile-body">
       <view class="section-head">
-        <text class="section-title">我的观潮记录</text>
-        <text class="section-more" bindtap="goAchieve">成就墙 ›</text>
+        <text class="section-title">观潮记录</text>
       </view>
-      <view class="record-card card">
-        <view
-          class="record"
-          wx:for="{{records}}"
-          wx:key="title"
-          data-title="{{item.title}}"
-          bindtap="onItem"
-        >
-          <view class="record-icon {{item.tone}}">
-            <image src="{{item.icon}}" mode="aspectFit"></image>
-          </view>
-          <text>{{item.title}}</text>
+      <view class="record-banner card" bindtap="goRecords">
+        <view class="record-banner-deco"></view>
+        <view class="record-banner-icon">
+          <image src="https://www.blueakaiwu.cn/api/v1/static/assets/profile/profile-records.png" mode="aspectFit"></image>
         </view>
+        <view class="record-banner-copy">
+          <text class="record-banner-desc">回顾每一次观潮的时间与收获</text>
+        </view>
+        <text class="record-banner-arrow">›</text>
       </view>
 
       <view class="section-head">
-        <text class="section-title">更多服务</text>
+        <text class="section-title">我的服务</text>
       </view>
-      <view class="menu-card card">
+      <view class="service-grid card">
         <view
-          class="menu-item"
-          wx:for="{{menus}}"
+          class="service-item"
+          wx:for="{{services}}"
           wx:key="title"
-          data-title="{{item.title}}"
-          bindtap="onItem"
+          data-url="{{item.url}}"
+          data-tab="{{item.tab}}"
+          bindtap="onService"
         >
-          <image src="{{item.icon}}" mode="aspectFit"></image>
-          <text>{{item.title}}</text>
-          <text class="arrow">›</text>
+          <view class="service-icon {{item.tone}}">
+            <image src="{{item.icon}}" mode="aspectFit"></image>
+          </view>
+          <text class="service-label">{{item.title}}</text>
         </view>
       </view>
 
-      <view class="version">观潮 · 最初版 0.3.0</view>
+      <view class="compliance-links">
+        <text class="compliance-link" data-type="collection" bindtap="onCompliance">《个人信息收集清单》</text>
+        <text class="compliance-link" data-type="sdk" bindtap="onCompliance">《SDK共享清单》</text>
+        <text class="compliance-link" data-type="sensitive" bindtap="onCompliance">《敏感个人信息处理说明》</text>
+      </view>
+
+      <view class="version">寻潮记 · 最初版 0.3.0</view>
     </view>
   </view>
   <unlock-popup id="unlockPopup"></unlock-popup>
 </view>
+
+<watch-ball />

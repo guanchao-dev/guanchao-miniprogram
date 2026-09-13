@@ -1,5 +1,6 @@
 import { BASE_URL } from '../config/env'
 import { clearSession, getAccessToken, getRefreshToken, saveSession } from './auth'
+import { getClientId } from './client'
 
 type Method = 'GET' | 'POST' | 'PUT' | 'DELETE'
 
@@ -11,6 +12,29 @@ type HttpOptions = {
   auth?: boolean
   timeout?: number
   idempotency?: boolean
+  /** GET 缓存毫秒数，默认 60000；传 0 表示不缓存 */
+  cacheTtl?: number
+}
+
+const DEFAULT_CACHE_TTL = 60_000
+const _cache: Record<string, { at: number, data: any }> = {}
+const _inflight: Record<string, Promise<any>> = {}
+
+// 缓存键带上身份，登录/退出后自动失效
+function identityKey(): string {
+  const token = getAccessToken()
+  return token ? token.slice(-10) : 'guest'
+}
+
+function makeKey(url: string, data?: Record<string, any>): string {
+  return `${identityKey()}|${url}${buildQuery(data)}`
+}
+
+/** 清空 GET 缓存（登录态变化、下拉刷新时用） */
+export function clearHttpCache(prefix = ''): void {
+  Object.keys(_cache).forEach((k) => {
+    if (!prefix || k.indexOf(prefix) >= 0) delete _cache[k]
+  })
 }
 
 export class ApiError extends Error {
@@ -95,13 +119,12 @@ function rawRequest(options: HttpOptions): Promise<any> {
   const query = method === 'GET' ? buildQuery(options.data) : ''
   const header: Record<string, string> = Object.assign({
     'Content-Type': 'application/json',
-    'X-Request-Id': uuid()
+    'X-Request-Id': uuid(),
+    'X-Client-Id': getClientId()
   }, options.header || {})
 
-  if (options.auth !== false) {
-    const token = getAccessToken()
-    if (token) header.Authorization = `Bearer ${token}`
-  }
+  const token = getAccessToken()
+  if (token) header.Authorization = `Bearer ${token}`
   if (options.idempotency) {
     header['Idempotency-Key'] = `idemp_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`
   }
@@ -134,13 +157,48 @@ function rawRequest(options: HttpOptions): Promise<any> {
 }
 
 function request(options: HttpOptions): Promise<any> {
-  return rawRequest(options).catch((err: ApiError) => {
+  const isGet = (options.method || 'GET') === 'GET'
+  const ttl = options.cacheTtl === undefined ? DEFAULT_CACHE_TTL : options.cacheTtl
+
+  // GET：命中缓存直接返回（预加载过的数据在这里被复用）
+  if (isGet && ttl > 0) {
+    const key = makeKey(options.url, options.data)
+    const hit = _cache[key]
+    if (hit && Date.now() - hit.at < ttl) {
+      return Promise.resolve(hit.data)
+    }
+    // 同一请求正在飞行中，复用同一个 Promise，避免重复发请求
+    if (_inflight[key]) return _inflight[key]
+
+    const p = request0(options).then((data) => {
+      _cache[key] = { at: Date.now(), data }
+      delete _inflight[key]
+      return data
+    }).catch((err) => {
+      delete _inflight[key]
+      throw err
+    })
+    _inflight[key] = p
+    return p
+  }
+
+  return request0(options)
+}
+
+function request0(options: HttpOptions): Promise<any> {
+  const isWrite = (options.method || 'GET') !== 'GET'
+  const done = (data: any) => {
+    // 写操作成功后清空 GET 缓存，避免页面读到旧数据
+    if (isWrite) clearHttpCache()
+    return data
+  }
+  return rawRequest(options).then(done).catch((err: ApiError) => {
     if (err.code !== 40101 || options.auth === false || options.url === '/auth/refresh') {
       throw err
     }
     return refreshAccessToken().then((token) => {
       if (!token) throw err
-      return rawRequest(options)
+      return rawRequest(options).then(done)
     })
   })
 }
@@ -157,7 +215,8 @@ const http = {
   },
   upload(url: string, filePath: string, formData?: Record<string, any>): Promise<any> {
     const header: Record<string, string> = {
-      'X-Request-Id': uuid()
+      'X-Request-Id': uuid(),
+      'X-Client-Id': getClientId()
     }
     const token = getAccessToken()
     if (token) header.Authorization = `Bearer ${token}`

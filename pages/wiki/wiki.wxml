@@ -3,7 +3,11 @@
     <view class="chip-row">
       <view class="chip {{category === item.id ? 'active' : ''}}" wx:for="{{cats}}" wx:key="id" data-id="{{item.id}}" bindtap="onCat">{{item.name}}</view>
     </view>
-    <view class="empty-tip" wx:if="{{!list.length}}">暂无图鉴</view>
+    <view class="page-loading" wx:if="{{loading}}">
+      <view class="spinner"></view>
+      <text>加载中…</text>
+    </view>
+    <view class="empty-tip" wx:elif="{{!list.length}}">{{emptyText}}</view>
     <view class="species-grid">
       <view class="species-cell card" wx:for="{{list}}" wx:key="id" data-id="{{item.id}}" bindtap="openDetail">
         <image class="species-thumb" src="{{item.coverSrc}}" mode="aspectFill"></image>
@@ -12,3 +16,5 @@
     </view>
   </view>
 </view>
+
+<watch-ball />

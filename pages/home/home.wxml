@@ -6,120 +6,152 @@
 
   <view class="page-content">
     <view class="top-row">
-      <view class="place-chip" bindtap="goSpots">
-        <image class="place-icon" src="/assets/home/home-pin.png" mode="aspectFit"></image>
+      <view class="place-chip">
+        <image class="place-icon" src="https://www.blueakaiwu.cn/api/v1/static/assets/home/home-pin.png" mode="aspectFit"></image>
         <text>{{place}}</text>
       </view>
       <view class="search-chip" bindtap="onSearch">
         <text>搜索潮汐 / 点位</text>
-        <image class="search-icon" src="/assets/home/home-search.png" mode="aspectFit"></image>
+        <image class="search-icon" src="https://www.blueakaiwu.cn/api/v1/static/assets/home/home-search.png" mode="aspectFit"></image>
       </view>
     </view>
 
     <view class="hero card">
       <view class="hero-copy">
-        <view class="hero-kicker">观潮 · 今日</view>
+        <view class="hero-kicker">寻潮记 · 今日</view>
         <view class="hero-title">跟潮汐一起</view>
         <view class="hero-title">出发探索</view>
-        <view class="hero-desc">{{heroDesc}}</view>
-        <view class="btn" bindtap="goAchieve">查看成就</view>
+        <view class="btn watch-btn {{watchClass}}" bindtap="onWatchToggle">{{watchLabel}}</view>
       </view>
       <view class="hero-visual">
         <view class="hero-blob"></view>
         <view class="hero-dot-a"></view>
         <view class="hero-dot-b"></view>
         <view class="hero-squiggle"></view>
-        <image class="hero-mascot" src="/assets/home/home-hero-mascot.png" mode="aspectFit"></image>
+        <image class="hero-mascot" src="https://www.blueakaiwu.cn/api/v1/static/assets/home/home-hero-mascot.png" mode="aspectFit"></image>
       </view>
     </view>
 
-    <view class="section-head">
-      <text class="section-title">AI 探索</text>
-      <text class="section-more">{{loggedIn ? '已登录' : '登录后可拍照'}}</text>
+    <view class="hot-box card">
+      <view class="hot-head">
+        <text class="section-title">赶海地点推荐</text>
+        <text class="section-more" bindtap="goRecommend">全部 ›</text>
+      </view>
+      <view class="page-loading" wx:if="{{recLoading}}">
+        <view class="spinner"></view>
+        <text>加载中…</text>
+      </view>
+      <view class="empty-tip" wx:elif="{{!recommended.length}}">暂无推荐点位</view>
+      <view class="hot-row" wx:for="{{recommended}}" wx:key="id" bindtap="goRecommend">
+        <text class="hot-rank rank-{{index + 1}}">{{index + 1}}</text>
+        <text class="hot-name">{{item.name}}</text>
+        <text class="hot-heat">热 {{item.heat}}</text>
+        <text class="hot-dist">{{item.distanceText}}</text>
+      </view>
     </view>
+
     <view class="ai-row">
-      <view class="ai-card card" bindtap="onGuess">
-        <text class="ai-emoji">📷</text>
-        <text class="ai-name">拍一张猜一猜</text>
-        <text class="ai-desc">对照图鉴，不是鉴定</text>
+      <view class="ai-card photo" bindtap="onGuess">
+        <view class="ai-orb"></view>
+        <image class="ai-icon" src="https://www.blueakaiwu.cn/api/v1/static/assets/home/home-fish.png" mode="aspectFit"></image>
+        <text class="ai-name">拍照识别</text>
       </view>
-      <view class="ai-card card" bindtap="onRefreshAdvice">
-        <text class="ai-emoji">🌊</text>
+      <view class="ai-card advice" bindtap="onRefreshAdvice">
+        <view class="ai-orb"></view>
+        <image class="ai-icon" src="https://www.blueakaiwu.cn/api/v1/static/assets/home/home-nearby.png" mode="aspectFit"></image>
         <text class="ai-name">出门建议</text>
-        <text class="ai-desc">把潮汐讲成人话</text>
-      </view>
-      <view class="ai-card card" bindtap="goDiscover">
-        <text class="ai-emoji">📒</text>
-        <text class="ai-name">今日发现</text>
-        <text class="ai-desc">生成一张图鉴卡</text>
       </view>
     </view>
 
-    <view class="tide card">
-      <view class="tide-head">
-        <text class="section-title">当前潮汐高度</text>
-        <text class="tag" style="background:#F6D081;">{{tideTag}}</text>
+    <swiper
+      class="activity-swiper"
+      autoplay
+      circular
+      interval="3500"
+      duration="500"
+      indicator-dots
+      indicator-color="rgba(28,28,28,0.18)"
+      indicator-active-color="#1888BF"
+    >
+      <swiper-item wx:for="{{activities}}" wx:key="id">
+        <view class="activity-card {{item.theme}}" data-item="{{item}}" bindtap="onActivity">
+          <view class="activity-main">
+            <text class="activity-tag">{{item.tag}}</text>
+            <text class="activity-name">{{item.title}}</text>
+            <text class="activity-desc">{{item.desc}}</text>
+          </view>
+          <image class="activity-illu" src="{{item.icon}}" mode="aspectFit"></image>
+        </view>
+      </swiper-item>
+    </swiper>
+  </view>
+
+  <view class="ai-mask" wx:if="{{showAdvice}}" bindtap="closeAdvice" catchtouchmove="noop">
+    <view class="ai-modal" catchtap="noop">
+      <view class="ai-modal-head">
+        <text>出门建议</text>
+        <text class="ai-close" bindtap="closeAdvice">×</text>
       </view>
-      <view class="advice-box" wx:if="{{advice.headline}}">
+      <scroll-view scroll-y class="ai-modal-body">
         <text class="advice-title">{{advice.headline}}</text>
-        <text class="advice-body">{{advice.body}}</text>
-        <text class="advice-extra" wx:if="{{advice.weatherLine}}">{{advice.weatherLine}}</text>
-        <text class="advice-extra" wx:if="{{advice.safetyLine}}">{{advice.safetyLine}}</text>
+        <view class="advice-key" wx:if="{{advice.suitableNow !== undefined || advice.risingText || advice.leaveBefore}}">
+          <text class="advice-key-item key-go" wx:if="{{advice.suitableNow}}">今日适合赶海</text>
+          <text class="advice-key-item key-no" wx:elif="{{advice.suitableNow === false}}">今日不太适合赶海</text>
+          <text class="advice-key-item" wx:if="{{advice.risingText}}">{{advice.risingText}}</text>
+          <text class="advice-key-item" wx:if="{{advice.leaveBefore}}">{{advice.leaveBefore}} 前离场</text>
+        </view>
+        <text class="advice-body" wx:if="{{advice.body}}">{{advice.body}}</text>
+        <view class="advice-safety" wx:if="{{advice.safetyLine}}">
+          <text class="advice-safety-label">安全提示</text>
+          <text class="advice-safety-text">{{advice.safetyLine}}</text>
+        </view>
         <text class="advice-disc">{{advice.disclaimer}}</text>
-      </view>
-      <view class="tide-chart">
-        <canvas type="2d" id="tideCanvas" class="tide-canvas"></canvas>
-      </view>
+      </scroll-view>
     </view>
-
-    <view class="section-head">
-      <text class="section-title">快捷入口</text>
-    </view>
-    <view class="feature-row card">
-      <view
-        class="feature"
-        wx:for="{{features}}"
-        wx:key="title"
-        data-title="{{item.title}}"
-        bindtap="onFeature"
-      >
-        <view class="feature-bubble {{item.tone}}">
-          <image src="{{item.icon}}" mode="aspectFit"></image>
-        </view>
-        <text>{{item.title}}</text>
-      </view>
-    </view>
-
-    <view class="section-head">
-      <text class="section-title">海洋科普闯关</text>
-      <text class="section-more" bindtap="goAchieve">去解锁 ›</text>
-    </view>
-    <scroll-view class="quiz-scroll" scroll-x enhanced show-scrollbar="{{false}}">
-      <view class="quiz-row">
-        <view class="quiz-card" wx:for="{{quizzes}}" wx:key="id" data-id="{{item.id}}" bindtap="onQuiz" style="background: {{item.color}};">
-          <image src="{{item.icon}}" mode="aspectFit"></image>
-          <text>{{item.title}}</text>
-        </view>
-      </view>
-    </scroll-view>
   </view>
 
   <view class="ai-mask" wx:if="{{showGuess}}" bindtap="closeGuess" catchtouchmove="noop">
     <view class="ai-modal" catchtap="noop">
       <view class="ai-modal-head">
-        <text>小螃蟹猜一猜</text>
+        <text>{{guess.isSeaCreature === false ? '小螃蟹看不懂' : '小螃蟹猜一猜'}}</text>
         <text class="ai-close" bindtap="closeGuess">×</text>
       </view>
       <scroll-view scroll-y class="ai-modal-body">
         <image wx:if="{{guessImage}}" class="guess-photo" src="{{guessImage}}" mode="aspectFit"></image>
-        <text class="ai-hint">这可能是下面几种，请打开图鉴再看一眼，不要只信我。</text>
-        <view class="candidate" wx:for="{{guess.candidates}}" wx:key="rank" data-item="{{item}}" bindtap="openWiki">
-          <view class="candidate-top">
-            <text class="candidate-name">{{item.name}}</text>
-            <text class="candidate-tag">{{item.confidenceLabel}}</text>
+
+        <block wx:if="{{guess.isSeaCreature === false}}">
+          <view class="not-sea">
+            <text class="not-sea-title">{{guess.message}}</text>
+            <text class="not-sea-tip">小螃蟹只认潮间带的小生物。把镜头对准海边的礁石、潮池或沙滩上的生物，靠近一点再拍一张试试。</text>
           </view>
-          <text class="candidate-reason">{{item.reason}}</text>
-        </view>
+        </block>
+        <block wx:else>
+          <text class="ai-hint">小螃蟹觉得最可能是它。百分比是它自己的把握程度，仅供参考；带「图鉴对照」的已经收录在图鉴里，可以点开看。</text>
+          <block wx:for="{{guess.candidates}}" wx:key="rank">
+            <view
+              class="candidate"
+              wx:if="{{index === 0 || showAllGuess}}"
+              data-item="{{item}}"
+              bindtap="openWiki"
+            >
+              <view class="candidate-top">
+                <text class="candidate-name">{{item.name}}</text>
+                <text class="candidate-prob">{{item.probabilityText}}</text>
+              </view>
+              <text class="candidate-latin" wx:if="{{item.latinName}}">{{item.latinName}}</text>
+              <view class="candidate-bar">
+                <view class="candidate-bar-fill" style="width: {{item.probability * 100}}%;"></view>
+              </view>
+              <text class="candidate-reason">{{item.reason}}</text>
+              <text class="candidate-wiki" wx:if="{{item.inEncyclopedia}}">图鉴对照 ›</text>
+            </view>
+          </block>
+
+          <view class="more-guess" wx:if="{{guess.candidates.length > 1}}" bindtap="toggleGuessAll">
+            {{showAllGuess ? '收起其他结果 ▲' : '显示其他 ' + (guess.candidates.length - 1) + ' 个结果 ▼'}}
+          </view>
+        </block>
+
         <text class="advice-extra" wx:if="{{guess.observeTip}}">{{guess.observeTip}}</text>
         <text class="advice-extra" wx:if="{{guess.safetyTip}}">{{guess.safetyTip}}</text>
         <text class="advice-disc">{{guess.disclaimer}}</text>
@@ -128,3 +160,5 @@
   </view>
   <unlock-popup id="unlockPopup"></unlock-popup>
 </view>
+
+<watch-ball />

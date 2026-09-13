@@ -10,6 +10,7 @@ Page({
       { id: 'mudflat', name: '泥滩' },
       { id: 'sandy', name: '沙滩' }
     ],
+    loading: true,
     all: [],
     list: []
   },
@@ -24,12 +25,18 @@ Page({
   },
 
   load() {
+    this.setData({ loading: true })
     contentApi.gear()
       .then((res) => {
         this.setData({ all: res.list || [] })
         this.applyFilter()
       })
-      .catch((err) => showError(err, '装备加载失败'))
+      .catch((err) => {
+        this.setData({ all: [] })
+        this.applyFilter()
+        showError(err, '装备清单加载失败')
+      })
+      .finally(() => this.setData({ loading: false }))
   },
 
   applyFilter() {

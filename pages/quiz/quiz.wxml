@@ -30,3 +30,5 @@
   </view>
   <unlock-popup id="unlockPopup"></unlock-popup>
 </view>
+
+<watch-ball />

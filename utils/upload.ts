@@ -36,8 +36,35 @@ export function chooseImage(): Promise<string> {
   })
 }
 
-export async function uploadImage(scene: 'speciesGuess' | 'observation' | 'card' | 'community', filePath: string): Promise<string> {
-  const data = await http.upload('/uploads', filePath, { scene })
+/**
+ * 上传前在手机端先压缩：拍照原图动辄 3~8MB，直接传很慢。
+ * 这里用 wx.compressImage 压到最长边约 1280、质量 75，通常能降到 200~500KB。
+ * 压缩失败（低版本基础库不支持 compressedWidth 等）就退回原图，不影响上传。
+ */
+export function compressForUpload(filePath: string, quality = 75, width = 1280): Promise<string> {
+  return new Promise((resolve) => {
+    if (!wx.compressImage) {
+      resolve(filePath)
+      return
+    }
+    try {
+      wx.compressImage({
+        src: filePath,
+        quality,
+        compressedWidth: width,
+        success: (res: any) => resolve(res.tempFilePath || filePath),
+        fail: () => resolve(filePath)
+      })
+    } catch (e) {
+      resolve(filePath)
+    }
+  })
+}
+
+export async function uploadImage(scene: 'speciesGuess' | 'observation' | 'card', filePath: string): Promise<string> {
+  // 先在本地压缩再传，减少上传体积
+  const compressed = await compressForUpload(filePath)
+  const data = await http.upload('/uploads', compressed, { scene })
   const uploadId = pick(data, 'uploadId', 'upload_id', 'id')
   if (!uploadId) throw new Error('上传成功但未返回 uploadId')
   const status = pick(data, 'status')

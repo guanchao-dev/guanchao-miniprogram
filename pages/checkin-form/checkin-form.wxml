@@ -1,0 +1,35 @@
+<view class="page memphis-bg">
+  <view class="memphis-layer">
+    <view class="geo-circle md" style="top: 30rpx; right: -40rpx; background:#34B8C5;"></view>
+  </view>
+
+  <view class="page-content">
+    <view class="card checkin-card">
+      <view class="list-title">研学报到</view>
+      <view class="checkin-sub">填写信息并完成定位，即视为本次签到。</view>
+
+      <view class="field-row">
+        <text class="field-label">姓名</text>
+        <input class="field-input" placeholder="请输入姓名" placeholder-class="field-placeholder" value="{{name}}" bindinput="onName" />
+      </view>
+
+      <view class="field-row">
+        <text class="field-label">学号</text>
+        <input class="field-input" type="number" placeholder="请输入学号" placeholder-class="field-placeholder" value="{{studentNo}}" bindinput="onStudentNo" />
+      </view>
+
+      <view class="field-row is-last">
+        <text class="field-label">位置</text>
+        <view class="field-loc">
+          <view class="loc-btn {{located ? 'is-done' : ''}}" bindtap="locate">{{locating ? '定位中…' : (located ? '重新定位' : '获取定位')}}</view>
+          <text class="field-loc-state {{located ? 'is-on' : ''}}">{{located ? '已定位 · 误差约300米' : '未定位'}}</text>
+        </view>
+      </view>
+
+      <view class="btn full-btn checkin-submit" bindtap="onSubmit">{{submitting ? '签到中…' : '提交签到'}}</view>
+      <view class="checkin-note">位置仅按约300米精度记录，用于签到核验。</view>
+    </view>
+  </view>
+</view>
+
+<watch-ball />

@@ -1,0 +1,110 @@
+.light-page {
+  padding-bottom: 48rpx;
+}
+
+.map-card {
+  position: relative;
+  padding: 16rpx;
+}
+
+.map-switch {
+  position: absolute;
+  top: 32rpx;
+  right: 32rpx;
+  z-index: 6;
+  padding: 8rpx 18rpx;
+  border: 3rpx solid #1C1C1C;
+  border-radius: 999rpx;
+  background: #FFFFFF;
+  box-shadow: 3rpx 3rpx 0 rgba(28, 28, 28, 0.85);
+  font-size: 22rpx;
+  font-weight: 750;
+}
+
+.map-stage {
+  position: relative;
+  width: 100%;
+  padding-top: 100%;
+  overflow: hidden;
+  border: 3rpx solid #1C1C1C;
+  border-radius: 28rpx;
+  background: #184D97;
+}
+
+.map-image {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.fog-patch {
+  position: absolute;
+  z-index: 2;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.fog-fill {
+  width: 100%;
+  height: 100%;
+  background:
+    radial-gradient(circle at 30% 30%, rgba(180, 198, 216, 0.55), rgba(36, 52, 78, 0.82) 62%),
+    repeating-linear-gradient(
+      118deg,
+      rgba(255, 255, 255, 0.08) 0 10rpx,
+      rgba(255, 255, 255, 0) 10rpx 22rpx
+    );
+  box-shadow: inset 0 0 24rpx rgba(12, 24, 44, 0.45);
+}
+
+.fog-patch.lit,
+.fog-patch.cleared {
+  opacity: 0;
+}
+
+.fog-patch.clearing {
+  animation: fogClear 1.15s ease forwards;
+}
+
+.light-burst {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 24rpx;
+  height: 24rpx;
+  margin: -12rpx 0 0 -12rpx;
+  border-radius: 50%;
+  background: #F6D081;
+  box-shadow: 0 0 0 8rpx rgba(246, 208, 129, 0.35);
+  animation: burst 1.15s ease forwards;
+}
+
+@keyframes fogClear {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  45% {
+    opacity: 0.55;
+    transform: scale(1.04);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.12);
+  }
+}
+
+@keyframes burst {
+  0% {
+    transform: scale(0.4);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(8);
+    opacity: 0;
+  }
+}

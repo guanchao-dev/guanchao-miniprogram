@@ -21,7 +21,8 @@ page {
   padding: 24rpx 28rpx 48rpx;
   box-sizing: border-box;
   position: relative;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
   background: var(--bg);
 }
 
@@ -183,6 +184,31 @@ page {
   color: var(--muted);
   text-align: center;
   font-size: 26rpx;
+}
+
+/* 加载中：数据没回来之前就转圈，不显示占位假数据 */
+.page-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 100rpx 20rpx;
+  color: var(--muted);
+  font-size: 26rpx;
+}
+
+.spinner {
+  width: 48rpx;
+  height: 48rpx;
+  margin-bottom: 20rpx;
+  border: 5rpx solid #E3E9EF;
+  border-top-color: #1878FF;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
 .list-card {

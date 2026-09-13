@@ -2,11 +2,37 @@
   padding: 80rpx 20rpx;
   color: #6B7C8A;
   text-align: center;
+  line-height: 1.6;
+}
+
+.day-block {
+  margin-bottom: 28rpx;
+}
+
+.day-label {
+  margin: 8rpx 4rpx 14rpx;
+  font-size: 26rpx;
+  font-weight: 850;
+  color: #1888BF;
 }
 
 .card-item {
-  margin-bottom: 18rpx;
-  padding: 24rpx;
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  margin-bottom: 16rpx;
+  padding: 20rpx;
+}
+
+.card-mascot {
+  width: 88rpx;
+  height: 88rpx;
+  flex-shrink: 0;
+}
+
+.card-body {
+  flex: 1;
+  min-width: 0;
 }
 
 .card-name {
@@ -18,4 +44,124 @@
   margin-top: 8rpx;
   color: #6B7C8A;
   font-size: 22rpx;
+}
+
+.card-arrow {
+  color: #1888BF;
+  font-size: 40rpx;
+  font-weight: 300;
+}
+
+.mask {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: rgba(11, 31, 56, 0.56);
+}
+
+.sheet {
+  width: 100%;
+  max-height: 84vh;
+  overflow: hidden;
+  border: 4rpx solid #1C1C1C;
+  border-bottom: 0;
+  border-radius: 36rpx 36rpx 0 0;
+  background: #EAF3FF;
+  box-sizing: border-box;
+}
+
+.sheet-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24rpx 28rpx 8rpx;
+  font-size: 34rpx;
+  font-weight: 850;
+}
+
+.sheet-close {
+  font-size: 44rpx;
+  font-weight: 300;
+}
+
+.sheet-body {
+  max-height: 72vh;
+  padding: 8rpx 28rpx 48rpx;
+  box-sizing: border-box;
+}
+
+.detail-mascot {
+  display: block;
+  width: 180rpx;
+  height: 180rpx;
+  margin: 8rpx auto 16rpx;
+}
+
+.detail-time {
+  text-align: center;
+  font-size: 30rpx;
+  font-weight: 850;
+}
+
+.detail-sub {
+  margin-top: 8rpx;
+  text-align: center;
+  color: #1888BF;
+  font-size: 24rpx;
+  font-weight: 700;
+}
+
+.detail-summary {
+  display: block;
+  margin-top: 20rpx;
+  color: #4F6787;
+  font-size: 26rpx;
+  line-height: 1.65;
+}
+
+.species-box {
+  margin-top: 24rpx;
+  padding: 18rpx;
+  border: 3rpx solid #1C1C1C;
+  border-radius: 24rpx;
+  background: #FFFFFF;
+}
+
+.species-title {
+  margin-bottom: 12rpx;
+  font-size: 24rpx;
+  font-weight: 850;
+}
+
+.species-row {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  padding: 10rpx 0;
+}
+
+.species-icon {
+  width: 44rpx;
+  height: 44rpx;
+}
+
+.species-name {
+  flex: 1;
+  font-size: 26rpx;
+  font-weight: 700;
+}
+
+.species-time {
+  color: #6B7C8A;
+  font-size: 22rpx;
+}
+
+.detail-note {
+  margin-top: 20rpx;
+  color: #9AA6B4;
+  font-size: 22rpx;
+  line-height: 1.5;
 }

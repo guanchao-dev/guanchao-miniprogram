@@ -1,1 +1,6 @@
-{}
+{
+  "usingComponents": {
+    "watch-ball": "/components/watch-ball/watch-ball",
+    "unlock-popup": "/components/unlock-popup/unlock-popup"
+  }
+}

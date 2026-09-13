@@ -1,3 +1,6 @@
 {
-  "navigationBarTitleText": "潮汐日历"
+  "navigationBarTitleText": "潮汐日历",
+  "usingComponents": {
+    "watch-ball": "/components/watch-ball/watch-ball"
+  }
 }

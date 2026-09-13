@@ -1,0 +1,10 @@
+.faq-q {
+  font-size: 28rpx;
+}
+
+.faq-a {
+  margin-top: 8rpx;
+  color: #4F6787;
+  font-size: 24rpx;
+  line-height: 1.6;
+}

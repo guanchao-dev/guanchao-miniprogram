@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "编辑资料",
+  "usingComponents": {
+    "watch-ball": "/components/watch-ball/watch-ball"
+  }
+}

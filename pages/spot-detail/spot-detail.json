@@ -1,3 +1,6 @@
 {
-  "navigationBarTitleText": "点位详情"
+  "navigationBarTitleText": "点位详情",
+  "usingComponents": {
+    "watch-ball": "/components/watch-ball/watch-ball"
+  }
 }

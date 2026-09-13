@@ -1,0 +1,11 @@
+.settings-danger {
+  background: #E64340;
+  color: #FFFFFF;
+}
+
+.settings-version {
+  margin-top: 32rpx;
+  color: #9AA6B4;
+  font-size: 20rpx;
+  text-align: center;
+}

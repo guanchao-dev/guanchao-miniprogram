@@ -3,12 +3,12 @@ import { isLoggedIn } from './auth'
 import { nowISO } from './format'
 
 const LOCAL_ICONS = [
-  '/assets/badges/crab-cloud.png',
-  '/assets/badges/crab-map.png',
-  '/assets/badges/crab-helmet.png',
-  '/assets/badges/crab-chest.png',
-  '/assets/badges/crab-star.png',
-  '/assets/badges/crab-crown.png'
+  'https://www.blueakaiwu.cn/api/v1/static/assets/badges/crab-cloud.png',
+  'https://www.blueakaiwu.cn/api/v1/static/assets/badges/crab-map.png',
+  'https://www.blueakaiwu.cn/api/v1/static/assets/badges/crab-helmet.png',
+  'https://www.blueakaiwu.cn/api/v1/static/assets/badges/crab-chest.png',
+  'https://www.blueakaiwu.cn/api/v1/static/assets/badges/crab-star.png',
+  'https://www.blueakaiwu.cn/api/v1/static/assets/badges/crab-crown.png'
 ]
 
 function queue(): any[] {

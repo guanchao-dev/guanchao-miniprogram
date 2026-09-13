@@ -5,6 +5,7 @@ import { chooseImage, downloadImage, mediaUrl, preloadImage } from '../../utils/
 
 Page({
   data: {
+    loading: true,
     item: {},
     akaText: '',
     coverUrl: '',
@@ -13,12 +14,16 @@ Page({
   },
 
   onLoad(query: any) {
-    const id = query && query.id
-    if (!id) return
+    const id = (query && query.id) || ''
+    if (!id) {
+      this.setData({ loading: false })
+      return
+    }
     this.load(id)
   },
 
   load(id: string) {
+    this.setData({ loading: true, item: {}, coverSrc: '' })
     contentApi.species(id)
       .then((item) => {
         const coverUrl = mediaUrl(item.coverUrl || '')
@@ -32,7 +37,8 @@ Page({
         })
         this.loadPhotos(id)
       })
-      .catch((err) => showError(err, '图鉴详情加载失败'))
+      .catch((err) => showError(err, '图鉴加载失败'))
+      .finally(() => this.setData({ loading: false }))
   },
 
   loadPhotos(speciesId: string) {

@@ -1,9 +1,52 @@
 <view class="page memphis-bg">
+  <view class="memphis-layer">
+    <view class="geo-circle lg" style="top: 20rpx; right: -40rpx; background:#34B8C5;"></view>
+    <view class="geo-square" style="bottom: 180rpx; left: -30rpx; background:#F6D081;"></view>
+  </view>
+
   <view class="page-content">
-    <view class="empty" wx:if="{{!list.length}}">还没有图鉴卡，去首页拍一张「今日发现」吧</view>
-    <view class="card-item card" wx:for="{{list}}" wx:key="id" data-id="{{item.id}}" bindtap="onOpen">
-      <view class="card-name">{{item.title}}</view>
-      <view class="card-meta">{{item.spotName}} · {{item.observedAt}}</view>
+    <view class="page-loading" wx:if="{{loading}}">
+      <view class="spinner"></view>
+      <text>加载中…</text>
+    </view>
+    <view class="empty" wx:elif="{{!groups.length}}">还没有观潮记录。回首页点「开始观潮」，结束一次就会出现在这里。</view>
+
+    <view class="day-block" wx:for="{{groups}}" wx:key="date">
+      <view class="day-label">{{item.label}}</view>
+      <view class="card-item card" wx:for="{{item.items}}" wx:for-item="row" wx:key="id" data-id="{{row.id}}" bindtap="onOpen">
+        <image class="card-mascot" src="{{row.mascot}}" mode="aspectFit"></image>
+        <view class="card-body">
+          <view class="card-name">{{row.startTime}} – {{row.endTime}}</view>
+          <view class="card-meta">时长 {{row.durationText}} · {{row.species.length}} 种发现</view>
+        </view>
+        <text class="card-arrow">›</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="mask" wx:if="{{showDetail}}" bindtap="closeDetail" catchtouchmove="noop">
+    <view class="sheet" catchtap="noop">
+      <view class="sheet-head">
+        <text>观潮记录</text>
+        <text class="sheet-close" bindtap="closeDetail">×</text>
+      </view>
+      <scroll-view scroll-y class="sheet-body">
+        <image class="detail-mascot" src="{{detail.mascot}}" mode="aspectFit"></image>
+        <view class="detail-time">{{detail.date}} · {{detail.startTime}} 到 {{detail.endTime}}</view>
+        <view class="detail-sub">这次一共观潮 {{detail.durationText}}</view>
+        <text class="detail-summary">{{detail.summary}}</text>
+        <view class="species-box" wx:if="{{detail.species.length}}">
+          <view class="species-title">认出的伙伴</view>
+          <view class="species-row" wx:for="{{detail.species}}" wx:key="name">
+            <image class="species-icon" src="https://www.blueakaiwu.cn/api/v1/static/assets/home/home-fish.png" mode="aspectFit"></image>
+            <text class="species-name">{{item.name}}</text>
+            <text class="species-time">{{item.time}}</text>
+          </view>
+        </view>
+        <view class="detail-note">记录由观潮时间和拍照识别自动生成，不能自己上传图片。</view>
+      </scroll-view>
     </view>
   </view>
 </view>
+
+<watch-ball />

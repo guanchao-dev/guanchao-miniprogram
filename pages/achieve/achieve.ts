@@ -1,7 +1,7 @@
 import { achieveApi } from '../../services/api'
-import { isLoggedIn } from '../../utils/auth'
-import { showError, toast } from '../../utils/format'
+import { toast } from '../../utils/format'
 import { flushUnlocks } from '../../utils/unlock'
+import { downloadImage, mediaUrl } from '../../utils/upload'
 
 const RARITY_STYLE: Record<string, { tag: string, tagColor: string, tagBg: string }> = {
   common: { tag: '普通', tagColor: '#5BA3E0', tagBg: '#D6EAF8' },
@@ -12,22 +12,22 @@ const RARITY_STYLE: Record<string, { tag: string, tagColor: string, tagBg: strin
 }
 
 const LOCAL_ICONS = [
-  '/assets/badges/crab-cloud.png',
-  '/assets/badges/crab-map.png',
-  '/assets/badges/crab-helmet.png',
-  '/assets/badges/crab-chest.png',
-  '/assets/badges/crab-detective.png',
-  '/assets/badges/crab-hero.png',
-  '/assets/badges/crab-dig.png',
-  '/assets/badges/crab-heart.png',
-  '/assets/badges/crab-star.png',
-  '/assets/badges/crab-checklist.png',
-  '/assets/badges/crab-diamond.png',
-  '/assets/badges/crab-book.png',
-  '/assets/badges/crab-astronaut.png',
-  '/assets/badges/crab-search.png',
-  '/assets/badges/crab-clock.png',
-  '/assets/badges/crab-crown.png'
+  'https://www.blueakaiwu.cn/api/v1/static/assets/badges/crab-cloud.png',
+  'https://www.blueakaiwu.cn/api/v1/static/assets/badges/crab-map.png',
+  'https://www.blueakaiwu.cn/api/v1/static/assets/badges/crab-helmet.png',
+  'https://www.blueakaiwu.cn/api/v1/static/assets/badges/crab-chest.png',
+  'https://www.blueakaiwu.cn/api/v1/static/assets/badges/crab-detective.png',
+  'https://www.blueakaiwu.cn/api/v1/static/assets/badges/crab-hero.png',
+  'https://www.blueakaiwu.cn/api/v1/static/assets/badges/crab-dig.png',
+  'https://www.blueakaiwu.cn/api/v1/static/assets/badges/crab-heart.png',
+  'https://www.blueakaiwu.cn/api/v1/static/assets/badges/crab-star.png',
+  'https://www.blueakaiwu.cn/api/v1/static/assets/badges/crab-checklist.png',
+  'https://www.blueakaiwu.cn/api/v1/static/assets/badges/crab-diamond.png',
+  'https://www.blueakaiwu.cn/api/v1/static/assets/badges/crab-book.png',
+  'https://www.blueakaiwu.cn/api/v1/static/assets/badges/crab-astronaut.png',
+  'https://www.blueakaiwu.cn/api/v1/static/assets/badges/crab-search.png',
+  'https://www.blueakaiwu.cn/api/v1/static/assets/badges/crab-clock.png',
+  'https://www.blueakaiwu.cn/api/v1/static/assets/badges/crab-crown.png'
 ]
 
 function decorateMedal(item: any, index: number) {
@@ -40,7 +40,7 @@ function decorateMedal(item: any, index: number) {
     tag: item.tag || style.tag,
     tagColor: style.tagColor,
     tagBg: style.tagBg,
-    icon: item.iconUrl || (locked ? '/assets/achieve/lock.png' : LOCAL_ICONS[index % LOCAL_ICONS.length]),
+    icon: item.iconUrl || (locked ? 'https://www.blueakaiwu.cn/api/v1/static/assets/achieve/lock.png' : LOCAL_ICONS[index % LOCAL_ICONS.length]),
     locked,
     description: item.description || '',
     requirements: item.requirements || [],
@@ -61,13 +61,15 @@ Page({
     shareText: '',
     shareCopyIndex: 0,
     medals: [],
-    friends: []
+    medalLoading: true,
+    friends: [],
+    boardLoading: true
   },
 
   onShow() {
     this.loadOverview()
     this.loadMedals()
-    this.loadFriends()
+    this.loadLeaderboard()
     flushUnlocks(this)
   },
 
@@ -123,31 +125,52 @@ Page({
   },
 
   loadMedals() {
+    this.setData({ medalLoading: true })
     achieveApi.medals()
       .then((data) => {
         const list = (data && (data.list || data)) || []
         this.setData({ medals: list.map(decorateMedal) })
         this.openPendingMedal()
       })
-      .catch((err) => showError(err, '勋章加载失败'))
+      .catch(() => this.setData({ medals: [] }))
+      .finally(() => this.setData({ medalLoading: false }))
   },
 
-  loadFriends() {
-    if (!isLoggedIn()) return
-    achieveApi.friends()
+  loadLeaderboard() {
+    const paint = (list: any[]) => {
+      this.setData({
+        friends: list.map((item: any) => ({
+          name: item.nickname || item.name,
+          level: `Lv.${item.level || 1}`,
+          score: item.score || 0,
+          avatar: item.avatar || 'https://www.blueakaiwu.cn/api/v1/static/assets/badges/crab-cloud.png',
+          me: !!item.me
+        }))
+      })
+      list.forEach((item: any, i: number) => {
+        const url = item.avatarUrl
+        if (url && url.indexOf('/users/') === 0) {
+          downloadImage(mediaUrl(url)).then((src) => {
+            if (src) this.setData({ [`friends[${i}].avatar`]: src })
+          })
+        }
+      })
+    }
+    this.setData({ boardLoading: true })
+    achieveApi.leaderboard()
       .then((data) => {
         const list = (data && (data.list || data)) || []
-        this.setData({
-          friends: list.map((item: any) => ({
-            name: item.nickname || item.name,
-            level: `Lv.${item.level || 1}`,
-            score: item.score || 0,
-            avatar: item.avatarUrl || '/assets/badges/crab-cloud.png',
-            me: !!item.me
-          }))
-        })
+        paint(list)
       })
-      .catch(() => {})
+      .catch(() => {
+        achieveApi.friends()
+          .then((data) => {
+            const list = (data && (data.list || data)) || []
+            paint(list)
+          })
+          .catch(() => paint([]))
+      })
+      .finally(() => this.setData({ boardLoading: false }))
   },
 
   onMedal(e: any) {
@@ -189,9 +212,9 @@ Page({
 
   getShareCopies() {
     const medal: any = this.data.selectedMedal
-    const title = (medal && (medal.displayTitle || medal.title)) || '观潮'
+    const title = (medal && (medal.displayTitle || medal.title)) || '寻潮记'
     return [
-      `我在 #观潮 解锁了「${title}」成就！每一次探索都是荣耀的印记，你也来挑战吧！🌊✨`,
+      `我在 #寻潮记 解锁了「${title}」成就！每一次探索都是荣耀的印记，你也来挑战吧！🌊✨`,
       `今天的海洋探索又有新收获：成功获得「${title}」勋章！一起去发现潮间带的秘密吧。🦀`
     ]
   },
@@ -233,11 +256,11 @@ Page({
   onShareAppMessage() {
     const medal: any = this.data.selectedMedal
     return {
-      title: medal && !medal.locked ? `我获得了“${medal.title}”勋章！` : '来观潮一起探索海洋吧'
+      title: medal && !medal.locked ? `我获得了“${medal.title}”勋章！` : '来寻潮记一起探索海洋吧'
     }
   },
 
-  goHome() {
-    wx.switchTab({ url: '/pages/home/home' })
+  goLightMap() {
+    wx.navigateTo({ url: '/pages/light-map/light-map' })
   }
 })

@@ -1,3 +1,6 @@
 {
-  "navigationBarTitleText": "我的图鉴卡"
+  "navigationBarTitleText": "观潮记录",
+  "usingComponents": {
+    "watch-ball": "/components/watch-ball/watch-ball"
+  }
 }

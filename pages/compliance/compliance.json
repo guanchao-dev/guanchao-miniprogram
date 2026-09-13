@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "合规说明",
+  "usingComponents": {
+    "watch-ball": "/components/watch-ball/watch-ball"
+  }
+}

@@ -30,9 +30,64 @@
   padding: 40rpx 28rpx;
 }
 
+.profile-row {
+  display: flex;
+  align-items: center;
+  gap: 24rpx;
+}
+
+.avatar-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8rpx;
+  width: auto;
+  padding: 0;
+  margin: 0;
+  background: transparent;
+  border: none;
+  line-height: 1.2;
+}
+
+.avatar-btn::after {
+  border: none;
+}
+
+.avatar-img {
+  width: 132rpx;
+  height: 132rpx;
+  border: 3rpx solid #1C1C1C;
+  border-radius: 50%;
+  background: #E8F4F8;
+}
+
+.avatar-tip {
+  color: #6B7C8A;
+  font-size: 20rpx;
+}
+
+.nickname-input {
+  flex: 1;
+  height: 84rpx;
+  padding: 0 20rpx;
+  border: 3rpx solid #1C1C1C;
+  border-radius: 999rpx;
+  background: #F6F8FA;
+  font-size: 28rpx;
+  box-sizing: border-box;
+}
+
+.login-note {
+  margin-top: 20rpx;
+  color: #9AA6B4;
+  font-size: 20rpx;
+  text-align: center;
+}
+
 .login-btn {
   width: 100%;
   height: 84rpx;
+  margin-top: 24rpx;
   background: #20B85A;
   color: #FFFFFF;
   box-sizing: border-box;

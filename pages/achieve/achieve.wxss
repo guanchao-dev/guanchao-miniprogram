@@ -287,10 +287,11 @@
   color: #fff;
 }
 
-.rank-title {
-  margin-bottom: 12rpx;
-  font-size: 26rpx;
-  font-weight: 800;
+.rank-empty {
+  padding: 24rpx 0 8rpx;
+  color: #6B7C8A;
+  font-size: 22rpx;
+  text-align: center;
 }
 
 .rank-item {

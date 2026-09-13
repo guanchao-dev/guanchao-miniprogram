@@ -1,0 +1,89 @@
+.checkin-card {
+  position: relative;
+  z-index: 2;
+}
+
+.checkin-sub {
+  margin-top: 10rpx;
+  color: #6B7C8A;
+  font-size: 24rpx;
+}
+
+.field-row {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  padding: 26rpx 0;
+  border-bottom: 2rpx dashed rgba(107, 124, 138, 0.35);
+}
+
+.field-row.is-last {
+  border-bottom: none;
+}
+
+.field-label {
+  width: 88rpx;
+  flex-shrink: 0;
+  color: #1C1C1C;
+  font-size: 28rpx;
+  font-weight: 800;
+}
+
+.field-input {
+  flex: 1;
+  padding: 14rpx 20rpx;
+  border: 3rpx solid #1C1C1C;
+  border-radius: 14rpx;
+  background: #F7FCFF;
+  font-size: 28rpx;
+  font-weight: 700;
+}
+
+.field-placeholder {
+  color: #9AA6B4;
+  font-weight: 500;
+}
+
+.field-loc {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10rpx;
+}
+
+.loc-btn {
+  padding: 12rpx 30rpx;
+  border: 3rpx solid #1C1C1C;
+  border-radius: 999rpx;
+  background: #34B8C5;
+  color: #FFFFFF;
+  font-size: 24rpx;
+  font-weight: 800;
+}
+
+.loc-btn.is-done {
+  background: #F6D081;
+  color: #1C1C1C;
+}
+
+.field-loc-state {
+  font-size: 22rpx;
+  color: #9AA6B4;
+}
+
+.field-loc-state.is-on {
+  color: #2E9E63;
+  font-weight: 700;
+}
+
+.checkin-submit {
+  margin-top: 36rpx;
+}
+
+.checkin-note {
+  margin-top: 14rpx;
+  color: #6B7C8A;
+  font-size: 22rpx;
+  text-align: center;
+}

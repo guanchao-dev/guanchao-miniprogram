@@ -1,0 +1,70 @@
+.about-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40rpx 24rpx 32rpx;
+  background: linear-gradient(135deg, #F7FCFF, #D8F3F6);
+}
+
+.about-mascot {
+  width: 200rpx;
+  height: 200rpx;
+}
+
+.about-name {
+  margin-top: 12rpx;
+  font-size: 44rpx;
+  font-weight: 900;
+}
+
+.about-slogan {
+  margin-top: 8rpx;
+  color: #1888BF;
+  font-size: 24rpx;
+  font-weight: 700;
+}
+
+.about-version {
+  margin-top: 14rpx;
+  padding: 4rpx 18rpx;
+  border: 3rpx solid #1C1C1C;
+  border-radius: 999rpx;
+  background: #FFFFFF;
+  font-size: 20rpx;
+  font-weight: 700;
+}
+
+.about-text {
+  margin-top: 10rpx;
+  color: #4F6787;
+  font-size: 25rpx;
+  line-height: 1.75;
+}
+
+.about-feature {
+  padding: 14rpx 0;
+}
+
+.about-feature + .about-feature {
+  border-top: 2rpx solid rgba(28, 28, 28, 0.08);
+}
+
+.about-feature-name {
+  display: block;
+  font-size: 27rpx;
+  font-weight: 800;
+}
+
+.about-feature-desc {
+  display: block;
+  margin-top: 4rpx;
+  color: #6B7C8A;
+  font-size: 22rpx;
+}
+
+.about-copy {
+  margin-top: 32rpx;
+  color: #9AA6B4;
+  font-size: 20rpx;
+  text-align: center;
+}
