@@ -6,7 +6,7 @@ import { chooseImage, mediaUrl, preloadImage, uploadImage } from '../../utils/up
 import { loadGuideSpots } from '../../utils/spotGuide'
 import { enqueueUnlocks, flushUnlocks } from '../../utils/unlock'
 import {
-  addWatchSpecies,
+  addWatchItem,
   getWatchSession,
   isWatching,
   setWatchSessionId,
@@ -19,7 +19,7 @@ const ASSET = 'https://www.blueakaiwu.cn/api/v1/static/assets'
 const DEFAULT_ACTIVITIES = [
   { id: 'theme-science', tag: '科普', title: '潮间带科普课', desc: '认识小螃蟹和贝类朋友', theme: 'teal', icon: `${ASSET}/home/home-fish.png`, url: '/pages/knowledge/knowledge' },
   { id: 'theme-study', tag: '研学', title: '赶海研学营', desc: '跟着导师探索潮间带', theme: 'yellow', icon: `${ASSET}/home/home-hero-mascot.png`, url: '' },
-  { id: 'theme-deepblue', tag: '科普', title: '深蓝两万里', desc: '探秘深海生物的世界', theme: 'banner', icon: `${ASSET}/home/home-deepblue.png`, url: '' }
+  { id: 'theme-deepblue', tag: '科普', title: '深蓝百万里', desc: '探秘深海生物的世界', theme: 'banner', icon: `${ASSET}/home/home-deepblue.png`, url: '/pages/knowledge/knowledge' }
 ]
 
 /** 与赶海无关的句子：天气、穿戴、泛化安全叮嘱 */
@@ -51,6 +51,103 @@ function nextTideText(advice: any, points: any[]): string {
   return `${next.time} ${next.type === 'high' ? '涨至最高潮' : '退到最低潮'}`
 }
 
+type GuessCandidate = {
+  rank: number
+  name: string
+  latinName?: string
+  probability: number
+  probabilityText?: string
+  confidenceLabel?: string
+  reason?: string
+  speciesId?: string | null
+  inEncyclopedia?: boolean
+  wikiPath?: string | null
+}
+
+/** 一个物品（图里一只生物）及其自己的候选列表 */
+type GuessItem = {
+  key: string
+  index: number
+  label: string
+  count: number
+  candidates: GuessCandidate[]
+  /** 渲染用：默认只放首选，展开后是全部。WXML 里不做条件计算 */
+  visibleCandidates: GuessCandidate[]
+  expanded: boolean
+  confirmedRank: number
+  topName: string
+}
+
+/** 一件垃圾：只有一个结论，没有备选 */
+type TrashItem = {
+  key: string
+  index: number
+  label: string
+  count: number
+  name: string
+  category: string
+  categoryLabel: string
+  probability: number
+  probabilityText: string
+  reason: string
+  tip: string
+  hazardNote: string
+  confirmed: boolean
+}
+
+/**
+ * 把物种识别结果整理成「每个物品一条」的渲染结构。
+ *
+ * 后端新结构是 items[]（每项 = 图里一个不同的生物，各自带候选）；
+ * 老记录（扁平 candidates）兜底成单物品，保证历史 guessId 也打得开。
+ * 渲染用的候选列表在这里预计算好，WXML 里就不用写任何条件逻辑。
+ */
+function normalizeGuessItems(raw: any): GuessItem[] {
+  let list: any[] = Array.isArray(raw && raw.items) ? raw.items.slice() : []
+  if (!list.length) {
+    const legacy = Array.isArray(raw && raw.candidates) ? raw.candidates : []
+    if (legacy.length) list = [{ label: '照片里的生物', candidates: legacy }]
+  }
+  return list
+    .map((it: any, i: number) => {
+      const candidates: GuessCandidate[] = (Array.isArray(it.candidates) ? it.candidates : []).slice(0, 3)
+      return {
+        key: `obj_${i + 1}`,
+        index: i + 1,
+        label: it.label || `发现 ${i + 1}`,
+        count: Number(it.count) > 1 ? Number(it.count) : 1,
+        candidates,
+        visibleCandidates: candidates.slice(0, 1),
+        expanded: false,
+        confirmedRank: 0,
+        topName: (candidates[0] && candidates[0].name) || ''
+      }
+    })
+    .filter((it: GuessItem) => it.candidates.length > 0)
+}
+
+/** 垃圾识别结果：每件一个结论 */
+function normalizeTrashItems(raw: any): TrashItem[] {
+  const list = Array.isArray(raw && raw.items) ? raw.items : []
+  return list
+    .map((it: any, i: number) => ({
+      key: `trash_${i + 1}`,
+      index: i + 1,
+      label: it.label || `垃圾 ${i + 1}`,
+      count: Number(it.count) > 1 ? Number(it.count) : 1,
+      name: it.name || '',
+      category: it.category || 'other',
+      categoryLabel: it.categoryLabel || '其他垃圾',
+      probability: Number(it.probability) || 0,
+      probabilityText: it.probabilityText || '',
+      reason: it.reason || '',
+      tip: it.tip || '',
+      hazardNote: it.hazardNote || '',
+      confirmed: false
+    }))
+    .filter((it: TrashItem) => !!it.name)
+}
+
 Page({
   lastGuessId: '',
   _unsubWatch: null as (() => void) | null,
@@ -66,8 +163,12 @@ Page({
     activities: DEFAULT_ACTIVITIES,
     showAdvice: false,
     showGuess: false,
-    showAllGuess: false,
+    showTrash: false,
+    trash: {},
+    trashItems: [] as TrashItem[],
+    trashImage: '',
     guess: {},
+    guessItems: [] as GuessItem[],
     guessImage: '',
     spotId: DEFAULT_SPOT_ID,
     tideHeightM: 0.8,
@@ -209,6 +310,7 @@ Page({
           tag: it.tag || it.category || '活动',
           title: it.title || it.name || '',
           desc: it.desc || it.subtitle || it.summary || '',
+          // banner 也是 theme 取值（图当背景 + 文字叠在上面），与前端同学的上传版本一致
           theme: it.theme === 'yellow' || it.theme === 'banner' ? it.theme : 'teal',
           icon: it.image || it.imageUrl || (it.tag === '研学' ? `${ASSET}/home/home-hero-mascot.png` : `${ASSET}/home/home-fish.png`),
           url: it.url || it.linkUrl || ''
@@ -222,8 +324,15 @@ Page({
 
   onActivity(e: any) {
     const item = e.currentTarget.dataset.item || {}
-    if (item.url && /^\/pages\//.test(item.url)) {
-      wx.navigateTo({ url: item.url })
+    const url = String(item.url || '')
+    // 外部网页（如公众号文章）交给 web-view 承载页；小程序不能直接跳外链
+    if (/^https?:\/\//.test(url)) {
+      const q = `url=${encodeURIComponent(url)}&title=${encodeURIComponent(item.title || '')}`
+      wx.navigateTo({ url: `/pages/webview/webview?${q}` })
+      return
+    }
+    if (url && /^\/pages\//.test(url)) {
+      wx.navigateTo({ url })
       return
     }
     toast('活动即将开放，敬请期待')
@@ -252,6 +361,7 @@ Page({
     wx.showLoading({ title: '生成建议', mask: true })
     aiApi.tideAdvice(this.data.spotId)
       .then((raw) => {
+        wx.hideLoading()
         const advice = raw || {}
         this.setData({
           advice: {
@@ -262,8 +372,11 @@ Page({
           showAdvice: true
         })
       })
-      .catch((err) => showError(err, '出门建议失败'))
-      .finally(() => wx.hideLoading())
+      .catch((err) => {
+        // 先 hideLoading 再 showError，否则提示会被 hideLoading 一起关掉
+        wx.hideLoading()
+        showError(err, '出门建议失败')
+      })
   },
 
   closeAdvice() {
@@ -293,27 +406,22 @@ Page({
       })
       .then((guess) => {
         this.lastGuessId = guess && guess.guessId
-        // 默认只展示概率最高的那一个，其余折叠
-        this.setData({ showGuess: true, guess: guess || {}, showAllGuess: false })
-        const hits = (guess && guess.candidates) || []
-        hits.slice(0, 3).forEach((item: any) => {
-          if (item && item.name) {
-            addWatchSpecies(item.name, nowTime())
-            const session = getWatchSession()
-            if (session && session.id) {
-              watchApi.addSpecies(session.id, {
-                name: item.name,
-                time: nowTime(),
-                speciesId: item.speciesId || '',
-                guessId: guess && guess.guessId
-              }).catch(() => {})
-            }
-          }
+        // 图里有几个生物就渲染几条，每条默认只展示自己的首选，其余折叠；
+        // 候选**不自动**写进观潮记录，等用户点「就是这个物种」再记那一种。
+        // 必须先关掉 loading：成功分支漏了这句的话，弹窗出来了转圈还一直转。
+        wx.hideLoading()
+        this.setData({
+          showGuess: true,
+          guess: guess || {},
+          guessItems: normalizeGuessItems(guess)
         })
         enqueueUnlocks((guess && guess.unlockedMedalIds) || [], 'guess')
         flushUnlocks(this)
       })
       .catch((err) => {
+        // 先关掉 loading 再弹提示：showToast 与 showLoading 共用同一个原生视图，
+        // 顺序反过来的话 hideLoading 会把刚弹出的 toast 一起关掉，用户什么都看不到。
+        wx.hideLoading()
         if (err && err.message === 'cancel') return
         if (err && err.code === 40101) {
           requireLogin()
@@ -321,16 +429,118 @@ Page({
         }
         showError(err, '识别失败')
       })
-      .finally(() => wx.hideLoading())
   },
 
-  /** 展开 / 收起其余候选 */
-  toggleGuessAll() {
-    this.setData({ showAllGuess: !this.data.showAllGuess })
+  /** 垃圾识别：拍照 → 上传 → 识物 + 判定类别（可回收 / 有害 / 厨余 / 其他） */
+  onTrashGuess() {
+    chooseImage()
+      .then((filePath) => {
+        this.setData({ trashImage: filePath })
+        wx.showLoading({ title: '小螃蟹在看', mask: true })
+        return uploadImage('speciesGuess', filePath)
+      })
+      .then((uploadId) => aiApi.trashGuess({ uploadId, spotId: this.data.spotId, clientTime: nowISO() }))
+      .then((res) => {
+        wx.hideLoading()
+        this.setData({ showTrash: true, trash: res || {}, trashItems: normalizeTrashItems(res) })
+      })
+      .catch((err) => {
+        // 同 onGuess：先 hideLoading 再 showError，否则提示会被 hideLoading 吞掉
+        wx.hideLoading()
+        if (err && err.message === 'cancel') return
+        if (err && err.code === 40101) {
+          requireLogin()
+          return
+        }
+        showError(err, '识别失败')
+      })
+  },
+
+  closeTrash() {
+    this.setData({ showTrash: false, trashItems: [] })
+  },
+
+  /** 展开 / 收起某一个物品的其他候选（每个物品独立，不再全局一刀切） */
+  toggleItemAll(e: any) {
+    const oi = Number(e.currentTarget.dataset.oi)
+    const item = (this.data.guessItems as GuessItem[])[oi]
+    if (!item) return
+    const expanded = !item.expanded
+    this.setData({
+      [`guessItems[${oi}].expanded`]: expanded,
+      [`guessItems[${oi}].visibleCandidates`]: expanded ? item.candidates : item.candidates.slice(0, 1)
+    })
+  },
+
+  /**
+   * 「就是这个物种」：把用户确认的这一种写进观潮记录。
+   * 图里有几个生物就能各记一条；同一个生物只能确认一次。
+   */
+  onConfirmSpecies(e: any) {
+    const oi = Number(e.currentTarget.dataset.oi)
+    const cand = e.currentTarget.dataset.item || {}
+    const item = (this.data.guessItems as GuessItem[])[oi]
+    if (!item || !cand.name || !cand.rank) return
+    if (item.confirmedRank) {
+      if (item.confirmedRank !== cand.rank) toast('这一条已经记过了，看看别的发现')
+      return
+    }
+    const session = getWatchSession()
+    if (!session) {
+      toast('先点首页的「开始观潮」，识别结果才会记入记录')
+      return
+    }
+    const entry = {
+      name: cand.name,
+      time: nowTime(),
+      kind: 'species' as const,
+      speciesId: cand.speciesId || '',
+      guessId: this.lastGuessId,
+      label: item.label,
+      count: item.count
+    }
+    // 本地会话（必须带上完整字段，结束观潮时上报的就是它）
+    addWatchItem(entry)
+    // 同步到服务端
+    if (session.id) {
+      watchApi.addSpecies(session.id, entry).catch(() => {})
+    }
+    this.setData({ [`guessItems[${oi}].confirmedRank`]: cand.rank })
+    toast('已记入观潮记录：' + cand.name)
+  },
+
+  /**
+   * 「就是它」：把这件垃圾记进观潮记录。
+   * 每件垃圾各记一条，重复点同一件只记一次。
+   */
+  onConfirmTrash(e: any) {
+    const oi = Number(e.currentTarget.dataset.oi)
+    const item = (this.data.trashItems as TrashItem[])[oi]
+    if (!item || item.confirmed) return
+    const session = getWatchSession()
+    if (!session) {
+      toast('先点首页的「开始观潮」，识别结果才会记入记录')
+      return
+    }
+    const entry = {
+      name: item.name,
+      time: nowTime(),
+      kind: 'trash' as const,
+      category: item.category,
+      categoryLabel: item.categoryLabel,
+      label: item.label,
+      count: item.count
+    }
+    addWatchItem(entry)
+    if (session.id) {
+      watchApi.addSpecies(session.id, entry).catch(() => {})
+    }
+    this.setData({ [`trashItems[${oi}].confirmed`]: true })
+    toast('已记入观潮记录：' + item.name)
   },
 
   closeGuess() {
-    this.setData({ showGuess: false, showAllGuess: false })
+    this.setData({ showGuess: false, guessItems: [] })
   },
 
   noop() {}

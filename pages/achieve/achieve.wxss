@@ -294,6 +294,26 @@
   text-align: center;
 }
 
+.rank-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.rank-more {
+  color: #1878FF;
+  font-size: 20rpx;
+  font-weight: 750;
+}
+
+.rank-no {
+  width: 32rpx;
+  text-align: center;
+  color: #8A7A6B;
+  font-size: 20rpx;
+  font-weight: 850;
+}
+
 .rank-item {
   display: flex;
   align-items: center;

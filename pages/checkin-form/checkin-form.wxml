@@ -1,34 +1,286 @@
 <view class="page memphis-bg">
   <view class="memphis-layer">
     <view class="geo-circle md" style="top: 30rpx; right: -40rpx; background:#34B8C5;"></view>
+    <view class="geo-square sm" style="bottom: 120rpx; left: -20rpx; background:#F6D081;"></view>
   </view>
 
   <view class="page-content">
-    <view class="card checkin-card">
-      <view class="list-title">研学报到</view>
-      <view class="checkin-sub">填写信息并完成定位，即视为本次签到。</view>
 
-      <view class="field-row">
-        <text class="field-label">姓名</text>
-        <input class="field-input" placeholder="请输入姓名" placeholder-class="field-placeholder" value="{{name}}" bindinput="onName" />
+    <!-- ==================== 入口 ==================== -->
+    <block wx:if="{{mode === ''}}">
+      <view class="hero">
+        <view class="hero-title">研学报到</view>
+        <view class="hero-sub">发起一场签到，或参与老师发起的签到</view>
       </view>
 
-      <view class="field-row">
-        <text class="field-label">学号</text>
-        <input class="field-input" type="number" placeholder="请输入学号" placeholder-class="field-placeholder" value="{{studentNo}}" bindinput="onStudentNo" />
-      </view>
-
-      <view class="field-row is-last">
-        <text class="field-label">位置</text>
-        <view class="field-loc">
-          <view class="loc-btn {{located ? 'is-done' : ''}}" bindtap="locate">{{locating ? '定位中…' : (located ? '重新定位' : '获取定位')}}</view>
-          <text class="field-loc-state {{located ? 'is-on' : ''}}">{{located ? '已定位 · 误差约300米' : '未定位'}}</text>
+      <view class="entry-card" data-mode="create" bindtap="pickMode">
+        <view class="entry-icon create">📍</view>
+        <view class="entry-body">
+          <view class="entry-title">设定签到</view>
+          <view class="entry-desc">在地图上圈出签到范围，生成密钥发给大家</view>
         </view>
+        <text class="entry-arrow">›</text>
       </view>
 
-      <view class="btn full-btn checkin-submit" bindtap="onSubmit">{{submitting ? '签到中…' : '提交签到'}}</view>
-      <view class="checkin-note">位置仅按约300米精度记录，用于签到核验。</view>
-    </view>
+      <view class="entry-card" data-mode="join" bindtap="pickMode">
+        <view class="entry-icon join">✅</view>
+        <view class="entry-body">
+          <view class="entry-title">进行签到</view>
+          <view class="entry-desc">输入老师给的密钥，在场地内完成报到</view>
+        </view>
+        <text class="entry-arrow">›</text>
+      </view>
+
+      <block wx:if="{{mySessions.length}}">
+        <view class="sec-head">
+          <text class="sec-title">我发起的签到</text>
+        </view>
+        <view class="sess-card" wx:for="{{mySessions}}" wx:key="sessionId" data-id="{{item.sessionId}}" bindtap="openDetail">
+          <view class="sess-top">
+            <text class="sess-place">{{item.placeName}}</text>
+            <text class="sess-badge {{item.status === 'active' ? 'on' : ''}}">{{item.status === 'active' ? '进行中' : '已结束'}}</text>
+          </view>
+          <view class="sess-key {{item.status === 'active' ? '' : 'muted'}}">{{item.status === 'active' ? item.key : '----'}}</view>
+          <view class="sess-meta">已签到 <text class="sess-num">{{item.checkinCount}}</text> 人{{item.status === 'active' ? ' · 点开看二维码 ›' : ' · 密钥已作废'}}</view>
+          <view class="sess-actions">
+            <view class="mini-btn" data-id="{{item.sessionId}}" catchtap="openRecords">查看名单</view>
+            <view class="mini-btn danger" wx:if="{{item.status === 'active'}}" data-id="{{item.sessionId}}" catchtap="closeSession">结束签到</view>
+          </view>
+        </view>
+      </block>
+    </block>
+
+    <!-- ==================== 签到详情 ==================== -->
+    <block wx:elif="{{mode === 'detail'}}">
+      <view class="topbar" bindtap="back">
+        <text class="topbar-back">‹</text>
+        <text class="topbar-title">签到详情</text>
+      </view>
+
+      <block wx:if="{{detailSession}}">
+        <view class="result-card">
+          <view class="result-title">{{detailSession.placeName}}</view>
+          <view class="result-sub">{{detailSession.status === 'active' ? '进行中' : '已结束'}}</view>
+
+          <view class="key-display" bindtap="copyDetailKey">
+            <text class="key-value">{{detailSession.key}}</text>
+            <text class="key-hint">点击复制密钥</text>
+          </view>
+
+          <image class="qr-img" src="{{qrUrl}}" mode="aspectFit" show-menu-by-longpress></image>
+          <text class="qr-hint">长按保存二维码，可投屏或打印给大家扫</text>
+
+          <view class="info-list">
+            <view class="info-row"><text class="info-k">范围</text><text class="info-v">已圈定签到区域</text></view>
+            <view class="info-row"><text class="info-k">签到</text><text class="info-v">{{detailSession.checkinCount}} 人</text></view>
+          </view>
+
+          <view class="main-btn" data-id="{{detailSession.sessionId}}" bindtap="openRecords">查看报到名单</view>
+        </view>
+      </block>
+    </block>
+
+    <!-- ==================== 设定签到 ==================== -->
+    <block wx:elif="{{mode === 'create'}}">
+      <view class="topbar" bindtap="back">
+        <text class="topbar-back">‹</text>
+        <text class="topbar-title">设定签到</text>
+      </view>
+
+      <!-- 创建成功 -->
+      <block wx:if="{{created}}">
+        <view class="result-card">
+          <view class="result-badge">✓</view>
+          <view class="result-title">签到已创建</view>
+          <view class="result-sub">把密钥或二维码发给大家</view>
+
+          <view class="key-display" bindtap="copyKey">
+            <text class="key-value">{{created.key}}</text>
+            <text class="key-hint">点击复制</text>
+          </view>
+
+          <image class="qr-img" src="{{qrUrl}}" mode="aspectFit" show-menu-by-longpress></image>
+          <text class="qr-hint">长按保存二维码，可投屏或打印</text>
+
+          <view class="info-list">
+            <view class="info-row"><text class="info-k">地点</text><text class="info-v">{{created.placeName}}</text></view>
+            <view class="info-row"><text class="info-k">范围</text><text class="info-v">已圈定签到区域</text></view>
+          </view>
+
+          <view class="main-btn" bindtap="back">完成</view>
+        </view>
+      </block>
+
+      <!-- 创建表单 -->
+      <block wx:else>
+        <view class="step"><text class="step-name">选择地点</text></view>
+        <view class="panel">
+          <block wx:if="{{placeName}}">
+            <view class="place-row">
+              <text class="place-pin">📍</text>
+              <view class="place-text">
+                <text class="place-name">{{placeName}}</text>
+                <text class="place-addr" wx:if="{{address}}">{{address}}</text>
+              </view>
+            </view>
+            <view class="panel-btn" bindtap="choosePlace">重新选择地点</view>
+          </block>
+          <block wx:else>
+            <view class="panel-empty">还没有选择签到地点</view>
+            <view class="panel-btn primary" bindtap="choosePlace">搜索并选择地点</view>
+          </block>
+        </view>
+
+        <block wx:if="{{placeName}}">
+          <view class="step"><text class="step-name">圈出签到范围</text></view>
+          <view class="panel">
+            <text class="panel-tip">
+              {{polyPoints.length < 3 ? '在地图上依次点出场地边界的顶点，至少 3 个' : '已描 ' + polyPoints.length + ' 个点，蓝色区域就是签到范围'}}
+            </text>
+            <map
+              class="fence-map"
+              latitude="{{mapLat}}"
+              longitude="{{mapLng}}"
+              scale="{{fenceScale}}"
+              markers="{{markers}}"
+              polygons="{{polygons}}"
+              bindtap="onMapTap"
+            ></map>
+            <view class="poly-actions">
+              <view class="ghost-btn" bindtap="undoPoint">撤销一个点</view>
+              <view class="ghost-btn" bindtap="clearPoints">清空重画</view>
+            </view>
+          </view>
+
+          <view class="step"><text class="step-name">生成密钥</text></view>
+          <view class="panel">
+            <text class="panel-tip">生成后把密钥发给参与签到的人</text>
+            <view class="main-btn {{polyPoints.length < 3 ? 'disabled' : ''}}" bindtap="onCreate">
+              {{creating ? '生成中…' : '生成签到密钥'}}
+            </view>
+          </view>
+        </block>
+      </block>
+    </block>
+
+    <!-- ==================== 进行签到 ==================== -->
+    <block wx:elif="{{mode === 'join'}}">
+      <view class="topbar" bindtap="back">
+        <text class="topbar-back">‹</text>
+        <text class="topbar-title">进行签到</text>
+      </view>
+
+      <!-- 签到成功 -->
+      <block wx:if="{{result}}">
+        <view class="result-card">
+          <view class="result-badge">✓</view>
+          <view class="result-title">{{result.alreadyChecked ? '今天已经签过到了' : '签到成功'}}</view>
+          <view class="result-sub">{{result.alreadyChecked ? '同一天只需签到一次' : '信息已发送给活动组织者'}}</view>
+          <view class="info-list">
+            <view class="info-row"><text class="info-k">姓名</text><text class="info-v">{{result.name}}</text></view>
+            <view class="info-row"><text class="info-k">学号</text><text class="info-v">{{result.studentNo}}</text></view>
+            <view class="info-row"><text class="info-k">活动</text><text class="info-v">{{result.sessionName || '研学报到'}}</text></view>
+            <view class="info-row" wx:if="{{result.sessionPlace}}"><text class="info-k">地点</text><text class="info-v">{{result.sessionPlace}}</text></view>
+            <view class="info-row"><text class="info-k">日期</text><text class="info-v">{{result.date}}</text></view>
+          </view>
+          <view class="main-btn" bindtap="back">完成</view>
+        </view>
+      </block>
+
+      <!-- 签到表单 -->
+      <block wx:else>
+        <view class="step"><text class="step-name">输入签到密钥</text></view>
+        <view class="panel">
+          <view class="key-input-row">
+            <input
+              class="key-field"
+              placeholder="6 位密钥"
+              placeholder-class="key-placeholder"
+              value="{{keyInput}}"
+              bindinput="onKeyInput"
+              maxlength="6"
+            />
+            <view class="mini-btn primary" bindtap="onVerify">{{verifying ? '验证中' : '验证'}}</view>
+            <view class="mini-btn" bindtap="scanKey">扫码</view>
+          </view>
+        </view>
+
+        <block wx:if="{{session}}">
+          <view class="step"><text class="step-name">填写信息</text></view>
+          <view class="panel">
+            <view class="session-head">
+              <text class="session-name">{{session.name}}</text>
+              <text class="session-place">📍 {{session.placeName}}</text>
+              <text class="session-owner">组织者：{{session.ownerNickname}}</text>
+            </view>
+            <view class="form-row">
+              <text class="form-label">姓名</text>
+              <input class="form-input" placeholder="请输入姓名" placeholder-class="form-ph" value="{{name}}" bindinput="onName" />
+            </view>
+            <view class="form-row">
+              <text class="form-label">学号</text>
+              <input class="form-input" type="number" placeholder="请输入学号" placeholder-class="form-ph" value="{{studentNo}}" bindinput="onStudentNo" />
+            </view>
+          </view>
+
+          <view class="step"><text class="step-name">确认位置</text></view>
+          <view class="panel">
+            <view class="loc-btn-row">
+              <view class="panel-btn {{located ? '' : 'primary'}}" bindtap="locate">
+                {{locating ? '定位中…' : (located ? '重新定位' : '获取当前位置')}}
+              </view>
+            </view>
+            <view class="loc-state {{inFence ? 'ok' : 'bad'}}" wx:if="{{located}}">
+              <text class="loc-state-icon">{{inFence ? '✅' : '⚠️'}}</text>
+              <view class="loc-state-text">
+                <text class="loc-state-title">{{inFence ? '你在签到范围内' : '你不在签到范围内'}}</text>
+                <text class="loc-state-desc" wx:if="{{inFence}}">距签到点约 {{distanceText}}</text>
+                <text class="loc-state-desc" wx:else>距签到点约 {{distanceText}}，请走到活动场地内再试</text>
+              </view>
+            </view>
+            <view class="main-btn {{inFence ? '' : 'disabled'}}" bindtap="onSubmit">
+              {{submitting ? '提交中…' : '提交签到'}}
+            </view>
+            <text class="panel-note">位置仅按约 300 米精度记录，不保存精确轨迹。</text>
+          </view>
+        </block>
+      </block>
+    </block>
+
+    <!-- ==================== 报到名单 ==================== -->
+    <block wx:elif="{{mode === 'records'}}">
+      <view class="topbar" bindtap="back">
+        <text class="topbar-back">‹</text>
+        <text class="topbar-title">报到名单</text>
+      </view>
+
+      <view class="page-loading" wx:if="{{recordsLoading}}">
+        <view class="spinner"></view>
+        <text>加载中…</text>
+      </view>
+
+      <block wx:elif="{{records}}">
+        <view class="panel">
+          <text class="records-place">{{records.placeName}}</text>
+          <view class="records-meta">
+            <text>密钥 {{records.key}}</text>
+            <text class="records-count">已签到 {{records.checkinCount}} 人</text>
+          </view>
+          <text class="panel-note" wx:if="{{records.status !== 'active'}}">该签到已结束</text>
+          <view class="main-btn" bindtap="copyRecords">复制名单</view>
+        </view>
+
+        <view class="empty-tip" wx:if="{{!records.list.length}}">还没有人签到</view>
+        <view class="name-card" wx:for="{{records.list}}" wx:key="checkinId">
+          <view class="name-row">
+            <text class="name-main">{{item.name}}</text>
+            <text class="name-sub">{{item.studentNo}}</text>
+          </view>
+          <text class="name-meta">{{item.date}} · 距签到点 {{item.distanceText || '—'}}</text>
+        </view>
+      </block>
+    </block>
+
   </view>
 </view>
 

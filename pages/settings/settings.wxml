@@ -14,7 +14,7 @@
 
     <view class="card list-card">
       <view class="list-title">监护人同意</view>
-      <view class="list-meta">未成年人使用寻潮记，建议由监护人确认同意后再开始场地探索。</view>
+      <view class="list-meta">未成年人使用追潮记，建议由监护人确认同意后再开始场地探索。</view>
       <view class="btn full-btn" bindtap="onConsent">我是监护人，确认同意</view>
       <view class="btn full-btn ghost-btn" bindtap="onWithdrawConsent">撤回监护人同意</view>
     </view>
@@ -25,7 +25,7 @@
       <view class="btn full-btn ghost-btn" bindtap="openPrivacy">查看用户协议 / 隐私政策</view>
     </view>
 
-    <view class="settings-version">寻潮记 · 最初版 0.3.0</view>
+    <view class="settings-version">追潮记 · 0.1.0 测试版</view>
   </view>
 </view>
 

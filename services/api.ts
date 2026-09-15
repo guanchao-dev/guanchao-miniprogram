@@ -140,6 +140,36 @@ export const contentApi = {
   checkin(body: Record<string, any>) {
     return http.post('/records/checkin', body, { auth: false })
   },
+  /** 我的报到记录 */
+  reportCheckins(page = 1, pageSize = 20) {
+    return http.get('/records/report-checkins', { page, pageSize }, { auth: false })
+      .then((data) => ({
+        raw: data,
+        list: unwrapList(data)
+      }))
+  },
+  // ===== 签到活动（组织者建围栏 + 参与者凭密钥签到）=====
+  /** 创建签到活动，返回 6 位密钥 */
+  createCheckinSession(body: Record<string, any>) {
+    return http.post('/checkin-sessions', body, { auth: false })
+  },
+  /** 按密钥查活动信息（参与者验证用） */
+  checkinSessionByKey(key: string) {
+    return http.get(`/checkin-sessions/by-key/${encodeURIComponent(key)}`, {}, { auth: false })
+  },
+  /** 我发起的签到活动 */
+  myCheckinSessions() {
+    return http.get('/checkin-sessions/mine', {}, { auth: false })
+      .then((data) => ({ raw: data, list: unwrapList(data) }))
+  },
+  /** 某个签到的报到名单（仅创建者） */
+  checkinSessionRecords(sessionId: string) {
+    return http.get(`/checkin-sessions/${sessionId}/records`, {}, { auth: false })
+  },
+  /** 结束签到 */
+  closeCheckinSession(sessionId: string) {
+    return http.post(`/checkin-sessions/${sessionId}/close`, {}, { auth: false })
+  },
   legal() {
     return http.get('/legal/latest', {}, { auth: false })
   },
@@ -169,6 +199,10 @@ export const aiApi = {
   },
   speciesGuess(body: Record<string, any>) {
     return http.post('/ai/species-guess', body, { timeout: 25000, idempotency: true, auth: false })
+  },
+  /** 垃圾识别：识出是什么垃圾 + 属于哪一类 */
+  trashGuess(body: Record<string, any>) {
+    return http.post('/ai/trash-guess', body, { timeout: 25000, auth: false })
   },
   speciesGuessDetail(guessId: string) {
     return http.get(`/ai/species-guess/${guessId}`, {}, { auth: false })
@@ -276,8 +310,25 @@ export const achieveApi = {
   friends() {
     return http.get('/achievements/friends', {}, { auth: false })
   },
-  leaderboard() {
-    return http.get('/achievements/leaderboard', { limit: 10 }, { auth: false })
+  /**
+   * 排行榜。
+   * @param scope 'all' 全站榜 / 'friends' 我关注的人
+   */
+  leaderboard(params?: Record<string, any>) {
+    return http.get('/achievements/leaderboard', Object.assign(
+      { scope: 'all', page: 1, pageSize: 20 },
+      params || {}
+    ), { auth: false })
+  }
+}
+
+export const userApi = {
+  /** 关注某个用户（用于「好友榜」） */
+  follow(userId: string) {
+    return http.post(`/users/${userId}/follow`, {})
+  },
+  unfollow(userId: string) {
+    return http.delete(`/users/${userId}/follow`)
   }
 }
 

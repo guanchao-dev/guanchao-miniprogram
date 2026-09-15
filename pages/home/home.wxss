@@ -589,6 +589,30 @@
   border-top: 2rpx dashed #DCE6EE;
 }
 
+.confirm-species {
+  margin-top: 14rpx;
+  height: 64rpx;
+  line-height: 58rpx;
+  text-align: center;
+  border: 3rpx solid #1878FF;
+  border-radius: 999rpx;
+  color: #1878FF;
+  font-size: 24rpx;
+  font-weight: 750;
+  box-sizing: border-box;
+}
+
+.confirm-species.done {
+  background: #20B85A;
+  border-color: #20B85A;
+  color: #FFFFFF;
+}
+
+.confirm-species.muted {
+  border-color: #C9D2DA;
+  color: #A8B3BD;
+}
+
 .not-sea {
   margin-top: 20rpx;
   padding: 24rpx 20rpx;
@@ -610,6 +634,93 @@
   font-size: 24rpx;
   line-height: 1.6;
   color: #7A6A4A;
+}
+
+/* ===== 多物品：照片里的每个发现各占一组 ===== */
+.guess-item {
+  margin-top: 18rpx;
+  padding-top: 14rpx;
+  border-top: 2rpx dashed #DCE6EE;
+}
+
+.guess-item-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6rpx;
+}
+
+.guess-item-label {
+  color: #1C1C1C;
+  font-size: 26rpx;
+  font-weight: 850;
+}
+
+.guess-item-count {
+  color: #7A6A4A;
+  font-size: 22rpx;
+  font-weight: 800;
+}
+
+.trash-item {
+  margin-top: 18rpx;
+}
+
+/* ===== 垃圾识别：国标四分类配色 ===== */
+.trash-cat {
+  display: inline-block;
+  margin-top: 8rpx;
+  padding: 4rpx 16rpx;
+  border-radius: 999rpx;
+  font-size: 22rpx;
+  font-weight: 800;
+}
+
+/* 与垃圾桶颜色对应：可回收蓝、有害红、厨余绿、其他灰 */
+.cat-recyclable {
+  background: #D6EAF8;
+  color: #1163C7;
+}
+
+.cat-hazardous {
+  background: #FBE0E0;
+  color: #C22B2B;
+}
+
+.cat-kitchen {
+  background: #DCF3E5;
+  color: #1F7F49;
+}
+
+.cat-other {
+  background: #E6EBF0;
+  color: #55636F;
+}
+
+.trash-block {
+  margin-top: 16rpx;
+  padding: 18rpx 20rpx;
+  border-radius: 16rpx;
+  background: rgba(255, 255, 255, 0.86);
+}
+
+.trash-block.hazard {
+  background: rgba(251, 224, 224, 0.5);
+}
+
+.trash-block-label {
+  display: block;
+  font-size: 24rpx;
+  font-weight: 850;
+  color: #1C1C1C;
+}
+
+.trash-block-text {
+  display: block;
+  margin-top: 8rpx;
+  font-size: 24rpx;
+  line-height: 1.55;
+  color: #4F6787;
 }
 
 .card-title {
