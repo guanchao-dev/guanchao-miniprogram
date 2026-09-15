@@ -1,0 +1,22 @@
+# 代码所有者（CODEOWNERS）
+# 这些人会被自动要求审核对应路径的 PR
+# 语法：<路径> <@用户或@组织/团队>
+
+# 全局默认审核人（所有文件变更都需要这些人审核）
+* @Tony230712-debug
+
+# 核心模块：必须由管理员审核
+/utils/ @Tony230712-debug
+/services/ @Tony230712-debug
+/config/ @Tony230712-debug
+
+# 配置文件
+project.config.json @Tony230712-debug
+app.json @Tony230712-debug
+tsconfig.json @Tony230712-debug
+
+# 合规与法律相关
+pages/compliance/ @Tony230712-debug
+pages/legal/ @Tony230712-debug
+CONTRIBUTING.md @Tony230712-debug
+.github/ @Tony230712-debug

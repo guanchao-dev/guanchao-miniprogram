@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 🐞 提交 Bug 或功能请求
+    url: https://github.com/guanchao-dev/guanchao-miniprogram/issues/new/choose
+    about: 请使用上方模板提交 Bug 报告或功能请求；其他讨论在团队内部沟通渠道进行
