@@ -392,6 +392,47 @@
   background: linear-gradient(135deg, #FFF8E8 0%, #F6E0AC 100%);
 }
 
+.activity-card.banner {
+  position: relative;
+  padding: 0;
+  background: #0A2A4A;
+}
+
+.activity-card.banner .activity-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.activity-card.banner .activity-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(8,28,52,0.82) 0%, rgba(8,28,52,0.55) 45%, rgba(8,28,52,0.15) 100%);
+}
+
+.activity-card.banner .activity-main {
+  position: relative;
+  z-index: 2;
+  justify-content: center;
+  height: 100%;
+  padding: 20rpx 28rpx 24rpx;
+  box-sizing: border-box;
+}
+
+.activity-card.banner .activity-tag {
+  background: rgba(255,255,255,0.92);
+  color: #0A2A4A;
+}
+
+.activity-card.banner .activity-name {
+  color: #FFFFFF;
+}
+
+.activity-card.banner .activity-desc {
+  color: rgba(255,255,255,0.88);
+}
+
 .activity-main {
   display: flex;
   flex-direction: column;

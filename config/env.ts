@@ -7,5 +7,8 @@ export const BASE_URL = 'https://www.blueakaiwu.cn/api/v1'
 
 export const DEFAULT_SPOT_ID = 'spot_qd_shilaoren'
 
-/** 腾讯位置服务 Key，场景须为「微信小程序」，并绑定 AppID wx6af244f2692b007f */
-export const TENCENT_MAP_KEY = 'REPLACE_WITH_LOCAL_KEY_SEE_ENV_EXAMPLE'
+/**
+ * 腾讯位置服务 Key 属于本机敏感配置，统一放在 env.local.ts 中（已 gitignore，不入库）。
+ * 新成员首次拉取代码后，复制 config/env.example.ts 为 config/env.local.ts 并填入真实 Key。
+ */
+export { TENCENT_MAP_KEY } from './env.local'

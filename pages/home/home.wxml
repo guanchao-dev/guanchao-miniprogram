@@ -75,12 +75,23 @@
     >
       <swiper-item wx:for="{{activities}}" wx:key="id">
         <view class="activity-card {{item.theme}}" data-item="{{item}}" bindtap="onActivity">
-          <view class="activity-main">
-            <text class="activity-tag">{{item.tag}}</text>
-            <text class="activity-name">{{item.title}}</text>
-            <text class="activity-desc">{{item.desc}}</text>
-          </view>
-          <image class="activity-illu" src="{{item.icon}}" mode="aspectFit"></image>
+          <block wx:if="{{item.theme === 'banner'}}">
+            <image class="activity-bg" src="{{item.icon}}" mode="aspectFill"></image>
+            <view class="activity-scrim"></view>
+            <view class="activity-main">
+              <text class="activity-tag">{{item.tag}}</text>
+              <text class="activity-name">{{item.title}}</text>
+              <text class="activity-desc">{{item.desc}}</text>
+            </view>
+          </block>
+          <block wx:else>
+            <view class="activity-main">
+              <text class="activity-tag">{{item.tag}}</text>
+              <text class="activity-name">{{item.title}}</text>
+              <text class="activity-desc">{{item.desc}}</text>
+            </view>
+            <image class="activity-illu" src="{{item.icon}}" mode="aspectFit"></image>
+          </block>
         </view>
       </swiper-item>
     </swiper>

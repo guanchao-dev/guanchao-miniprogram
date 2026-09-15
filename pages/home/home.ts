@@ -18,7 +18,8 @@ const ASSET = 'https://www.blueakaiwu.cn/api/v1/static/assets'
 
 const DEFAULT_ACTIVITIES = [
   { id: 'theme-science', tag: '科普', title: '潮间带科普课', desc: '认识小螃蟹和贝类朋友', theme: 'teal', icon: `${ASSET}/home/home-fish.png`, url: '/pages/knowledge/knowledge' },
-  { id: 'theme-study', tag: '研学', title: '赶海研学营', desc: '跟着导师探索潮间带', theme: 'yellow', icon: `${ASSET}/home/home-hero-mascot.png`, url: '' }
+  { id: 'theme-study', tag: '研学', title: '赶海研学营', desc: '跟着导师探索潮间带', theme: 'yellow', icon: `${ASSET}/home/home-hero-mascot.png`, url: '' },
+  { id: 'theme-deepblue', tag: '科普', title: '深蓝两万里', desc: '探秘深海生物的世界', theme: 'banner', icon: `${ASSET}/home/home-deepblue.png`, url: '' }
 ]
 
 /** 与赶海无关的句子：天气、穿戴、泛化安全叮嘱 */
@@ -208,7 +209,7 @@ Page({
           tag: it.tag || it.category || '活动',
           title: it.title || it.name || '',
           desc: it.desc || it.subtitle || it.summary || '',
-          theme: it.theme === 'yellow' ? 'yellow' : 'teal',
+          theme: it.theme === 'yellow' || it.theme === 'banner' ? it.theme : 'teal',
           icon: it.image || it.imageUrl || (it.tag === '研学' ? `${ASSET}/home/home-hero-mascot.png` : `${ASSET}/home/home-fish.png`),
           url: it.url || it.linkUrl || ''
         })).filter((it: any) => it.title)
