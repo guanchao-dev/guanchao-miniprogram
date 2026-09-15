@@ -6,14 +6,14 @@
   <view class="page-content">
     <view class="card about-hero">
       <image class="about-mascot" src="https://www.blueakaiwu.cn/api/v1/static/assets/home/home-hero-mascot.png" mode="aspectFit"></image>
-      <view class="about-name">寻潮记</view>
+      <view class="about-name">追潮记</view>
       <view class="about-slogan">跟潮汐一起，出发探索</view>
       <view class="about-version">v{{version}}</view>
     </view>
 
     <view class="card list-card">
-      <view class="list-title">关于寻潮记</view>
-      <view class="list-meta about-text">寻潮记是一款面向赶海爱好者的海洋素养小程序。我们把潮汐查询、潮间带生物识别、赶海知识科普和场地探索打卡结合在一起，希望让每一次赶海都更安全、更有趣，也让更多人了解和爱护潮间带。</view>
+      <view class="list-title">关于追潮记</view>
+      <view class="list-meta about-text">追潮记是一款面向赶海爱好者的海洋素养小程序。我们把潮汐查询、潮间带生物识别、赶海知识科普和场地探索打卡结合在一起，希望让每一次赶海都更安全、更有趣，也让更多人了解和爱护潮间带。</view>
     </view>
 
     <view class="card list-card">
@@ -30,7 +30,7 @@
       <view class="btn full-btn" bindtap="goLegal">查看用户协议 / 隐私政策</view>
     </view>
 
-    <view class="about-copy">© 2026 寻潮记团队</view>
+    <view class="about-copy">© 2026 追潮记团队</view>
   </view>
 </view>
 

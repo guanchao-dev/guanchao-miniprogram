@@ -136,10 +136,13 @@ Page({
       .finally(() => this.setData({ medalLoading: false }))
   },
 
+  /** 成就页只展示前 3 名，完整榜单在排行榜页 */
   loadLeaderboard() {
     const paint = (list: any[]) => {
       this.setData({
-        friends: list.map((item: any) => ({
+        friends: list.slice(0, 3).map((item: any, i: number) => ({
+          key: `${item.userId || i}_${i}`,
+          rank: item.rank || i + 1,
           name: item.nickname || item.name,
           level: `Lv.${item.level || 1}`,
           score: item.score || 0,
@@ -147,7 +150,7 @@ Page({
           me: !!item.me
         }))
       })
-      list.forEach((item: any, i: number) => {
+      list.slice(0, 3).forEach((item: any, i: number) => {
         const url = item.avatarUrl
         if (url && url.indexOf('/users/') === 0) {
           downloadImage(mediaUrl(url)).then((src) => {
@@ -157,20 +160,17 @@ Page({
       })
     }
     this.setData({ boardLoading: true })
-    achieveApi.leaderboard()
+    achieveApi.leaderboard({ scope: 'all', page: 1, pageSize: 3 })
       .then((data) => {
         const list = (data && (data.list || data)) || []
         paint(list)
       })
-      .catch(() => {
-        achieveApi.friends()
-          .then((data) => {
-            const list = (data && (data.list || data)) || []
-            paint(list)
-          })
-          .catch(() => paint([]))
-      })
+      .catch(() => paint([]))
       .finally(() => this.setData({ boardLoading: false }))
+  },
+
+  goLeaderboard() {
+    wx.navigateTo({ url: '/pages/leaderboard/leaderboard' })
   },
 
   onMedal(e: any) {
@@ -212,9 +212,9 @@ Page({
 
   getShareCopies() {
     const medal: any = this.data.selectedMedal
-    const title = (medal && (medal.displayTitle || medal.title)) || '寻潮记'
+    const title = (medal && (medal.displayTitle || medal.title)) || '追潮记'
     return [
-      `我在 #寻潮记 解锁了「${title}」成就！每一次探索都是荣耀的印记，你也来挑战吧！🌊✨`,
+      `我在 #追潮记 解锁了「${title}」成就！每一次探索都是荣耀的印记，你也来挑战吧！🌊✨`,
       `今天的海洋探索又有新收获：成功获得「${title}」勋章！一起去发现潮间带的秘密吧。🦀`
     ]
   },
@@ -256,7 +256,7 @@ Page({
   onShareAppMessage() {
     const medal: any = this.data.selectedMedal
     return {
-      title: medal && !medal.locked ? `我获得了“${medal.title}”勋章！` : '来寻潮记一起探索海洋吧'
+      title: medal && !medal.locked ? `我获得了“${medal.title}”勋章！` : '来追潮记一起探索海洋吧'
     }
   },
 

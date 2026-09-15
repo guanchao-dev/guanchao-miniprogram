@@ -18,7 +18,7 @@
 
     <view class="hero card">
       <view class="hero-copy">
-        <view class="hero-kicker">寻潮记 · 今日</view>
+        <view class="hero-kicker">追潮记 · 今日</view>
         <view class="hero-title">跟潮汐一起</view>
         <view class="hero-title">出发探索</view>
         <view class="btn watch-btn {{watchClass}}" bindtap="onWatchToggle">{{watchLabel}}</view>
@@ -54,7 +54,12 @@
       <view class="ai-card photo" bindtap="onGuess">
         <view class="ai-orb"></view>
         <image class="ai-icon" src="https://www.blueakaiwu.cn/api/v1/static/assets/home/home-fish.png" mode="aspectFit"></image>
-        <text class="ai-name">拍照识别</text>
+        <text class="ai-name">生物识别</text>
+      </view>
+      <view class="ai-card trash" bindtap="onTrashGuess">
+        <view class="ai-orb"></view>
+        <image class="ai-icon" src="https://www.blueakaiwu.cn/api/v1/static/assets/home/home-gear.png" mode="aspectFit"></image>
+        <text class="ai-name">垃圾识别</text>
       </view>
       <view class="ai-card advice" bindtap="onRefreshAdvice">
         <view class="ai-orb"></view>
@@ -77,12 +82,6 @@
         <view class="activity-card {{item.theme}}" data-item="{{item}}" bindtap="onActivity">
           <block wx:if="{{item.theme === 'banner'}}">
             <image class="activity-bg" src="{{item.icon}}" mode="aspectFill"></image>
-            <view class="activity-scrim"></view>
-            <view class="activity-main">
-              <text class="activity-tag">{{item.tag}}</text>
-              <text class="activity-name">{{item.title}}</text>
-              <text class="activity-desc">{{item.desc}}</text>
-            </view>
           </block>
           <block wx:else>
             <view class="activity-main">
@@ -137,35 +136,99 @@
           </view>
         </block>
         <block wx:else>
-          <text class="ai-hint">小螃蟹觉得最可能是它。百分比是它自己的把握程度，仅供参考；带「图鉴对照」的已经收录在图鉴里，可以点开看。</text>
-          <block wx:for="{{guess.candidates}}" wx:key="rank">
-            <view
-              class="candidate"
-              wx:if="{{index === 0 || showAllGuess}}"
-              data-item="{{item}}"
-              bindtap="openWiki"
-            >
-              <view class="candidate-top">
-                <text class="candidate-name">{{item.name}}</text>
-                <text class="candidate-prob">{{item.probabilityText}}</text>
+          <text class="ai-hint">小螃蟹在照片里看到了 {{guessItems.length}} 个发现。每个发现都给了一两个可能的名字，百分比是它自己的把握程度；带「图鉴对照」的已经收录在图鉴里，可以点开看。每个发现都可以单独确认，点「就是这个物种」才会记进观潮记录。</text>
+          <block wx:for="{{guessItems}}" wx:for-item="obj" wx:for-index="oi" wx:key="key">
+            <view class="guess-item">
+              <view class="guess-item-head">
+                <text class="guess-item-label">{{obj.label}}</text>
+                <text class="guess-item-count" wx:if="{{obj.count > 1}}">×{{obj.count}}</text>
               </view>
-              <text class="candidate-latin" wx:if="{{item.latinName}}">{{item.latinName}}</text>
-              <view class="candidate-bar">
-                <view class="candidate-bar-fill" style="width: {{item.probability * 100}}%;"></view>
+
+              <block wx:for="{{obj.visibleCandidates}}" wx:for-item="cand" wx:key="rank">
+                <view class="candidate">
+                  <view data-item="{{cand}}" bindtap="openWiki">
+                    <view class="candidate-top">
+                      <text class="candidate-name">{{cand.name}}</text>
+                      <text class="candidate-prob">{{cand.probabilityText}}</text>
+                    </view>
+                    <text class="candidate-latin" wx:if="{{cand.latinName}}">{{cand.latinName}}</text>
+                    <view class="candidate-bar">
+                      <view class="candidate-bar-fill" style="width: {{cand.probability * 100}}%;"></view>
+                    </view>
+                    <text class="candidate-reason">{{cand.reason}}</text>
+                    <text class="candidate-wiki" wx:if="{{cand.inEncyclopedia}}">图鉴对照 ›</text>
+                  </view>
+                  <view
+                    class="confirm-species {{obj.confirmedRank === cand.rank ? 'done' : ''}} {{obj.confirmedRank > 0 && obj.confirmedRank !== cand.rank ? 'muted' : ''}}"
+                    data-item="{{cand}}"
+                    data-oi="{{oi}}"
+                    catchtap="onConfirmSpecies"
+                  >{{obj.confirmedRank === cand.rank ? '已记入观潮记录 ✓' : '就是这个物种'}}</view>
+                </view>
+              </block>
+
+              <view class="more-guess" wx:if="{{obj.candidates.length > 1}}" data-oi="{{oi}}" bindtap="toggleItemAll">
+                {{obj.expanded ? '收起其他结果 ▲' : '显示其他 ' + (obj.candidates.length - 1) + ' 个结果 ▼'}}
               </view>
-              <text class="candidate-reason">{{item.reason}}</text>
-              <text class="candidate-wiki" wx:if="{{item.inEncyclopedia}}">图鉴对照 ›</text>
             </view>
           </block>
-
-          <view class="more-guess" wx:if="{{guess.candidates.length > 1}}" bindtap="toggleGuessAll">
-            {{showAllGuess ? '收起其他结果 ▲' : '显示其他 ' + (guess.candidates.length - 1) + ' 个结果 ▼'}}
-          </view>
         </block>
 
         <text class="advice-extra" wx:if="{{guess.observeTip}}">{{guess.observeTip}}</text>
         <text class="advice-extra" wx:if="{{guess.safetyTip}}">{{guess.safetyTip}}</text>
         <text class="advice-disc">{{guess.disclaimer}}</text>
+      </scroll-view>
+    </view>
+  </view>
+  <view class="ai-mask" wx:if="{{showTrash}}" bindtap="closeTrash" catchtouchmove="noop">
+    <view class="ai-modal" catchtap="noop">
+      <view class="ai-modal-head">
+        <text>{{trash.isTrash === false ? '小螃蟹没看到垃圾' : '垃圾分类小助手'}}</text>
+        <text class="ai-close" bindtap="closeTrash">×</text>
+      </view>
+      <scroll-view scroll-y class="ai-modal-body">
+        <image wx:if="{{trashImage}}" class="guess-photo" src="{{trashImage}}" mode="aspectFit"></image>
+
+        <block wx:if="{{trash.isTrash === false}}">
+          <view class="not-sea">
+            <text class="not-sea-title">{{trash.message}}</text>
+            <text class="not-sea-tip">把小螃蟹对准沙滩上的塑料袋、饮料瓶、渔网这类废弃物，靠近一点再拍一张试试。</text>
+          </view>
+        </block>
+        <block wx:else>
+          <text class="ai-hint">小螃蟹在照片里看到了 {{trashItems.length}} 件垃圾，每件按国家生活垃圾分类标准（四分类）给一个结论，可以直接照着投桶；各地细则略有不同，以当地规定为准。</text>
+
+          <block wx:for="{{trashItems}}" wx:for-item="obj" wx:for-index="oi" wx:key="key">
+            <view class="candidate trash-item">
+              <view class="guess-item-head">
+                <text class="guess-item-label">{{obj.label}}</text>
+                <text class="guess-item-count" wx:if="{{obj.count > 1}}">×{{obj.count}}</text>
+              </view>
+              <view class="candidate-top">
+                <text class="candidate-name">{{obj.name}}</text>
+              </view>
+              <view class="trash-cat cat-{{obj.category}}">{{obj.categoryLabel}}</view>
+              <text class="candidate-reason">{{obj.reason}}</text>
+
+              <view class="trash-block" wx:if="{{obj.tip}}">
+                <text class="trash-block-label">怎么处理</text>
+                <text class="trash-block-text">{{obj.tip}}</text>
+              </view>
+              <view class="trash-block hazard" wx:if="{{obj.hazardNote}}">
+                <text class="trash-block-label">对海洋的影响</text>
+                <text class="trash-block-text">{{obj.hazardNote}}</text>
+              </view>
+
+              <view
+                class="confirm-species {{obj.confirmed ? 'done' : ''}}"
+                data-oi="{{oi}}"
+                catchtap="onConfirmTrash"
+              >{{obj.confirmed ? '已记入观潮记录 ✓' : '就是它，记进观潮记录'}}</view>
+            </view>
+          </block>
+        </block>
+
+        <text class="advice-disc">{{trash.disclaimer}}</text>
       </scroll-view>
     </view>
   </view>

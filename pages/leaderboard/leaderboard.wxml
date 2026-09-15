@@ -1,0 +1,41 @@
+<view class="page">
+  <view class="lb-tabs">
+    <view
+      class="lb-tab {{scope === item.id ? 'on' : ''}}"
+      wx:for="{{tabs}}"
+      wx:key="id"
+      data-id="{{item.id}}"
+      bindtap="onTab"
+    >{{item.name}}</view>
+  </view>
+
+  <view class="page-loading" wx:if="{{loading}}">
+    <view class="spinner"></view>
+    <text>加载中…</text>
+  </view>
+
+  <view class="empty-tip" wx:elif="{{!list.length}}">{{emptyText}}</view>
+
+  <view class="page-content" wx:else>
+    <view class="lb-row {{item.me ? 'me' : ''}}" wx:for="{{list}}" wx:key="key">
+      <text class="lb-rank rank-{{item.rank <= 3 ? item.rank : 'n'}}">{{item.rank}}</text>
+      <image class="lb-avatar" src="{{item.avatar}}" mode="aspectFill"></image>
+      <view class="lb-meta">
+        <text class="lb-name">{{item.name}}{{item.me ? '（我）' : ''}}</text>
+        <text class="lb-level">{{item.level}}</text>
+      </view>
+      <text class="lb-score">{{item.score}}</text>
+      <view
+        class="lb-follow {{item.followed ? 'on' : ''}}"
+        wx:if="{{!item.me}}"
+        data-id="{{item.userId}}"
+        data-index="{{index}}"
+        catchtap="onFollow"
+      >{{item.followed ? '已关注' : '关注'}}</view>
+    </view>
+
+    <view class="lb-more" wx:if="{{loadingMore}}">加载中…</view>
+    <view class="lb-more" wx:elif="{{hasMore}}">上拉加载更多</view>
+    <view class="lb-more" wx:else>已经到底啦</view>
+  </view>
+</view>

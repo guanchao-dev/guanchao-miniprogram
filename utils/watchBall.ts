@@ -1,4 +1,4 @@
-import { endWatchSession, getWatchSession, isWatching } from './watchLog'
+import { endWatchSession, getWatchSession, isWatching, removeWatchRecord } from './watchLog'
 import { nowISO } from './format'
 import { watchApi } from '../services/api'
 
@@ -84,7 +84,13 @@ export function endWatchNow(): any {
     watchApi.end(session.id, {
       endedAt,
       species: record.species
-    }).catch(() => {})
+    }).then(() => {
+      // 服务端已经记下这次观潮 → 删掉本地那条，否则观潮记录里会重复显示两条
+      removeWatchRecord(record.id)
+      emit()
+    }).catch(() => {
+      // 失败就保留本地记录（无网时先存本地，有网再从服务端拉）
+    })
   }
   stopTimer()
   emit()

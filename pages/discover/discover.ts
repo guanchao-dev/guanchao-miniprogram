@@ -20,7 +20,7 @@ Page({
     card: {},
     coverSrc: '',
     aiGenerating: false,
-    shareTitle: '我在寻潮记留下一张今日发现',
+    shareTitle: '我在追潮记留下一张今日发现',
     sharePath: '/pages/home/home'
   },
 
@@ -81,7 +81,7 @@ Page({
     this.setData({
       card: card || {},
       aiGenerating: !!(card && card.id && !card.aiImageReady),
-      shareTitle: card && card.title ? `我在寻潮记留下一张「${card.title}」` : '我在寻潮记留下一张今日发现',
+      shareTitle: card && card.title ? `我在追潮记留下一张「${card.title}」` : '我在追潮记留下一张今日发现',
       sharePath: card && card.id ? `/pages/discover/discover?id=${card.id}` : '/pages/home/home'
     })
     if (card && card.aiImageReady && card.coverUrl) {
@@ -149,6 +149,9 @@ Page({
         })
       })
       .then((card) => {
+        // 成功分支同样要收尾，否则转圈一直不停、按钮也一直禁用
+        wx.hideLoading()
+        this.setData({ submitting: false })
         this.showCard(card, this.data.photoPath)
         enqueueUnlocks((card && card.unlockedMedalIds) || [], 'card')
         flushUnlocks(this)
@@ -156,10 +159,12 @@ Page({
           this.pollAiCover(card.id)
         }
       })
-      .catch((err) => showError(err, '生成图鉴卡失败'))
-      .finally(() => {
-        this.setData({ submitting: false })
+      .catch((err) => {
+        // 先关 loading 再弹提示：showToast 与 showLoading 共用同一个原生视图，
+        // 反过来的话 hideLoading 会把刚弹出的 toast 一起关掉，用户什么都看不到。
         wx.hideLoading()
+        this.setData({ submitting: false })
+        showError(err, '生成图鉴卡失败')
       })
   },
 

@@ -1,0 +1,19 @@
+<view class="page">
+  <!-- web-view 是整页原生组件，铺满屏幕、上面盖不了别的 UI，所以兜底界面要二选一 -->
+  <web-view
+    wx:if="{{url && !failed}}"
+    src="{{url}}"
+    bindload="onWebLoad"
+    binderror="onWebError"
+  ></web-view>
+
+  <view class="fallback" wx:if="{{failed}}">
+    <view class="fallback-card">
+      <text class="fallback-emoji">🦀</text>
+      <text class="fallback-title">这个页面暂时打不开</text>
+      <text class="fallback-tip">多半是小程序后台还没放行这个链接的域名。可以直接复制链接，粘贴到浏览器或微信里打开。</text>
+      <view class="fallback-btn" wx:if="{{url}}" bindtap="copyLink">复制链接</view>
+      <view class="fallback-btn ghost" wx:if="{{url}}" bindtap="retry">重试</view>
+    </view>
+  </view>
+</view>
