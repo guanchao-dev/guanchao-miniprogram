@@ -28,10 +28,10 @@ scan=$(git diff --cached -U0 --diff-filter=ACM -- . \
   ':(exclude)CONTRIBUTING.md' \
   ':(exclude)README.md' \
   ':(exclude).github/ISSUE_TEMPLATE/*' \
-  | grep -E '^\+' | grep -v '^\+\+\+' || true)
+  | grep -E '^\+' | grep -v -E '^\+\+\+' || true)
 
 hit=$(printf '%s\n' "$scan" | grep -n -E -i \
-  -e '1[3-9][0-9]{9}[^0-9]' \
+  -e '(^|[^0-9])1[3-9][0-9]{9}([^0-9]|$)' \
   -e '(^|[^0-9])[0-9]{17}[0-9Xx]([^0-9]|$)' \
   -e '(password|passwd|secret|api[_-]?key|access[_-]?key|app[_-]?secret|token)[[:space:]]*[=:][[:space:]]*["'\''][^"'\'' ]{6,}' \
   -e 'sk-[A-Za-z0-9]{16,}' \
