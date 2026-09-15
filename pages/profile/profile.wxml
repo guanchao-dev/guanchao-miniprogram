@@ -55,7 +55,7 @@
         <text class="compliance-link" data-type="sensitive" bindtap="onCompliance">《敏感个人信息处理说明》</text>
       </view>
 
-      <view class="version">寻潮记 · 最初版 0.3.0</view>
+      <view class="version">追潮记 · 0.1.0 测试版</view>
     </view>
   </view>
   <unlock-popup id="unlockPopup"></unlock-popup>

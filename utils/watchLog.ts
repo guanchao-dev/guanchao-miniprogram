@@ -9,9 +9,31 @@ const MASCOTS = [
   'https://www.blueakaiwu.cn/api/v1/static/assets/home/home-hero-mascot.png'
 ]
 
+export type WatchItemKind = 'species' | 'trash'
+
 export type WatchSpecies = {
   name: string
   time: string
+  /** 这条记录是生物还是垃圾。老数据没有这个字段，一律按 species 处理 */
+  kind?: WatchItemKind
+  speciesId?: string
+  guessId?: string
+  /** 仅垃圾：国标四分类的英文值与中文名 */
+  category?: string
+  categoryLabel?: string
+  /** 这一条在照片里的位置描述（「左边礁石上的螃蟹」） */
+  label?: string
+  /** 同一物种 / 同类垃圾在照片里的个数 */
+  count?: number
+  /** 展示层 wx:key 用：`${kind}:${name}` */
+  key?: string
+}
+
+/** 补齐 kind / count / key，让本地与服务端两条来源的记录形状一致。 */
+function withKey(row: WatchSpecies): WatchSpecies {
+  const kind: WatchItemKind = row.kind === 'trash' ? 'trash' : 'species'
+  const count = Number(row.count) > 1 ? Number(row.count) : 1
+  return { ...row, kind, count, key: `${kind}:${row.name}` }
 }
 
 export type WatchSession = {
@@ -37,6 +59,31 @@ export type WatchDayGroup = {
   date: string
   label: string
   items: WatchRecord[]
+}
+
+/** 一次观潮里按类别分好的发现（生物 / 垃圾各一组） */
+export type FindingGroup = {
+  key: string
+  title: string
+  items: WatchSpecies[]
+}
+
+/**
+ * 把一次观潮的发现按类别分成「生物」和「垃圾」两组，**组内按时间排序**。
+ *
+ * 空组不返回（避免出现「捡到的垃圾（0）」这种空标题）。
+ * 详情页按 groups 渲染，不要再直接用扁平的 species 列表——那样两类会混在一起。
+ */
+export function groupFindings(species: WatchSpecies[] = []): FindingGroup[] {
+  const byTime = (a: WatchSpecies, b: WatchSpecies) => (a.time || '').localeCompare(b.time || '')
+  const creatures = (species || [])
+    .filter((s) => s && s.name && (s.kind || 'species') === 'species')
+    .sort(byTime)
+  const trash = (species || []).filter((s) => s && s.name && s.kind === 'trash').sort(byTime)
+  const groups: FindingGroup[] = []
+  if (creatures.length) groups.push({ key: 'species', title: '认出的生物', items: creatures })
+  if (trash.length) groups.push({ key: 'trash', title: '捡到的垃圾', items: trash })
+  return groups
 }
 
 function pad(n: number): string {
@@ -75,13 +122,19 @@ function dateLabel(date: string): string {
   return `${Number(parts[1])}月${Number(parts[2])}日`
 }
 
+/** 与后端 watch.py 的 _summary() 保持一致，避免本地/服务端两条记录的文案不一样。 */
 function buildSummary(record: WatchRecord): string {
-  const count = record.species.length
-  if (!count) {
+  const rows = (record.species || []).filter((s) => s && s.name)
+  if (!rows.length) {
     return `这次观潮从 ${record.startTime} 到 ${record.endTime}，一共 ${record.durationText}。还没有识别到生物，下次可以拍一张给小螃蟹认一认。`
   }
-  const names = record.species.map((item) => item.name).join('、')
-  return `这次观潮从 ${record.startTime} 到 ${record.endTime}，一共 ${record.durationText}。期间认出了 ${count} 种潮间带伙伴：${names}。`
+  // 生物和垃圾分开说，别把塑料瓶也叫成「潮间带伙伴」
+  const sp = rows.filter((s) => (s.kind || 'species') === 'species')
+  const tr = rows.filter((s) => s.kind === 'trash')
+  const parts: string[] = []
+  if (sp.length) parts.push(`认出了 ${sp.length} 种潮间带伙伴：${sp.map((s) => s.name).join('、')}`)
+  if (tr.length) parts.push(`还捡到 ${tr.length} 件垃圾：${tr.map((s) => s.name).join('、')}`)
+  return `这次观潮从 ${record.startTime} 到 ${record.endTime}，一共 ${record.durationText}。${parts.join('；')}。`
 }
 
 export function getWatchSession(): WatchSession | null {
@@ -105,12 +158,22 @@ export function setWatchSessionId(id: string): void {
   wx.setStorageSync(SESSION_KEY, session)
 }
 
-export function addWatchSpecies(name: string, time: string): void {
+/**
+ * 往当前观潮里记一条发现（生物或垃圾）。
+ *
+ * 去重按 kind+name：同名的生物和垃圾各记一条；重复确认同一条只记一次。
+ * 注意这里必须把 kind/category 等字段一并存进本地缓存——结束观潮时
+ * 上报给服务端的正是这条本地记录，只存 name/time 的话字段会在那一步丢掉。
+ */
+export function addWatchItem(item: WatchSpecies): void {
   const session = getWatchSession()
-  if (!session || !name) return
-  const exists = session.species.some((item) => item.name === name)
+  if (!session || !item || !item.name) return
+  const row = withKey(item)
+  const exists = (session.species || []).some(
+    (x) => (x.key || `${x.kind || 'species'}:${x.name}`) === row.key
+  )
   if (exists) return
-  session.species = session.species.concat([{ name, time }])
+  session.species = (session.species || []).concat([row])
   wx.setStorageSync(SESSION_KEY, session)
 }
 
@@ -128,7 +191,7 @@ export function endWatchSession(endedAt: string): WatchRecord | null {
     startTime: timeText(start),
     endTime: timeText(end),
     durationText: durationText(start, end),
-    species: session.species || [],
+    species: (session.species || []).map(withKey),
     summary: '',
     mascot: MASCOTS[logs.length % MASCOTS.length]
   }
@@ -138,12 +201,35 @@ export function endWatchSession(endedAt: string): WatchRecord | null {
   return record
 }
 
+/**
+ * 删除本地某条观潮记录。
+ * 服务端已经记下这次观潮时，把本地那条删掉，避免同一场观潮重复显示。
+ */
+export function removeWatchRecord(id: string): void {
+  if (!id) return
+  const logs: WatchRecord[] = wx.getStorageSync(LOGS_KEY) || []
+  const next = logs.filter((item) => item && item.id !== id)
+  if (next.length !== logs.length) wx.setStorageSync(LOGS_KEY, next)
+}
+
 export function fromApiRecord(item: any): WatchRecord | null {
   if (!item) return null
-  const species = (item.species || []).map((row: any) => ({
-    name: row.name || '',
-    time: row.time || ''
-  })).filter((row: WatchSpecies) => row.name)
+  // 必须把 kind/category 等字段透传过来，否则垃圾会被当成生物渲染
+  const species = (item.species || [])
+    .map((row: any) =>
+      withKey({
+        name: row.name || '',
+        time: row.time || '',
+        kind: row.kind === 'trash' ? 'trash' : 'species',
+        speciesId: row.speciesId || '',
+        guessId: row.guessId || '',
+        category: row.category || '',
+        categoryLabel: row.categoryLabel || '',
+        label: row.label || '',
+        count: Number(row.count) > 1 ? Number(row.count) : 1
+      })
+    )
+    .filter((row: WatchSpecies) => row.name)
   const record: WatchRecord = {
     id: String(item.id || ''),
     date: item.date || (item.startedAt || '').slice(0, 10),
@@ -154,7 +240,8 @@ export function fromApiRecord(item: any): WatchRecord | null {
     durationText: item.durationText || '',
     species,
     summary: item.summary || '',
-    mascot: item.mascot || 'https://www.blueakaiwu.cn/api/v1/static/assets/badges/crab-star.png'
+    // 后端字段名是 mascotKey，不是 mascot——之前只读 mascot，导致服务端记录永远显示默认图
+    mascot: item.mascotKey || item.mascot || 'https://www.blueakaiwu.cn/api/v1/static/assets/badges/crab-star.png'
   }
   if (!record.id) return null
   if (!record.summary) record.summary = buildSummary(record)
@@ -164,11 +251,15 @@ export function fromApiRecord(item: any): WatchRecord | null {
 export function listWatchGroups(extra: WatchRecord[] = []): WatchDayGroup[] {
   const local: WatchRecord[] = wx.getStorageSync(LOGS_KEY) || []
 
+  // 同一次观潮可能同时存在「本地那条」和「服务端那条」（id 不同但 startedAt 相同），
+  // 这里按 startedAt 去重，避免一次观潮显示成两条。服务端的优先（extra 在前）。
   const merged: WatchRecord[] = []
   const seen: Record<string, boolean> = {}
   extra.concat(local).forEach((item) => {
-    if (!item || !item.id || seen[item.id]) return
-    seen[item.id] = true
+    if (!item || !item.id) return
+    const key = item.startedAt || item.id
+    if (seen[key]) return
+    seen[key] = true
     merged.push(item)
   })
   const map: Record<string, WatchRecord[]> = {}

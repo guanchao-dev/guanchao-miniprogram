@@ -17,7 +17,7 @@
         <image class="card-mascot" src="{{row.mascot}}" mode="aspectFit"></image>
         <view class="card-body">
           <view class="card-name">{{row.startTime}} – {{row.endTime}}</view>
-          <view class="card-meta">时长 {{row.durationText}} · {{row.species.length}} 种发现</view>
+          <view class="card-meta">时长 {{row.durationText}} · {{row.species.length}} 项发现</view>
         </view>
         <text class="card-arrow">›</text>
       </view>
@@ -35,13 +35,28 @@
         <view class="detail-time">{{detail.date}} · {{detail.startTime}} 到 {{detail.endTime}}</view>
         <view class="detail-sub">这次一共观潮 {{detail.durationText}}</view>
         <text class="detail-summary">{{detail.summary}}</text>
-        <view class="species-box" wx:if="{{detail.species.length}}">
-          <view class="species-title">认出的伙伴</view>
-          <view class="species-row" wx:for="{{detail.species}}" wx:key="name">
-            <image class="species-icon" src="https://www.blueakaiwu.cn/api/v1/static/assets/home/home-fish.png" mode="aspectFit"></image>
-            <text class="species-name">{{item.name}}</text>
-            <text class="species-time">{{item.time}}</text>
-          </view>
+        <view class="species-box" wx:if="{{detail.groups.length}}">
+          <view class="species-title">这次发现</view>
+          <!-- 生物 / 垃圾各成一组，组内按时间排序，不混在一起 -->
+          <block wx:for="{{detail.groups}}" wx:for-item="grp" wx:for-index="gi" wx:key="key">
+            <view class="group-head {{gi > 0 ? 'group-head-gap' : ''}}">
+              <text class="group-name">{{grp.title}}</text>
+              <text class="group-count">{{grp.items.length}}</text>
+            </view>
+            <view class="species-row" wx:for="{{grp.items}}" wx:for-item="fd" wx:key="key">
+              <image
+                class="species-icon"
+                src="{{fd.kind === 'trash' ? 'https://www.blueakaiwu.cn/api/v1/static/assets/home/home-gear.png' : 'https://www.blueakaiwu.cn/api/v1/static/assets/home/home-fish.png'}}"
+                mode="aspectFit"
+              ></image>
+              <view class="species-main">
+                <text class="species-name">{{fd.name}}{{fd.count > 1 ? ' ×' + fd.count : ''}}</text>
+                <text class="species-sub" wx:if="{{fd.categoryLabel}}">{{fd.categoryLabel}}</text>
+                <text class="species-sub" wx:elif="{{fd.label}}">{{fd.label}}</text>
+              </view>
+              <text class="species-time">{{fd.time}}</text>
+            </view>
+          </block>
         </view>
         <view class="detail-note">记录由观潮时间和拍照识别自动生成，不能自己上传图片。</view>
       </scroll-view>

@@ -1,5 +1,5 @@
 import { watchApi } from '../../services/api'
-import { fromApiRecord, listWatchGroups } from '../../utils/watchLog'
+import { fromApiRecord, groupFindings, listWatchGroups } from '../../utils/watchLog'
 
 const EMPTY_DETAIL = {
   id: '',
@@ -10,8 +10,14 @@ const EMPTY_DETAIL = {
   endTime: '',
   durationText: '',
   species: [],
+  groups: [],
   summary: '',
   mascot: 'https://www.blueakaiwu.cn/api/v1/static/assets/badges/crab-star.png'
+}
+
+/** 详情页按「生物 / 垃圾」分组展示，组内在 groupFindings 里排好序 */
+function withGroups(record: any) {
+  return { ...record, groups: groupFindings(record && record.species) }
 }
 
 Page({
@@ -44,11 +50,11 @@ Page({
         if (item.id === id) found = item
       })
     })
-    if (found) this.setData({ showDetail: true, detail: found })
+    if (found) this.setData({ showDetail: true, detail: withGroups(found) })
     watchApi.detail(id)
       .then((data) => {
         const detail = fromApiRecord(data)
-        if (detail) this.setData({ showDetail: true, detail })
+        if (detail) this.setData({ showDetail: true, detail: withGroups(detail) })
       })
       .catch(() => {})
   },

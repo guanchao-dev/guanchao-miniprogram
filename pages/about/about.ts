@@ -1,6 +1,6 @@
 Page({
   data: {
-    version: '0.3.0',
+    version: '0.1.0 测试版',
     features: [
       { title: '潮汐表', desc: '查看附近赶海点的实时潮高与涨退潮' },
       { title: '潮汐日历', desc: '按月浏览高潮低潮，安排赶海行程' },

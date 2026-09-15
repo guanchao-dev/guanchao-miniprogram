@@ -2,6 +2,7 @@
   "pages": [
     "pages/home/home",
     "pages/achieve/achieve",
+    "pages/leaderboard/leaderboard",
     "pages/profile/profile",
     "pages/profile-edit/profile-edit",
     "pages/login/login",
@@ -26,10 +27,11 @@
     "pages/faq/faq",
     "pages/about/about",
     "pages/compliance/compliance",
+    "pages/webview/webview",
     "pages/legal/legal"
   ],
   "window": {
-    "navigationBarTitleText": "寻潮记",
+    "navigationBarTitleText": "追潮记",
     "navigationBarBackgroundColor": "#FFFFFF",
     "navigationBarTextStyle": "black",
     "backgroundColor": "#FFFFFF",
@@ -63,10 +65,14 @@
   },
   "permission": {
     "scope.userLocation": {
-      "desc": "用于计算你到青岛赶海点的距离；开始探索后仅在场地内记录网格"
+      "desc": "用于查找附近赶海点、签到定位与场地探索"
     }
   },
-  "requiredPrivateInfos": ["getLocation", "onLocationChange"],
+  "requiredPrivateInfos": [
+    "getLocation",
+    "chooseLocation",
+    "onLocationChange"
+  ],
   "style": "v2",
   "lazyCodeLoading": "requiredComponents",
   "sitemapLocation": "sitemap.json",

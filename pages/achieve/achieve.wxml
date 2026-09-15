@@ -77,8 +77,12 @@
       </view>
 
       <view class="rank-card card">
-        <view class="rank-title">排行榜</view>
-        <view class="rank-item {{item.me ? 'me' : ''}}" wx:for="{{friends}}" wx:key="name">
+        <view class="rank-head" bindtap="goLeaderboard">
+          <text class="rank-title">排行榜</text>
+          <text class="rank-more">查看完整榜单 ›</text>
+        </view>
+        <view class="rank-item {{item.me ? 'me' : ''}}" wx:for="{{friends}}" wx:key="key" bindtap="goLeaderboard">
+          <text class="rank-no">{{item.rank}}</text>
           <image src="{{item.avatar}}" mode="aspectFill"></image>
           <view class="rank-meta">
             <text class="rank-name">{{item.name}}</text>

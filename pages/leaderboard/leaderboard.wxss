@@ -1,0 +1,109 @@
+.lb-tabs {
+  display: flex;
+  gap: 16rpx;
+  padding: 20rpx 24rpx 4rpx;
+}
+
+.lb-tab {
+  flex: 1;
+  height: 72rpx;
+  line-height: 66rpx;
+  text-align: center;
+  border: 3rpx solid #1C1C1C;
+  border-radius: 999rpx;
+  background: #FFFFFF;
+  font-size: 26rpx;
+  font-weight: 750;
+  box-sizing: border-box;
+}
+
+.lb-tab.on {
+  background: #1878FF;
+  color: #FFFFFF;
+}
+
+.lb-row {
+  display: flex;
+  align-items: center;
+  margin: 16rpx 24rpx;
+  padding: 18rpx 20rpx;
+  border: 3rpx solid #1C1C1C;
+  border-radius: 24rpx;
+  background: #FFFFFF;
+  box-shadow: 3rpx 3rpx 0 rgba(28, 28, 28, 0.85);
+}
+
+.lb-row.me {
+  background: #EAF4FF;
+}
+
+.lb-rank {
+  width: 56rpx;
+  text-align: center;
+  font-size: 28rpx;
+  font-weight: 850;
+  color: #8A97A3;
+}
+
+.lb-rank.rank-1 { color: #E6A700; }
+.lb-rank.rank-2 { color: #8A97A3; }
+.lb-rank.rank-3 { color: #C57B3A; }
+
+.lb-avatar {
+  width: 72rpx;
+  height: 72rpx;
+  margin: 0 16rpx;
+  border: 3rpx solid #1C1C1C;
+  border-radius: 50%;
+  background: #E8F4F8;
+}
+
+.lb-meta {
+  flex: 1;
+  min-width: 0;
+}
+
+.lb-name {
+  display: block;
+  font-size: 28rpx;
+  font-weight: 800;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.lb-level {
+  display: block;
+  margin-top: 4rpx;
+  color: #6B7C8A;
+  font-size: 22rpx;
+}
+
+.lb-score {
+  margin-left: 12rpx;
+  font-size: 30rpx;
+  font-weight: 850;
+  color: #1878FF;
+}
+
+.lb-follow {
+  margin-left: 16rpx;
+  padding: 8rpx 22rpx;
+  border: 3rpx solid #1878FF;
+  border-radius: 999rpx;
+  color: #1878FF;
+  font-size: 22rpx;
+  font-weight: 750;
+}
+
+.lb-follow.on {
+  border-color: #C9D2DA;
+  color: #A8B3BD;
+}
+
+.lb-more {
+  padding: 28rpx 0 60rpx;
+  text-align: center;
+  color: #9AA6B4;
+  font-size: 22rpx;
+}

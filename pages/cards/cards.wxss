@@ -136,6 +136,35 @@
   font-weight: 850;
 }
 
+/* 分组小标题：认出的生物 / 捡到的垃圾 */
+.group-head {
+  display: flex;
+  align-items: center;
+  margin-bottom: 6rpx;
+  padding-bottom: 6rpx;
+  border-bottom: 2rpx dashed #E3EEF7;
+}
+
+.group-head-gap {
+  margin-top: 18rpx;
+}
+
+.group-name {
+  color: #1C1C1C;
+  font-size: 22rpx;
+  font-weight: 800;
+}
+
+.group-count {
+  margin-left: 10rpx;
+  padding: 0 12rpx;
+  border-radius: 999rpx;
+  background: #E3EEF7;
+  color: #1878FF;
+  font-size: 20rpx;
+  font-weight: 800;
+}
+
 .species-row {
   display: flex;
   align-items: center;
@@ -148,10 +177,23 @@
   height: 44rpx;
 }
 
-.species-name {
+/* 名称 + 副标题（垃圾的类别 / 生物的位置）两行 */
+.species-main {
+  display: flex;
+  flex-direction: column;
   flex: 1;
+  min-width: 0;
+}
+
+.species-name {
   font-size: 26rpx;
   font-weight: 700;
+}
+
+.species-sub {
+  margin-top: 2rpx;
+  color: #6B7C8A;
+  font-size: 20rpx;
 }
 
 .species-time {

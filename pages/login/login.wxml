@@ -7,7 +7,7 @@
   <view class="page-content">
     <view class="login-hero">
       <image class="login-mascot" src="https://www.blueakaiwu.cn/api/v1/static/assets/badges/crab-cloud.png" mode="aspectFit"></image>
-      <view class="login-title">欢迎来到寻潮记</view>
+      <view class="login-title">欢迎来到追潮记</view>
       <view class="login-sub">使用微信登录，同步探索记录和成就。</view>
     </view>
 
