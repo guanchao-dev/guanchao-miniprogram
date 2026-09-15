@@ -1,0 +1,55 @@
+#!/bin/sh
+# 寻潮记 · 提交前敏感信息扫描
+# 安装（每台机器一次）：git config core.hooksPath hooks
+#
+# 检查暂存区：禁止密钥、证件号、手机号、内部文档、本机绝对路径等进入仓库。
+
+set -u
+
+RED='\033[0;31m'; YELLOW='\033[0;33m'; NC='\033[0m'
+violations=0
+report=""
+
+# 1) 按文件名禁止入库的类型
+bad_files=$(git diff --cached --name-only --diff-filter=ACM | grep -E -i \
+  '(^|/)\.env($|\.)|\.(pem|key|p12|pfx|jks|keystore|docx|xlsx)$|(^|/)docs/.+\.(md|docx)$|env\.local\.ts$|project\.private\.config\.json$' \
+  | grep -v -E '\.env\.example|env\.example\.ts' || true)
+
+if [ -n "$bad_files" ]; then
+  violations=$((violations+1))
+  report="${report}${RED}[禁止]${NC} 以下文件不允许入库（内部文档/密钥/私人配置）：\\n$bad_files\\n"
+fi
+
+# 2) 暂存内容正则扫描（仅新增行；模板、本钩子、说明性文件列入白名单）
+scan=$(git diff --cached -U0 --diff-filter=ACM -- . \
+  ':(exclude)config/env.example.ts' \
+  ':(exclude)config/env.ts' \
+  ':(exclude)hooks/pre-commit' \
+  ':(exclude)CONTRIBUTING.md' \
+  ':(exclude)README.md' \
+  ':(exclude).github/ISSUE_TEMPLATE/*' \
+  | grep -E '^\+' | grep -v -E '^\+\+\+' || true)
+
+hit=$(printf '%s\n' "$scan" | grep -n -E -i \
+  -e '(^|[^0-9])1[3-9][0-9]{9}([^0-9]|$)' \
+  -e '(^|[^0-9])[0-9]{17}[0-9Xx]([^0-9]|$)' \
+  -e '(password|passwd|secret|api[_-]?key|access[_-]?key|app[_-]?secret|token)[[:space:]]*[=:][[:space:]]*["'\''][^"'\'' ]{6,}' \
+  -e 'sk-[A-Za-z0-9]{16,}' \
+  -e 'AIza[0-9A-Za-z_-]{20,}' \
+  -e '[A-Z0-9]{5}-[A-Z0-9]{5}-[A-Z0-9]{5}-[A-Z0-9]{5}-[A-Z0-9]{5}-[A-Z0-9]{5}' \
+  -e '[A-Za-z]:\\Users\\[A-Za-z0-9._-]+' \
+  -e '(^|[^0-9])(10|172\.(1[6-9]|2[0-9]|3[01])|192\.168)\.[0-9]{1,3}\.[0-9]{1,3}' \
+  || true)
+
+if [ -n "$hit" ]; then
+  violations=$((violations+1))
+  report="${report}${RED}[禁止]${NC} 暂存内容疑似包含敏感信息（手机号/证件号/密钥/内网IP/本机路径等）：\\n$hit\\n"
+fi
+
+if [ "$violations" -gt 0 ]; then
+  printf '\n%b\n' "$report"
+  printf "${YELLOW}提交已被安全钩子拦截。${NC}如确认是误报，请先联系管理员确认，再使用 git commit --no-verify 跳过。\\n"
+  exit 1
+fi
+
+exit 0
