@@ -18,7 +18,7 @@ Page({
       { title: '潮汐表', icon: 'https://www.blueakaiwu.cn/api/v1/static/assets/home/home-calendar.png', tone: 'sky', url: '/pages/tide/tide' },
       { title: '潮汐日历', icon: 'https://www.blueakaiwu.cn/api/v1/static/assets/home/home-quiz1.png', tone: 'mint', url: '/pages/calendar/calendar' },
       { title: '海洋图鉴', icon: 'https://www.blueakaiwu.cn/api/v1/static/assets/home/home-fish.png', tone: 'yellow', url: '/pages/wiki/wiki' },
-      { title: '知识科普', icon: 'https://www.blueakaiwu.cn/api/v1/static/assets/home/home-nearby.png', tone: 'pink', url: '/pages/knowledge/knowledge' },
+      { title: '知识科普', icon: 'https://www.blueakaiwu.cn/api/v1/static/assets/home/home-science.png', tone: 'pink', url: '/pages/knowledge/knowledge' },
       { title: '成就', icon: 'https://www.blueakaiwu.cn/api/v1/static/assets/profile/profile-medal.png', tone: 'yellow', tab: '/pages/achieve/achieve' },
       { title: '装备推荐', icon: 'https://www.blueakaiwu.cn/api/v1/static/assets/profile/profile-gear.png', tone: 'pink', url: '/pages/gear/gear' },
       { title: '签到', icon: 'https://www.blueakaiwu.cn/api/v1/static/assets/profile/profile-booking.png', tone: 'sky', url: '/pages/checkin-form/checkin-form' },
