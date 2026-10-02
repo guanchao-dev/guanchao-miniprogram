@@ -9,6 +9,28 @@
   box-sizing: border-box;
   overflow: hidden;
   margin-bottom: 18rpx;
+  /* NEW 角标要绝对定位到右上角，需要这层做定位父级 */
+  position: relative;
+}
+
+/* 新获得：右上角一个 NEW。
+   和金边（.unlocked）、呼吸光晕 + 扫光（.is-new）一起标识「这是刚拿到的」，
+   进过一次图鉴后三者一起消失，只留静态金边。 */
+.new-badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 2;
+  padding: 4rpx 14rpx 6rpx;
+  border-left: 3rpx solid #1C1C1C;
+  border-bottom: 3rpx solid #1C1C1C;
+  border-bottom-left-radius: 16rpx;
+  background: #E8B84B;
+  color: #1C1C1C;
+  font-size: 20rpx;
+  font-weight: 850;
+  line-height: 1.2;
+  letter-spacing: 1rpx;
 }
 
 .species-thumb {
