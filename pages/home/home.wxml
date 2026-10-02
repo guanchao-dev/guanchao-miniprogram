@@ -189,6 +189,12 @@
         <text class="advice-disc">{{guess.disclaimer}}</text>
       </scroll-view>
     </view>
+      <!-- 图鉴入口：贴在弹窗左上角外侧。放在 .ai-modal 之外，才不会被它的
+           overflow:hidden 裁掉。点它不关弹窗 —— 用户看完图鉴返回时识别结果还在。 -->
+      <view class="wiki-entry" bindtap="goWiki" hover-class="wiki-entry-hover" hover-stay-time="80">
+        <image class="wiki-entry-img" src="https://www.blueakaiwu.cn/api/v1/static/assets/home/home-wiki-entry.png" mode="aspectFit"></image>
+      </view>
+    </view>
   </view>
   <view class="ai-mask" wx:if="{{showTrash}}" bindtap="closeTrash" catchtouchmove="noop">
     <view class="ai-modal" catchtap="noop">
@@ -240,13 +246,6 @@
 
         <text class="advice-disc">{{trash.disclaimer}}</text>
       </scroll-view>
-    </view>
-      <!-- 图鉴入口：跨在弹窗左上角边框上（一半在外、一半压着弹窗）。
-           放在 .ai-modal 之外，才不会被它的 overflow:hidden 裁掉。
-           点它不关弹窗 —— 用户看完图鉴返回时，这次的识别结果还在。 -->
-      <view class="wiki-entry" bindtap="goWiki" hover-class="wiki-entry-hover" hover-stay-time="80">
-        <image class="wiki-entry-img" src="https://www.blueakaiwu.cn/api/v1/static/assets/home/home-wiki-entry.png" mode="aspectFit"></image>
-      </view>
     </view>
   </view>
   <unlock-popup id="unlockPopup"></unlock-popup>
