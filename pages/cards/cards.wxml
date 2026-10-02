@@ -29,7 +29,7 @@
 
         <!-- 方框分区：这次认出的图鉴 -->
         <view class="log-box">
-          <text class="log-box-title">这次认出的图鉴</text>
+          <text class="log-box-title">认出的生物</text>
           <view class="log-thumbs" wx:if="{{row.creatureCovers.length}}">
             <image
               class="log-thumb"
@@ -97,7 +97,7 @@
           </view>
         </view>
         <view class="log-box">
-          <text class="log-box-title">这次认出的图鉴</text>
+          <text class="log-box-title">认出的生物</text>
           <view class="log-thumbs" wx:if="{{detail.creatureCovers.length}}">
             <image
               class="log-thumb"
@@ -112,29 +112,6 @@
         </view>
 
         <view class="detail-spot" wx:if="{{detail.spot}}">📍 观潮地点：{{detail.spot.name}}{{detail.spot.source === 'custom' ? '（地图自选）' : ''}}</view>
-        <view class="species-box" wx:if="{{detail.groups.length}}">
-          <view class="species-title">这次发现</view>
-          <!-- 生物 / 垃圾各成一组，组内按时间排序，不混在一起 -->
-          <block wx:for="{{detail.groups}}" wx:for-item="grp" wx:for-index="gi" wx:key="key">
-            <view class="group-head {{gi > 0 ? 'group-head-gap' : ''}}">
-              <text class="group-name">{{grp.title}}</text>
-              <text class="group-count">{{grp.items.length}}</text>
-            </view>
-            <view class="species-row" wx:for="{{grp.items}}" wx:for-item="fd" wx:key="key">
-              <image
-                class="species-icon"
-                src="{{fd.kind === 'trash' ? 'https://www.blueakaiwu.cn/api/v1/static/assets/home/home-gear.png' : 'https://www.blueakaiwu.cn/api/v1/static/assets/home/home-fish.png'}}"
-                mode="aspectFit"
-              ></image>
-              <view class="species-main">
-                <text class="species-name">{{fd.name}}{{fd.count > 1 ? ' ×' + fd.count : ''}}</text>
-                <text class="species-sub" wx:if="{{fd.categoryLabel}}">{{fd.categoryLabel}}</text>
-                <text class="species-sub" wx:elif="{{fd.label}}">{{fd.label}}</text>
-              </view>
-              <text class="species-time">{{fd.time}}</text>
-            </view>
-          </block>
-        </view>
         <view class="detail-note">记录由观潮时间和拍照识别自动生成，不能自己上传图片。</view>
       </scroll-view>
     </view>

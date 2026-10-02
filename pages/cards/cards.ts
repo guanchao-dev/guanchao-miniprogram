@@ -4,7 +4,6 @@ import {
   creatureCount,
   creatureItems,
   fromApiRecord,
-  groupFindings,
   listWatchGroups,
   trashAmount,
   TRASH_AMOUNT_TEXT
@@ -19,7 +18,6 @@ const EMPTY_DETAIL = {
   endTime: '',
   durationText: '',
   species: [],
-  groups: [],
   summary: '',
   creatureCount: 0,
   trashAmountText: '无',
@@ -49,11 +47,6 @@ function loadCovers(): Promise<void> {
     .catch(() => {
       // 拿不到就只是不显示图鉴图，不影响记录本身
     })
-}
-
-/** 详情按「生物 / 垃圾」分组展示，组内在 groupFindings 里排好序 */
-function withGroups(record: any) {
-  return { ...record, groups: groupFindings(record && record.species) }
 }
 
 /** 给一条记录补上「观潮记录卡」需要的派生字段：生物种数 / 垃圾量 / 图鉴图 */
@@ -118,12 +111,12 @@ Page({
         if (item.id === id) found = item
       })
     })
-    if (found) this.setData({ showDetail: true, detail: withGroups(found) })
+    if (found) this.setData({ showDetail: true, detail: found })
     watchApi
       .detail(id)
       .then((data) => {
         const detail = fromApiRecord(data)
-        if (detail) this.setData({ showDetail: true, detail: withGroups(decorate(detail)) })
+        if (detail) this.setData({ showDetail: true, detail: decorate(detail) })
       })
       .catch(() => {})
   },
