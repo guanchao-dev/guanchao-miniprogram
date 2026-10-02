@@ -290,11 +290,16 @@
 .ghost-btn:active { background: #F0F4F8; }
 
 /* ==================== 主按钮 ==================== */
+/* 用 flex 居中而不是 height + line-height：
+   后者在文案变长或换行时会溢出、文字偏上。 */
 .main-btn {
   width: 100%;
-  height: 92rpx;
-  line-height: 86rpx;
+  min-height: 92rpx;
   margin-top: 24rpx;
+  padding: 0 28rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   text-align: center;
   border: 3rpx solid #1C1C1C;
   border-radius: 999rpx;
@@ -414,28 +419,43 @@
   font-size: 22rpx;
 }
 
+/* 分组信息行：标签在左、值靠右对齐。
+   值右对齐是关键 —— 扫下来数值排成一列，比左对齐好读得多，
+   这也是系统设置类列表的通行做法。
+   分隔线用发丝级实线（原来是虚线，看着像没做完的稿子）。 */
 .info-list {
-  margin-top: 30rpx;
-  border-top: 2rpx dashed #DCE6EE;
+  margin-top: 28rpx;
+  border-top: 2rpx solid #E6ECF2;
 }
 
 .info-row {
   display: flex;
-  align-items: flex-start;
-  gap: 18rpx;
-  padding: 20rpx 0;
-  border-bottom: 2rpx dashed #DCE6EE;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 22rpx 0;
+  border-bottom: 2rpx solid #E6ECF2;
+}
+
+/* 最后一行不画线 —— 收在卡片底边上更干净 */
+.info-row:last-child {
+  padding-bottom: 8rpx;
+  border-bottom: 0;
 }
 
 .info-k {
-  width: 90rpx;
+  width: 118rpx;
   flex-shrink: 0;
   color: #6B7C8A;
-  font-size: 24rpx;
+  font-size: 25rpx;
 }
 
 .info-v {
   flex: 1;
+  min-width: 0;
+  margin-left: 20rpx;
+  text-align: right;
+  font-weight: 700;
+  word-break: break-all;
   font-size: 27rpx;
   font-weight: 750;
   line-height: 1.5;

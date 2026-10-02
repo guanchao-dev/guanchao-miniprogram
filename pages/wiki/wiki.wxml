@@ -16,13 +16,21 @@
       <text>加载中…</text>
     </view>
     <view class="empty-tip" wx:elif="{{!list.length}}">{{emptyText}}</view>
-    <view class="species-grid">
+    <!-- 一页 8 个（两列四行）。flipCls 每次翻页更换，让入场动效重放 -->
+    <view class="species-grid {{flipCls}}">
       <view class="species-cell card {{item.lit ? 'unlocked' : 'locked'}} {{item.isNew ? 'is-new' : ''}}" wx:for="{{list}}" wx:key="id" data-id="{{item.id}}" bindtap="openDetail" hover-class="tap">
         <view class="species-thumb-wrap">
           <image class="species-thumb" src="{{item.coverSrc}}" mode="aspectFill"></image>
         </view>
         <view class="species-name">{{item.name}}</view>
       </view>
+    </view>
+
+    <!-- 翻页 -->
+    <view class="pager" wx:if="{{totalPages > 1}}">
+      <view class="pager-btn {{page <= 1 ? 'is-off' : ''}}" bindtap="prevPage" hover-class="tap">‹ 上一页</view>
+      <text class="pager-ind">{{page}} / {{totalPages}}</text>
+      <view class="pager-btn {{page >= totalPages ? 'is-off' : ''}}" bindtap="nextPage" hover-class="tap">下一页 ›</view>
     </view>
   </view>
 </view>
