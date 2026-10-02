@@ -27,7 +27,7 @@
     <view class="card list-card">
       <view class="list-title">协议与隐私</view>
       <view class="list-meta">我们重视你的个人信息与未成年人保护。</view>
-      <view class="btn full-btn" bindtap="goLegal">查看用户协议 / 隐私政策</view>
+      <view class="btn full-btn" bindtap="goLegal" hover-class="tap">查看用户协议 / 隐私政策</view>
     </view>
 
     <view class="about-copy">© 2026 追潮记团队</view>

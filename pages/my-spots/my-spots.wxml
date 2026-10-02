@@ -12,7 +12,7 @@
 
     <view class="header-bar">
       <text class="header-count">共 {{list.length}} 个点位</text>
-      <view class="header-btn" bindtap="goShare">+ 上传新点位</view>
+      <view class="header-btn" bindtap="goShare" hover-class="tap">+ 上传新点位</view>
     </view>
 
     <!-- 空状态 -->
@@ -20,7 +20,7 @@
       <text class="empty-icon">🗺️</text>
       <view class="empty-title">还没有宝藏点位</view>
       <view class="empty-sub">把你常去的好赶海地点传上来，下次一键导航</view>
-      <view class="empty-cta" bindtap="goShare">去上传第一个</view>
+      <view class="empty-cta" bindtap="goShare" hover-class="tap">去上传第一个</view>
     </view>
 
     <!-- 加载中 -->

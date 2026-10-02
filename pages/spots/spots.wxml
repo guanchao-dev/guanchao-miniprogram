@@ -5,7 +5,7 @@
       <text>加载中…</text>
     </view>
     <view class="empty-tip" wx:elif="{{!list.length}}">暂无点位，请稍后重试</view>
-    <view class="card list-card" wx:for="{{list}}" wx:key="id" data-id="{{item.id}}" bindtap="openDetail">
+    <view class="card list-card" wx:for="{{list}}" wx:key="id" data-id="{{item.id}}" bindtap="openDetail" hover-class="tap">
       <view class="list-title">{{item.name}}</view>
       <view class="list-meta">{{item.city}} {{item.distanceText}}</view>
       <view class="list-meta">{{item.openTime}}</view>

@@ -1,5 +1,5 @@
 <view class="unlock-mask" wx:if="{{visible}}" catchtouchmove="noop">
-  <view class="unlock-close" bindtap="onClose">×</view>
+  <view class="unlock-close" bindtap="onClose" hover-class="tap">×</view>
   <view class="unlock-copy">
     <view class="unlock-kicker">{{kicker}}</view>
     <view class="unlock-name">
@@ -24,5 +24,5 @@
     </view>
   </view>
 
-  <view class="unlock-btn" bindtap="onView">立即查看</view>
+  <view class="unlock-btn" bindtap="onView" hover-class="tap">立即查看</view>
 </view>

@@ -38,16 +38,16 @@
         wx:key="date"
         data-date="{{item.date}}"
         bindtap="onPickDate"
-      >
+       hover-class="tap">
         <text class="date-day">{{item.day}}</text>
         <text class="date-week">{{item.week}}</text>
       </view>
     </scroll-view>
 
     <view class="nav-row">
-      <view class="nav-btn" bindtap="onPrevDay">前一天</view>
+      <view class="nav-btn" bindtap="onPrevDay" hover-class="tap">前一天</view>
       <view class="nav-mid">{{date}}</view>
-      <view class="nav-btn" bindtap="onNextDay">后一天</view>
+      <view class="nav-btn" bindtap="onNextDay" hover-class="tap">后一天</view>
     </view>
 
     <view class="card block">

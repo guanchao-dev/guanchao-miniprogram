@@ -6,7 +6,7 @@
       wx:key="id"
       data-id="{{item.id}}"
       bindtap="onTab"
-    >{{item.name}}</view>
+     hover-class="tap">{{item.name}}</view>
   </view>
 
   <view class="page-loading" wx:if="{{loading}}">

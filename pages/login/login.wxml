@@ -28,7 +28,7 @@
       </view>
       <view class="login-note">头像和昵称可以不填，之后在「我的」里也能改。</view>
 
-      <view class="btn login-btn" bindtap="onWechatLogin">{{loading ? '登录中...' : '微信一键登录'}}</view>
+      <view class="btn login-btn" bindtap="onWechatLogin" hover-class="tap">{{loading ? '登录中...' : '微信一键登录'}}</view>
     </view>
   </view>
 </view>

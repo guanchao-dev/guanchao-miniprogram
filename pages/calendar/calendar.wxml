@@ -30,7 +30,7 @@
             wx:for-item="cell"
             data-date="{{cell.date}}"
             bindtap="onTapDay"
-          >
+           hover-class="tap">
             <block wx:if="{{cell}}">
               <view class="cal-day">{{cell.day}}</view>
               <view class="cal-low" wx:if="{{cell.lowText}}">退 {{cell.lowText}}</view>
@@ -69,7 +69,7 @@
       <view class="remind-time">提醒时间 <text class="remind-val">{{remindTime}}</text></view>
     </picker>
     <view class="remind-sub">会在该时间前 1 小时发消息提醒</view>
-    <view class="btn remind-btn" bindtap="confirmRemind">{{reminding ? '设置中...' : '设置提醒'}}</view>
+    <view class="btn remind-btn" bindtap="confirmRemind" hover-class="tap">{{reminding ? '设置中...' : '设置提醒'}}</view>
   </view>
 </view>
 

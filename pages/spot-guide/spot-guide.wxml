@@ -11,7 +11,7 @@
       <text>加载中…</text>
     </view>
     <view class="empty-tip" wx:elif="{{!list.length}}">暂无赶海点</view>
-    <view class="spot-item card" wx:for="{{list}}" wx:key="id" data-id="{{item.id}}" bindtap="onOpen">
+    <view class="spot-item card" wx:for="{{list}}" wx:key="id" data-id="{{item.id}}" bindtap="onOpen" hover-class="tap">
       <view class="item-rank">{{index + 1}}</view>
       <image class="item-icon" src="{{item.icon}}" mode="aspectFit"></image>
       <view class="item-body">
@@ -26,12 +26,12 @@
     <view class="sheet" catchtap="noop">
       <view class="sheet-head">
         <text>{{detail.name}}</text>
-        <text class="sheet-close" bindtap="closeDetail">×</text>
+        <text class="sheet-close" bindtap="closeDetail" hover-class="tap">×</text>
       </view>
       <scroll-view scroll-y class="sheet-body">
         <swiper wx:if="{{photos.length}}" class="pano" indicator-dots circular>
           <swiper-item wx:for="{{photos}}" wx:key="*this">
-            <image class="pano-img" src="{{item}}" mode="aspectFill" data-url="{{item}}" bindtap="previewPhoto"></image>
+            <image class="pano-img" src="{{item}}" mode="aspectFill" data-url="{{item}}" bindtap="previewPhoto" hover-class="tap"></image>
           </swiper-item>
         </swiper>
         <view class="pano-fallback" wx:else>
@@ -48,7 +48,7 @@
           <text class="info-v">{{detail.openTime}}</text>
         </view>
 
-        <view class="nav-row" bindtap="onNavigate">
+        <view class="nav-row" bindtap="onNavigate" hover-class="tap">
           <view class="nav-row-main">
             <text class="nav-row-title">导航到{{detail.navName || detail.name}}</text>
             <text class="nav-row-sub">{{detail.distanceText}} · 高德 / 百度等地图一键导航</text>
@@ -77,7 +77,7 @@
             wx:key="name"
             data-id="{{item.id}}"
             bindtap="openSpecies"
-          >{{item.name}}</text>
+           hover-class="tap">{{item.name}}</text>
         </view>
         <text class="hint">{{detail.observeHint}}</text>
 
@@ -85,7 +85,7 @@
           <text class="chip" wx:for="{{detail.safetyTags}}" wx:key="*this">{{item}}</text>
         </view>
 
-        <view class="btn full-btn" bindtap="goExplore">开始探索</view>
+        <view class="btn full-btn" bindtap="goExplore" hover-class="tap">开始探索</view>
       </scroll-view>
     </view>
   </view>

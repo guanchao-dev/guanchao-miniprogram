@@ -289,3 +289,69 @@ page {
 .quiz-options {
   margin-top: 12rpx;
 }
+
+/* ============================================================
+   全局动效
+   ------------------------------------------------------------
+   页面之间的切换动画由微信原生控制（webview 渲染器改不了），
+   所以「顺滑感」只能从这三处来：弹窗过渡、按下反馈、内容入场。
+
+   时长与曲线统一用一套：短（0.2s 上下）、减速曲线（ease-out），
+   不做弹跳、不做大位移 —— 动作越小越像系统原生。
+   ============================================================ */
+
+@keyframes mask-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* 面板轻微上浮 + 从略小回到原尺寸。位移只有 28rpx，避免"飞进来"的廉价感 */
+@keyframes panel-in {
+  from { opacity: 0; transform: translateY(28rpx) scale(0.96); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* 内容入场：只用透明度。
+   刻意不用位移 —— transform 会给内部 position:fixed 的弹窗制造包含块，
+   弹窗就会相对内容区定位而不是视口，直接错位。 */
+@keyframes page-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* 遮罩淡入。弹窗都用 wx:if 控制显隐，进场动画纯 CSS 就能生效，不用改 JS。
+   出场没做：wx:if 会把元素立刻移除，要做出场得改成常驻 DOM + visible 控制，
+   收益不大、改动面却很大。 */
+.mask,
+.ai-mask,
+.unlock-mask,
+.spot-mask,
+.share-panel-mask,
+.remind-mask,
+.medal-modal-mask {
+  animation: mask-in 0.22s ease-out both;
+}
+
+/* 弹窗面板。.panel 是 checkin-form 里的内联表单面板，所以只在遮罩内才动 */
+.sheet,
+.ai-modal,
+.mask .panel,
+.spot-mask .panel,
+.share-panel-mask .panel,
+.remind-mask .panel,
+.medal-modal-mask .panel {
+  animation: panel-in 0.26s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* 按下反馈。wxml 上用 hover-class="tap" 指定，这里只定义样子。
+   之前 157 个可点击元素只有 1 个有反馈，点下去毫无动静 —— 这是"顺滑感"
+   里体感最强的一块。 */
+.tap {
+  opacity: 0.68;
+}
+
+/* 页面内容入场。放在 .page-content 上，每个页面首次加载淡入一次；
+   tabBar 页面被切回来时不会重放（元素没销毁）。 */
+.page-content {
+  animation: page-in 0.2s ease-out both;
+}

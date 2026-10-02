@@ -13,7 +13,7 @@
     <!-- 地图选点 -->
     <view class="card field-card">
       <view class="field-label">位置</view>
-      <view class="place-pick" bindtap="choosePlace">
+      <view class="place-pick" bindtap="choosePlace" hover-class="tap">
         <block wx:if="{{lat}}">
           <view class="place-name">{{name || '未命名点位'}}</view>
           <view class="place-addr" wx:if="{{address}}">{{address}}</view>

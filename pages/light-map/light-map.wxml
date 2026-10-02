@@ -6,7 +6,7 @@
 
   <view class="page-content">
     <view class="map-card card">
-      <view class="map-switch" bindtap="onSwitchMap">{{mapName}} ▾</view>
+      <view class="map-switch" bindtap="onSwitchMap" hover-class="tap">{{mapName}} ▾</view>
       <view class="page-loading" wx:if="{{loading}}">
         <view class="spinner"></view>
         <text>加载中…</text>

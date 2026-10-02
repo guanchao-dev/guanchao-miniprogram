@@ -10,7 +10,7 @@
         <image class="place-icon" src="https://www.blueakaiwu.cn/api/v1/static/assets/home/home-pin.png" mode="aspectFit"></image>
         <text>{{place}}</text>
       </view>
-      <view class="search-chip" bindtap="onSearch">
+      <view class="search-chip" bindtap="onSearch" hover-class="tap">
         <text>搜索潮汐 / 点位</text>
         <image class="search-icon" src="https://www.blueakaiwu.cn/api/v1/static/assets/home/home-search.png" mode="aspectFit"></image>
       </view>
@@ -22,7 +22,7 @@
         <view class="hero-kicker">追潮记 · 今日</view>
         <view class="hero-title">跟泡泡一起</view>
         <view class="hero-title">出发探索</view>
-        <view id="onb-watch" class="btn watch-btn {{watchClass}}" bindtap="onWatchToggle">{{watchLabel}}</view>
+        <view id="onb-watch" class="btn watch-btn {{watchClass}}" bindtap="onWatchToggle" hover-class="tap">{{watchLabel}}</view>
       </view>
       <view class="hero-visual">
         <image class="hero-mascot" src="/assets/temp_png/paopao-q-2x.png" mode="aspectFit"></image>
@@ -32,14 +32,14 @@
     <view id="onb-spots" class="hot-box card">
       <view class="hot-head">
         <text class="section-title">赶海地点推荐</text>
-        <text class="section-more" bindtap="goRecommend">全部 ›</text>
+        <text class="section-more" bindtap="goRecommend" hover-class="tap">全部 ›</text>
       </view>
       <view class="page-loading" wx:if="{{recLoading}}">
         <view class="spinner"></view>
         <text>加载中…</text>
       </view>
       <view class="empty-tip" wx:elif="{{!recommended.length}}">暂无推荐点位</view>
-      <view class="hot-row" wx:for="{{recommended}}" wx:key="id" bindtap="goRecommend">
+      <view class="hot-row" wx:for="{{recommended}}" wx:key="id" bindtap="goRecommend" hover-class="tap">
         <text class="hot-rank rank-{{index + 1}}">{{index + 1}}</text>
         <text class="hot-name">{{item.name}}</text>
         <text class="hot-heat">热 {{item.heat}}</text>
@@ -48,17 +48,17 @@
     </view>
 
     <view class="ai-row">
-      <view id="onb-photo" class="ai-card photo" bindtap="onGuess">
+      <view id="onb-photo" class="ai-card photo" bindtap="onGuess" hover-class="tap">
         <view class="ai-orb"></view>
         <image class="ai-icon" src="https://www.blueakaiwu.cn/api/v1/static/assets/home/home-camera.png" mode="aspectFit"></image>
         <text class="ai-name">生物识别</text>
       </view>
-      <view id="onb-trash" class="ai-card trash" bindtap="onTrashGuess">
+      <view id="onb-trash" class="ai-card trash" bindtap="onTrashGuess" hover-class="tap">
         <view class="ai-orb"></view>
         <image class="ai-icon" src="https://www.blueakaiwu.cn/api/v1/static/assets/home/home-gear.png" mode="aspectFit"></image>
         <text class="ai-name">生态净滩</text>
       </view>
-      <view id="onb-advice" class="ai-card advice" bindtap="onRefreshAdvice">
+      <view id="onb-advice" class="ai-card advice" bindtap="onRefreshAdvice" hover-class="tap">
         <view class="ai-orb"></view>
         <image class="ai-icon" src="https://www.blueakaiwu.cn/api/v1/static/assets/home/home-nearby.png" mode="aspectFit"></image>
         <text class="ai-name">出门建议</text>
@@ -77,7 +77,7 @@
       indicator-active-color="#1888BF"
     >
       <swiper-item wx:for="{{activities}}" wx:key="id">
-        <view class="activity-card {{item.theme}}" data-item="{{item}}" bindtap="onActivity">
+        <view class="activity-card {{item.theme}}" data-item="{{item}}" bindtap="onActivity" hover-class="tap">
           <block wx:if="{{item.theme === 'banner'}}">
             <image class="activity-bg" src="{{item.icon}}" mode="aspectFill"></image>
           </block>
@@ -102,7 +102,7 @@
           <text class="adv-title">出门建议</text>
           <text class="adv-sub">泡泡的赶海小提醒</text>
         </view>
-        <text class="adv-close" bindtap="closeAdvice">×</text>
+        <text class="adv-close" bindtap="closeAdvice" hover-class="tap">×</text>
       </view>
 
       <view class="adv-bubble">
@@ -133,7 +133,7 @@
     <view class="ai-modal-wrap" catchtap="noop">
     <view class="ai-modal">
       <view class="ai-modal-head only-close">
-        <text class="ai-close" bindtap="closeGuess">×</text>
+        <text class="ai-close" bindtap="closeGuess" hover-class="tap">×</text>
       </view>
       <scroll-view scroll-y class="ai-modal-body">
         <image wx:if="{{guessImage}}" class="guess-photo" src="{{guessImage}}" mode="aspectFit"></image>
@@ -154,7 +154,7 @@
 
               <block wx:for="{{obj.visibleCandidates}}" wx:for-item="cand" wx:key="rank">
                 <view class="candidate">
-                  <view data-item="{{cand}}" bindtap="openWiki">
+                  <view data-item="{{cand}}" bindtap="openWiki" hover-class="tap">
                     <view class="candidate-top">
                       <text class="candidate-name">{{cand.name}}</text>
                       <text class="candidate-prob">{{cand.probabilityText}}</text>
@@ -195,7 +195,7 @@
     <view class="ai-modal" catchtap="noop">
       <view class="ai-modal-head">
         <text>{{trash.isTrash === false ? '小螃蟹没看到垃圾' : '垃圾分类小助手'}}</text>
-        <text class="ai-close" bindtap="closeTrash">×</text>
+        <text class="ai-close" bindtap="closeTrash" hover-class="tap">×</text>
       </view>
       <scroll-view scroll-y class="ai-modal-body">
         <image wx:if="{{trashImage}}" class="guess-photo" src="{{trashImage}}" mode="aspectFit"></image>
@@ -253,7 +253,7 @@
   <view class="spot-sheet" catchtap="noop">
     <view class="spot-sheet-head">
       <text class="spot-sheet-title">选择观潮地点</text>
-      <text class="spot-sheet-close" bindtap="closeSpotPicker">×</text>
+      <text class="spot-sheet-close" bindtap="closeSpotPicker" hover-class="tap">×</text>
     </view>
     <view class="spot-sheet-tip">选一个离你近、人气高的赶海点，或在地图上自己选</view>
 
@@ -266,7 +266,7 @@
           wx:key="id"
           data-index="{{index}}"
           bindtap="onPickWatchSpot"
-        >
+         hover-class="tap">
           <view class="spot-rank">{{index + 1}}</view>
           <view class="spot-row-main">
             <text class="spot-row-name">{{item.name}}</text>
@@ -280,7 +280,7 @@
         <view class="spot-empty" wx:if="{{!watchSpots.length}}">暂时没有推荐点位，可以从地图自选</view>
       </view>
 
-      <view class="spot-custom" bindtap="onChooseCustomSpot">
+      <view class="spot-custom" bindtap="onChooseCustomSpot" hover-class="tap">
         <text class="spot-custom-icon">📍</text>
         <view class="spot-custom-main">
           <text class="spot-custom-title">地图上自己选</text>

@@ -3,7 +3,7 @@
     <block wx:if="{{!card.id}}">
       <view class="card form-card">
         <view class="field-label">观察照片</view>
-        <view class="photo-box" bindtap="choosePhoto">
+        <view class="photo-box" bindtap="choosePhoto" hover-class="tap">
           <image wx:if="{{photoPath}}" class="photo" src="{{photoPath}}" mode="aspectFill"></image>
           <view wx:else class="photo-placeholder">
             <text>点击拍照或从相册选择</text>
@@ -41,7 +41,7 @@
           placeholder="你看到了什么？例如：石头缝里有好多小白点"
         />
 
-        <view class="btn submit-btn" bindtap="onSubmit">{{submitting ? '生成中...' : '生成今日发现'}}</view>
+        <view class="btn submit-btn" bindtap="onSubmit" hover-class="tap">{{submitting ? '生成中...' : '生成今日发现'}}</view>
       </view>
     </block>
 
@@ -55,8 +55,8 @@
         <view class="safety" wx:if="{{card.safetyTip}}">安全提醒：{{card.safetyTip}}</view>
         <view class="disc">{{card.disclaimer}}</view>
         <view class="action-row">
-          <view class="btn action-btn" bindtap="onFavorite">{{card.favorited ? '已收藏' : '收藏'}}</view>
-          <view class="btn action-btn share-btn" bindtap="onShare">分享</view>
+          <view class="btn action-btn" bindtap="onFavorite" hover-class="tap">{{card.favorited ? '已收藏' : '收藏'}}</view>
+          <view class="btn action-btn share-btn" bindtap="onShare" hover-class="tap">分享</view>
         </view>
       </view>
     </block>

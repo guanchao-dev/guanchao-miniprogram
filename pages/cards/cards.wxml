@@ -14,7 +14,7 @@
     <!-- 观潮记录卡：只留「认了几种生物 / 垃圾量」，底部铺这次认出的图鉴图 -->
     <view class="day-block" wx:for="{{groups}}" wx:key="date">
       <view class="day-label">{{item.label}}</view>
-      <view class="log-card card" wx:for="{{item.items}}" wx:for-item="row" wx:key="id" data-id="{{row.id}}" bindtap="onOpen">
+      <view class="log-card card" wx:for="{{item.items}}" wx:for-item="row" wx:key="id" data-id="{{row.id}}" bindtap="onOpen" hover-class="tap">
         <!-- 日志卡版式：一行一个条目，标签在左、数值压在右侧的横线上 -->
         <view class="log-block">
           <view class="log-line">
@@ -50,7 +50,7 @@
     <view class="sheet" catchtap="noop">
       <view class="sheet-head">
         <text>观潮记录</text>
-        <text class="sheet-close" bindtap="closeDetail">×</text>
+        <text class="sheet-close" bindtap="closeDetail" hover-class="tap">×</text>
       </view>
       <scroll-view scroll-y class="sheet-body">
         <!-- 观潮日志卡：两列网格，每格「标签在左、数值压在右侧横线上」 -->

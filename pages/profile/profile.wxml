@@ -6,7 +6,7 @@
 
   <view class="page-content">
     <view class="profile-hero">
-      <view class="user-row" bindtap="goLogin">
+      <view class="user-row" bindtap="goLogin" hover-class="tap">
         <image class="avatar" src="{{user.avatar}}" mode="aspectFit" catchtap="goEditProfile"></image>
         <view class="user-meta">
           <view class="user-name">{{user.name}}</view>
@@ -19,7 +19,7 @@
       <view class="section-head">
         <text class="section-title">观潮记录</text>
       </view>
-      <view class="record-banner card" bindtap="goRecords">
+      <view class="record-banner card" bindtap="goRecords" hover-class="tap">
         <view class="record-banner-deco"></view>
         <view class="record-banner-icon">
           <image src="https://www.blueakaiwu.cn/api/v1/static/assets/profile/profile-records.png" mode="aspectFit"></image>
@@ -42,7 +42,7 @@
           data-url="{{item.url}}"
           data-tab="{{item.tab}}"
           bindtap="onService"
-        >
+         hover-class="tap">
           <view class="service-icon {{item.tone}}">
             <image src="{{item.icon}}" mode="aspectFit"></image>
           </view>
@@ -51,9 +51,9 @@
       </view>
 
       <view class="compliance-links">
-        <text class="compliance-link" data-type="collection" bindtap="onCompliance">《个人信息收集清单》</text>
-        <text class="compliance-link" data-type="sdk" bindtap="onCompliance">《SDK共享清单》</text>
-        <text class="compliance-link" data-type="sensitive" bindtap="onCompliance">《敏感个人信息处理说明》</text>
+        <text class="compliance-link" data-type="collection" bindtap="onCompliance" hover-class="tap">《个人信息收集清单》</text>
+        <text class="compliance-link" data-type="sdk" bindtap="onCompliance" hover-class="tap">《SDK共享清单》</text>
+        <text class="compliance-link" data-type="sensitive" bindtap="onCompliance" hover-class="tap">《敏感个人信息处理说明》</text>
       </view>
 
       <view class="version">追潮记 · 0.1.0 测试版</view>

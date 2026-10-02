@@ -16,7 +16,7 @@
           data-qid="{{item.id}}"
           data-oid="{{opt.id}}"
           bindtap="onPick"
-        >{{opt.text}}</view>
+         hover-class="tap">{{opt.text}}</view>
       </view>
     </view>
 
@@ -26,7 +26,7 @@
       <view class="list-meta" wx:for="{{result.wrong}}" wx:key="questionId">{{item.explain}}</view>
     </view>
 
-    <view class="btn full-btn" wx:if="{{questions.length && !result}}" bindtap="onSubmit">提交答案</view>
+    <view class="btn full-btn" wx:if="{{questions.length && !result}}" bindtap="onSubmit" hover-class="tap">提交答案</view>
   </view>
   <unlock-popup id="unlockPopup"></unlock-popup>
 </view>

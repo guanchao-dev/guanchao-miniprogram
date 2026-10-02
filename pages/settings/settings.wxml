@@ -3,32 +3,32 @@
     <view class="card list-card" wx:if="{{!loggedIn}}">
       <view class="list-title">账号</view>
       <view class="list-meta">登录后可同步观潮记录、成就与探索进度。</view>
-      <view class="btn full-btn" bindtap="goLogin">登录 / 注册</view>
+      <view class="btn full-btn" bindtap="goLogin" hover-class="tap">登录 / 注册</view>
     </view>
 
     <view class="card list-card" wx:if="{{loggedIn}}">
       <view class="list-title">账号</view>
-      <view class="btn full-btn" bindtap="onLogout">退出登录</view>
-      <view class="btn full-btn settings-danger" bindtap="onDelete">注销并删除数据</view>
+      <view class="btn full-btn" bindtap="onLogout" hover-class="tap">退出登录</view>
+      <view class="btn full-btn settings-danger" bindtap="onDelete" hover-class="tap">注销并删除数据</view>
     </view>
 
     <view class="card list-card">
       <view class="list-title">监护人同意</view>
       <view class="list-meta">未成年人使用追潮记，建议由监护人确认同意后再开始场地探索。</view>
-      <view class="btn full-btn" bindtap="onConsent">我是监护人，确认同意</view>
-      <view class="btn full-btn ghost-btn" bindtap="onWithdrawConsent">撤回监护人同意</view>
+      <view class="btn full-btn" bindtap="onConsent" hover-class="tap">我是监护人，确认同意</view>
+      <view class="btn full-btn ghost-btn" bindtap="onWithdrawConsent" hover-class="tap">撤回监护人同意</view>
     </view>
 
     <view class="card list-card">
       <view class="list-title">新手教程</view>
       <view class="list-meta">再看一遍特色功能介绍：开始观潮、AI 识别、生态净滩、宝藏点位…</view>
-      <view class="btn full-btn" bindtap="onReplayOnboarding">再次查看新手教程</view>
+      <view class="btn full-btn" bindtap="onReplayOnboarding" hover-class="tap">再次查看新手教程</view>
     </view>
 
     <view class="card list-card">
       <view class="list-title">隐私与协议</view>
       <view class="list-meta" wx:if="{{version}}">当前版本 {{version}}</view>
-      <view class="btn full-btn ghost-btn" bindtap="openPrivacy">查看用户协议 / 隐私政策</view>
+      <view class="btn full-btn ghost-btn" bindtap="openPrivacy" hover-class="tap">查看用户协议 / 隐私政策</view>
     </view>
 
     <view class="settings-version">追潮记 · 0.1.0 测试版</view>

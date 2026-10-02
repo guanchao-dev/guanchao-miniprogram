@@ -13,7 +13,7 @@
         <view class="hero-sub">发起一场签到，或参与老师发起的签到</view>
       </view>
 
-      <view class="entry-card" data-mode="create" bindtap="pickMode">
+      <view class="entry-card" data-mode="create" bindtap="pickMode" hover-class="tap">
         <view class="entry-icon create">📍</view>
         <view class="entry-body">
           <view class="entry-title">设定签到</view>
@@ -22,7 +22,7 @@
         <text class="entry-arrow">›</text>
       </view>
 
-      <view class="entry-card" data-mode="join" bindtap="pickMode">
+      <view class="entry-card" data-mode="join" bindtap="pickMode" hover-class="tap">
         <view class="entry-icon join">✅</view>
         <view class="entry-body">
           <view class="entry-title">进行签到</view>
@@ -35,7 +35,7 @@
         <view class="sec-head">
           <text class="sec-title">我发起的签到</text>
         </view>
-        <view class="sess-card" wx:for="{{mySessions}}" wx:key="sessionId" data-id="{{item.sessionId}}" bindtap="openDetail">
+        <view class="sess-card" wx:for="{{mySessions}}" wx:key="sessionId" data-id="{{item.sessionId}}" bindtap="openDetail" hover-class="tap">
           <view class="sess-top">
             <text class="sess-place">{{item.placeName}}</text>
             <text class="sess-badge {{item.status === 'active' ? 'on' : ''}}">{{item.status === 'active' ? '进行中' : '已结束'}}</text>
@@ -52,7 +52,7 @@
 
     <!-- ==================== 签到详情 ==================== -->
     <block wx:elif="{{mode === 'detail'}}">
-      <view class="topbar" bindtap="back">
+      <view class="topbar" bindtap="back" hover-class="tap">
         <text class="topbar-back">‹</text>
         <text class="topbar-title">签到详情</text>
       </view>
@@ -62,7 +62,7 @@
           <view class="result-title">{{detailSession.placeName}}</view>
           <view class="result-sub">{{detailSession.status === 'active' ? '进行中' : '已结束'}}</view>
 
-          <view class="key-display" bindtap="copyDetailKey">
+          <view class="key-display" bindtap="copyDetailKey" hover-class="tap">
             <text class="key-value">{{detailSession.key}}</text>
             <text class="key-hint">点击复制密钥</text>
           </view>
@@ -75,14 +75,14 @@
             <view class="info-row"><text class="info-k">签到</text><text class="info-v">{{detailSession.checkinCount}} 人</text></view>
           </view>
 
-          <view class="main-btn" data-id="{{detailSession.sessionId}}" bindtap="openRecords">查看报到名单</view>
+          <view class="main-btn" data-id="{{detailSession.sessionId}}" bindtap="openRecords" hover-class="tap">查看报到名单</view>
         </view>
       </block>
     </block>
 
     <!-- ==================== 设定签到 ==================== -->
     <block wx:elif="{{mode === 'create'}}">
-      <view class="topbar" bindtap="back">
+      <view class="topbar" bindtap="back" hover-class="tap">
         <text class="topbar-back">‹</text>
         <text class="topbar-title">设定签到</text>
       </view>
@@ -94,7 +94,7 @@
           <view class="result-title">签到已创建</view>
           <view class="result-sub">把密钥或二维码发给大家</view>
 
-          <view class="key-display" bindtap="copyKey">
+          <view class="key-display" bindtap="copyKey" hover-class="tap">
             <text class="key-value">{{created.key}}</text>
             <text class="key-hint">点击复制</text>
           </view>
@@ -107,7 +107,7 @@
             <view class="info-row"><text class="info-k">范围</text><text class="info-v">已圈定签到区域</text></view>
           </view>
 
-          <view class="main-btn" bindtap="back">完成</view>
+          <view class="main-btn" bindtap="back" hover-class="tap">完成</view>
         </view>
       </block>
 
@@ -123,11 +123,11 @@
                 <text class="place-addr" wx:if="{{address}}">{{address}}</text>
               </view>
             </view>
-            <view class="panel-btn" bindtap="choosePlace">重新选择地点</view>
+            <view class="panel-btn" bindtap="choosePlace" hover-class="tap">重新选择地点</view>
           </block>
           <block wx:else>
             <view class="panel-empty">还没有选择签到地点</view>
-            <view class="panel-btn primary" bindtap="choosePlace">搜索并选择地点</view>
+            <view class="panel-btn primary" bindtap="choosePlace" hover-class="tap">搜索并选择地点</view>
           </block>
         </view>
 
@@ -147,15 +147,15 @@
               bindtap="onMapTap"
             ></map>
             <view class="poly-actions">
-              <view class="ghost-btn" bindtap="undoPoint">撤销一个点</view>
-              <view class="ghost-btn" bindtap="clearPoints">清空重画</view>
+              <view class="ghost-btn" bindtap="undoPoint" hover-class="tap">撤销一个点</view>
+              <view class="ghost-btn" bindtap="clearPoints" hover-class="tap">清空重画</view>
             </view>
           </view>
 
           <view class="step"><text class="step-name">生成密钥</text></view>
           <view class="panel">
             <text class="panel-tip">生成后把密钥发给参与签到的人</text>
-            <view class="main-btn {{polyPoints.length < 3 ? 'disabled' : ''}}" bindtap="onCreate">
+            <view class="main-btn {{polyPoints.length < 3 ? 'disabled' : ''}}" bindtap="onCreate" hover-class="tap">
               {{creating ? '生成中…' : '生成签到密钥'}}
             </view>
           </view>
@@ -165,7 +165,7 @@
 
     <!-- ==================== 进行签到 ==================== -->
     <block wx:elif="{{mode === 'join'}}">
-      <view class="topbar" bindtap="back">
+      <view class="topbar" bindtap="back" hover-class="tap">
         <text class="topbar-back">‹</text>
         <text class="topbar-title">进行签到</text>
       </view>
@@ -183,7 +183,7 @@
             <view class="info-row" wx:if="{{result.sessionPlace}}"><text class="info-k">地点</text><text class="info-v">{{result.sessionPlace}}</text></view>
             <view class="info-row"><text class="info-k">日期</text><text class="info-v">{{result.date}}</text></view>
           </view>
-          <view class="main-btn" bindtap="back">完成</view>
+          <view class="main-btn" bindtap="back" hover-class="tap">完成</view>
         </view>
       </block>
 
@@ -200,8 +200,8 @@
               bindinput="onKeyInput"
               maxlength="6"
             />
-            <view class="mini-btn primary" bindtap="onVerify">{{verifying ? '验证中' : '验证'}}</view>
-            <view class="mini-btn" bindtap="scanKey">扫码</view>
+            <view class="mini-btn primary" bindtap="onVerify" hover-class="tap">{{verifying ? '验证中' : '验证'}}</view>
+            <view class="mini-btn" bindtap="scanKey" hover-class="tap">扫码</view>
           </view>
         </view>
 
@@ -226,7 +226,7 @@
           <view class="step"><text class="step-name">确认位置</text></view>
           <view class="panel">
             <view class="loc-btn-row">
-              <view class="panel-btn {{located ? '' : 'primary'}}" bindtap="locate">
+              <view class="panel-btn {{located ? '' : 'primary'}}" bindtap="locate" hover-class="tap">
                 {{locating ? '定位中…' : (located ? '重新定位' : '获取当前位置')}}
               </view>
             </view>
@@ -238,7 +238,7 @@
                 <text class="loc-state-desc" wx:else>距签到点约 {{distanceText}}，请走到活动场地内再试</text>
               </view>
             </view>
-            <view class="main-btn {{inFence ? '' : 'disabled'}}" bindtap="onSubmit">
+            <view class="main-btn {{inFence ? '' : 'disabled'}}" bindtap="onSubmit" hover-class="tap">
               {{submitting ? '提交中…' : '提交签到'}}
             </view>
             <text class="panel-note">位置仅按约 300 米精度记录，不保存精确轨迹。</text>
@@ -249,7 +249,7 @@
 
     <!-- ==================== 报到名单 ==================== -->
     <block wx:elif="{{mode === 'records'}}">
-      <view class="topbar" bindtap="back">
+      <view class="topbar" bindtap="back" hover-class="tap">
         <text class="topbar-back">‹</text>
         <text class="topbar-title">报到名单</text>
       </view>
@@ -267,7 +267,7 @@
             <text class="records-count">已签到 {{records.checkinCount}} 人</text>
           </view>
           <text class="panel-note" wx:if="{{records.status !== 'active'}}">该签到已结束</text>
-          <view class="main-btn" bindtap="copyRecords">复制名单</view>
+          <view class="main-btn" bindtap="copyRecords" hover-class="tap">复制名单</view>
         </view>
 
         <view class="empty-tip" wx:if="{{!records.list.length}}">还没有人签到</view>

@@ -11,7 +11,7 @@
       <text>加载中…</text>
     </view>
     <view class="empty-tip" wx:elif="{{!list.length}}">暂无科普内容</view>
-    <view class="spot-item card" wx:for="{{list}}" wx:key="id" data-id="{{item.id}}" bindtap="onOpen">
+    <view class="spot-item card" wx:for="{{list}}" wx:key="id" data-id="{{item.id}}" bindtap="onOpen" hover-class="tap">
       <view class="item-rank">{{index + 1}}</view>
       <view class="item-body">
         <view class="item-name">{{item.title}}</view>
@@ -25,7 +25,7 @@
     <view class="sheet" catchtap="noop">
       <view class="sheet-head">
         <text>{{detail.title}}</text>
-        <text class="sheet-close" bindtap="closeDetail">×</text>
+        <text class="sheet-close" bindtap="closeDetail" hover-class="tap">×</text>
       </view>
       <scroll-view scroll-y class="sheet-body">
         <view class="page-loading" wx:if="{{detailLoading}}">

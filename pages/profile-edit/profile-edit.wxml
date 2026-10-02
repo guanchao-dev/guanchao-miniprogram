@@ -7,7 +7,7 @@
     <view class="card edit-card" wx:if="{{!loggedIn}}">
       <view class="list-title">还没有登录</view>
       <view class="edit-hint">登录后才能修改头像和昵称。</view>
-      <view class="btn full-btn" bindtap="goLogin">去登录</view>
+      <view class="btn full-btn" bindtap="goLogin" hover-class="tap">去登录</view>
     </view>
 
     <block wx:else>
@@ -33,7 +33,7 @@
         <view class="edit-hint">头像来自微信授权选择，昵称保存后展示在个人主页。</view>
       </view>
 
-      <view class="btn full-btn edit-save" bindtap="onSave">{{saving ? '保存中…' : '保存'}}</view>
+      <view class="btn full-btn edit-save" bindtap="onSave" hover-class="tap">{{saving ? '保存中…' : '保存'}}</view>
     </block>
   </view>
 </view>

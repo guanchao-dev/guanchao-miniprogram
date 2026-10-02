@@ -58,7 +58,7 @@
             wx:key="id"
             data-index="{{index}}"
             bindtap="onMedal"
-          >
+           hover-class="tap">
             <view class="medal-tag" style="background: {{item.tagBg}}; color: {{item.tagColor}};">{{item.tag}}</view>
             <image class="medal-icon" src="{{item.icon}}" mode="aspectFit"></image>
             <text class="medal-name">{{item.locked ? '???' : item.title}}</text>
@@ -72,15 +72,15 @@
         <image class="level-medal" src="https://www.blueakaiwu.cn/api/v1/static/assets/badges/medal-wing.png" mode="aspectFit"></image>
         <view class="level-title">Lv.24 海洋探索家</view>
         <view class="mini-bar"><view style="width: 64%;"></view></view>
-        <view class="btn level-btn" bindtap="goLightMap">继续探索</view>
+        <view class="btn level-btn" bindtap="goLightMap" hover-class="tap">继续探索</view>
       </view>
 
       <view class="rank-card card">
-        <view class="rank-head" bindtap="goLeaderboard">
+        <view class="rank-head" bindtap="goLeaderboard" hover-class="tap">
           <text class="rank-title">排行榜</text>
           <text class="rank-more">查看完整榜单 ›</text>
         </view>
-        <view class="rank-item {{item.me ? 'me' : ''}}" wx:for="{{friends}}" wx:key="key" bindtap="goLeaderboard">
+        <view class="rank-item {{item.me ? 'me' : ''}}" wx:for="{{friends}}" wx:key="key" bindtap="goLeaderboard" hover-class="tap">
           <text class="rank-no">{{item.rank}}</text>
           <image src="{{item.avatar}}" mode="aspectFill"></image>
           <view class="rank-meta">
@@ -106,10 +106,10 @@
   >
     <view class="medal-modal" catchtap="noop">
       <view class="modal-actions">
-        <view class="modal-action share-action" bindtap="openSharePanel">
+        <view class="modal-action share-action" bindtap="openSharePanel" hover-class="tap">
           <image class="modal-share-icon" src="https://www.blueakaiwu.cn/api/v1/static/assets/icons/share-lucide.png" mode="aspectFit"></image>
         </view>
-        <view class="modal-action close-action" bindtap="closeMedal">×</view>
+        <view class="modal-action close-action" bindtap="closeMedal" hover-class="tap">×</view>
       </view>
 
       <scroll-view class="modal-scroll" scroll-y>
@@ -169,7 +169,7 @@
           <image src="https://www.blueakaiwu.cn/api/v1/static/assets/icons/share-lucide.png" mode="aspectFit"></image>
           <text>分享成就</text>
         </view>
-        <view class="share-panel-close" bindtap="closeSharePanel">×</view>
+        <view class="share-panel-close" bindtap="closeSharePanel" hover-class="tap">×</view>
       </view>
 
       <scroll-view class="share-panel-scroll" scroll-y>
@@ -183,10 +183,10 @@
 
         <view class="share-copy-card">
           <text>{{shareText}}</text>
-          <view class="share-refresh" bindtap="refreshShareCopy">↻</view>
+          <view class="share-refresh" bindtap="refreshShareCopy" hover-class="tap">↻</view>
         </view>
 
-        <view class="share-copy-button" bindtap="copyShareText">
+        <view class="share-copy-button" bindtap="copyShareText" hover-class="tap">
           <view class="copy-symbol">
             <view></view>
           </view>
@@ -203,12 +203,12 @@
             <text>微信好友</text>
           </view>
 
-          <view class="share-channel" data-channel="QQ" bindtap="shareToExternal">
+          <view class="share-channel" data-channel="QQ" bindtap="shareToExternal" hover-class="tap">
             <view class="channel-icon qq-icon">Q</view>
             <text>QQ</text>
           </view>
 
-          <view class="share-channel" data-channel="微博" bindtap="shareToExternal">
+          <view class="share-channel" data-channel="微博" bindtap="shareToExternal" hover-class="tap">
             <view class="channel-icon weibo-icon">博</view>
             <text>微博</text>
           </view>

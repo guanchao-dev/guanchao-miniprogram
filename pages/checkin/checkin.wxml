@@ -3,7 +3,7 @@
     <view class="card list-card">
       <view class="list-title">打卡日历</view>
       <view class="list-meta">完成现场观察后，同一天只计 1 次打卡。</view>
-      <view class="btn full-btn" bindtap="goDiscover">去生成图鉴卡</view>
+      <view class="btn full-btn" bindtap="goDiscover" hover-class="tap">去生成图鉴卡</view>
     </view>
 
     <view class="empty-tip" wx:if="{{!list.length}}">还没有打卡记录</view>
