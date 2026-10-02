@@ -20,7 +20,10 @@ Page({
     ],
     loading: true,
     list: [],
-    emptyText: '暂无图鉴'
+    emptyText: '暂无图鉴',
+    litCount: 0,
+    totalCount: 0,
+    litIds: [] as string[]
   },
 
   onShow() {
@@ -32,7 +35,36 @@ Page({
     this.load()
   },
 
+  /**
+   * 拉「我点亮的物种」集合：顶部进度条 + 列表点亮态都用它。
+   * 收藏列表走的是 /encyclopedia/favorites，不带 lit 字段，所以统一用这个集合判断，
+   * 两种列表的渲染逻辑才一致。
+   */
+  refreshUnlocked() {
+    contentApi.encyclopediaUnlocked()
+      .then((d: any) => {
+        this.setData({
+          litIds: (d && d.speciesIds) || [],
+          litCount: (d && d.litCount) || 0,
+          totalCount: (d && d.totalCount) || 0
+        })
+        this.markLit()
+      })
+      .catch(() => {
+        // 拿不到不影响看图鉴，只是不显示点亮态
+      })
+  },
+
+  /** 集合到位后回填已渲染列表的点亮态 */
+  markLit() {
+    const ids = this.data.litIds
+    this.setData({
+      list: this.data.list.map((it: any) => ({ ...it, lit: ids.indexOf(it.id) >= 0 }))
+    })
+  },
+
   load() {
+    this.refreshUnlocked()
     if (this.data.category === FAV) {
       this.loadFavorites()
       return
@@ -66,11 +98,13 @@ Page({
   },
 
   paint(raw: any[]) {
+    const ids = this.data.litIds
     this.setData({
       list: raw.map((it: any) => ({
         id: it.id,
         name: it.name,
-        coverSrc: ''
+        coverSrc: '',
+        lit: ids.indexOf(it.id) >= 0
       }))
     })
     raw.forEach((it: any, i: number) => {

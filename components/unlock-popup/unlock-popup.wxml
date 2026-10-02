@@ -1,7 +1,7 @@
 <view class="unlock-mask" wx:if="{{visible}}" catchtouchmove="noop">
   <view class="unlock-close" bindtap="onClose">×</view>
   <view class="unlock-copy">
-    <view class="unlock-kicker">恭喜你成功解锁徽章！</view>
+    <view class="unlock-kicker">{{kicker}}</view>
     <view class="unlock-name">
       <text class="wing">❧</text>
       <text>【{{medal.title}}】</text>

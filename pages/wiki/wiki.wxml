@@ -3,14 +3,24 @@
     <view class="chip-row">
       <view class="chip {{category === item.id ? 'active' : ''}}" wx:for="{{cats}}" wx:key="id" data-id="{{item.id}}" bindtap="onCat">{{item.name}}</view>
     </view>
+    <!-- 收集进度：识别并确认过的物种才会点亮 -->
+    <view class="lit-progress" wx:if="{{totalCount > 0}}">
+      <view class="lit-progress-track">
+        <view class="lit-progress-fill" style="width: {{litCount / totalCount * 100}}%"></view>
+      </view>
+      <text class="lit-progress-text">已点亮 {{litCount}} / {{totalCount}}</text>
+    </view>
+
     <view class="page-loading" wx:if="{{loading}}">
       <view class="spinner"></view>
       <text>加载中…</text>
     </view>
     <view class="empty-tip" wx:elif="{{!list.length}}">{{emptyText}}</view>
     <view class="species-grid">
-      <view class="species-cell card" wx:for="{{list}}" wx:key="id" data-id="{{item.id}}" bindtap="openDetail">
-        <image class="species-thumb" src="{{item.coverSrc}}" mode="aspectFill"></image>
+      <view class="species-cell card {{item.lit ? 'unlocked' : 'locked'}}" wx:for="{{list}}" wx:key="id" data-id="{{item.id}}" bindtap="openDetail">
+        <view class="species-thumb-wrap">
+          <image class="species-thumb" src="{{item.coverSrc}}" mode="aspectFill"></image>
+        </view>
         <view class="species-name">{{item.name}}</view>
       </view>
     </view>

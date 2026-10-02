@@ -669,9 +669,24 @@ Page({
     }
     // 本地会话（必须带上完整字段，结束观潮时上报的就是它）
     addWatchItem(entry)
-    // 同步到服务端
+    // 同步到服务端。响应会带回「本次新点亮的图鉴物种」—— 后端只在这个物种此前
+    // 没点亮过时才返回它，所以直接拿去弹庆祝弹窗即可，前端不用另外去重。
     if (session.id) {
-      watchApi.addSpecies(session.id, entry).catch(() => {})
+      watchApi.addSpecies(session.id, entry)
+        .then((res: any) => {
+          const lit = res && res.newlyLitSpecies
+          if (!lit) return
+          enqueueUnlocks([{
+            medalId: lit.id,   // 解锁队列按 medalId 去重
+            id: lit.id,
+            title: lit.name,
+            description: '已收录进你的观潮图鉴',
+            icon: mediaUrl(lit.coverUrl || ''),
+            source: 'species'
+          }], 'species')
+          flushUnlocks(this)
+        })
+        .catch(() => {})
     }
     this.setData({ [`guessItems[${oi}].confirmedRank`]: cand.rank })
     toast('已记入观潮记录：' + cand.name)

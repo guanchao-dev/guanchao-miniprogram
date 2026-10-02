@@ -24,3 +24,90 @@
   font-weight: 800;
   line-height: 1.3;
 }
+
+/* ===== 收集进度条 ===== */
+.lit-progress {
+  display: flex;
+  align-items: center;
+  margin-bottom: 18rpx;
+}
+
+.lit-progress-track {
+  flex: 1;
+  height: 16rpx;
+  border-radius: 8rpx;
+  background: #E9EFED;
+  overflow: hidden;
+}
+
+.lit-progress-fill {
+  height: 100%;
+  border-radius: 8rpx;
+  background: linear-gradient(90deg, #F6D081, #E8B84B);
+}
+
+.lit-progress-text {
+  margin-left: 16rpx;
+  font-size: 24rpx;
+  font-weight: 800;
+  color: #7A8A86;
+  white-space: nowrap;
+}
+
+/* ===== 缩略图包裹层：扫光需要一个定位父级 ===== */
+.species-thumb-wrap {
+  position: relative;
+  overflow: hidden;
+}
+
+/* ===== 未点亮：置灰 =====
+   拆成两条声明：万一某些基础库不支持 filter，opacity 仍能兜底表达「未获得」。 */
+.species-cell.locked .species-thumb {
+  opacity: 0.45;
+  filter: grayscale(1);
+}
+
+.species-cell.locked .species-name {
+  color: #A8B3B0;
+}
+
+/* ===== 已点亮：金边 + 呼吸光晕 ===== */
+.species-cell.unlocked {
+  border: 3rpx solid #E8B84B;
+  animation: goldBreath 2.4s ease-in-out infinite;
+}
+
+@keyframes goldBreath {
+  0%, 100% {
+    box-shadow: 3rpx 3rpx 0 rgba(28, 28, 28, 0.85), 0 0 10rpx 2rpx rgba(246, 208, 129, 0.55);
+  }
+  50% {
+    box-shadow: 3rpx 3rpx 0 rgba(28, 28, 28, 0.85), 0 0 26rpx 8rpx rgba(246, 208, 129, 0.95);
+  }
+}
+
+/* 不灵不灵：一道斜光周期性扫过缩略图 */
+.species-cell.unlocked .species-thumb-wrap::after {
+  content: '';
+  position: absolute;
+  top: -60%;
+  left: -80%;
+  width: 55%;
+  height: 220%;
+  transform: rotate(18deg);
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.9), transparent);
+  animation: shineSweep 2.8s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes shineSweep {
+  0% {
+    left: -80%;
+  }
+  55% {
+    left: 130%;
+  }
+  100% {
+    left: 130%;
+  }
+}

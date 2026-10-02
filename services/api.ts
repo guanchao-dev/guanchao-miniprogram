@@ -113,11 +113,24 @@ export const contentApi = {
       list: unwrapGear(data)
     }))
   },
+  /**
+   * 图鉴列表。返回项带 lit 字段（是否已点亮）。
+   *
+   * ⚠️ 这里的 auth: false 必须与 watchApi.addSpecies 保持一致：两边都用游客身份
+   * client:{id} 归档。若改成 auth: true，点亮会记在 user:{id} 下、列表按 client:{id}
+   * 查，图鉴将永远点不亮。（观潮记录本身就是 client 归属，addSpecies 不能改。）
+   *
+   * cacheTtl: 0 —— 点亮后回到图鉴必须立刻可见，不能等 60 秒缓存过期。
+   */
   encyclopedia(params?: Record<string, any>) {
-    return http.get('/encyclopedia', params, { auth: false }).then((data) => ({
+    return http.get('/encyclopedia', params, { auth: false, cacheTtl: 0 }).then((data) => ({
       raw: data,
       list: unwrapList(data)
     }))
+  },
+  /** 我点亮的图鉴物种 + 总数（图鉴页进度条用）。身份同上，必须 auth: false。 */
+  encyclopediaUnlocked() {
+    return http.get('/encyclopedia/unlocked', {}, { auth: false, cacheTtl: 0 })
   },
   species(id: string) {
     return http.get(`/encyclopedia/${id}`, {}, { auth: false })

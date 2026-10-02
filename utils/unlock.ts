@@ -73,7 +73,9 @@ export function resolveMedal(item: any): Promise<any> {
 }
 
 export function ackUnlock(medalId: string, source = 'pending') {
-  if (!medalId || !isLoggedIn()) return Promise.resolve(null)
+  // 图鉴点亮复用了同一套弹窗，但它不是勋章、没有对应的 ack 接口，
+  // 传 speciesId 过去只会 404，直接跳过。
+  if (!medalId || source === 'species' || !isLoggedIn()) return Promise.resolve(null)
   return achieveApi.ackUnlock(medalId, source).catch(() => null)
 }
 
