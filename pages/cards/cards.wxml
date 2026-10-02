@@ -15,13 +15,13 @@
     <view class="day-block" wx:for="{{groups}}" wx:key="date">
       <view class="day-label">{{item.label}}</view>
       <view class="log-card card" wx:for="{{item.items}}" wx:for-item="row" wx:key="id" data-id="{{row.id}}" bindtap="onOpen">
-        <!-- 两列统计格：标签在上、大号数值在下、数值压在一条横线上 -->
-        <view class="log-grid">
-          <view class="log-cell">
+        <!-- 日志卡版式：一行一个条目，标签在左、数值压在右侧的横线上 -->
+        <view class="log-block">
+          <view class="log-line">
             <text class="log-k">识别生物</text>
             <text class="log-v {{row.creatureCount ? '' : 'is-zero'}}">{{row.creatureCount}} 种</text>
           </view>
-          <view class="log-cell">
+          <view class="log-line">
             <text class="log-k">垃圾量</text>
             <text class="log-v {{row.trashAmountText === '无' ? 'is-zero' : ''}}">{{row.trashAmountText}}</text>
           </view>
@@ -53,13 +53,13 @@
         <text class="sheet-close" bindtap="closeDetail">×</text>
       </view>
       <scroll-view scroll-y class="sheet-body">
-        <!-- 与列表页同一套版式：两列统计格 + 方框分区 -->
-        <view class="log-grid">
-          <view class="log-cell">
+        <!-- 日志卡版式：一行一个条目，标签在左、数值压在右侧的横线上 -->
+        <view class="log-block">
+          <view class="log-line">
             <text class="log-k">识别生物</text>
             <text class="log-v {{detail.creatureCount ? '' : 'is-zero'}}">{{detail.creatureCount}} 种</text>
           </view>
-          <view class="log-cell">
+          <view class="log-line">
             <text class="log-k">垃圾量</text>
             <text class="log-v {{detail.trashAmountText === '无' ? 'is-zero' : ''}}">{{detail.trashAmountText}}</text>
           </view>

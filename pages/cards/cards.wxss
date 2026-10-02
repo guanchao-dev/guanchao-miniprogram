@@ -155,43 +155,44 @@
   line-height: 1.5;
 }
 
-/* ===== 观潮记录卡：两列统计格 + 方框分区 ===== */
+/* ===== 观潮日志卡：一行一个条目，标签在左、数值压在右侧横线上 ===== */
 .log-card {
   padding: 26rpx 28rpx 22rpx;
   margin-bottom: 18rpx;
 }
 
-/* 两列统计格：标签在上，大号数值在下，数值压在一条横线上 */
-.log-grid {
+/* 统计条目收在一个方框里 */
+.log-block {
+  padding: 20rpx 22rpx 2rpx;
+  border-radius: 20rpx;
+  background: #F3F7FB;
+}
+
+.log-line {
   display: flex;
-}
-
-.log-cell {
-  flex: 1;
-  min-width: 0;
-  padding-right: 28rpx;
-}
-
-.log-cell + .log-cell {
-  padding-right: 0;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 24rpx;
 }
 
 .log-k {
-  display: block;
-  font-size: 24rpx;
+  flex: none;
+  font-size: 26rpx;
   font-weight: 700;
   color: #6B7F8F;
 }
 
-/* 数值落在横线上，像纸质日志的填写栏 */
+/* 数值压在一条横线上，横线由左延伸到右边 —— 对应参考图里那条手写填空线 */
 .log-v {
-  display: block;
-  margin-top: 14rpx;
+  flex: 1;
+  min-width: 0;
+  margin-left: 24rpx;
   padding-bottom: 8rpx;
   border-bottom: 3rpx solid #1C1C1C;
-  font-size: 40rpx;
+  text-align: right;
+  font-size: 38rpx;
   font-weight: 850;
-  line-height: 1.15;
+  line-height: 1.2;
 }
 
 /* 「0 种」「无」这类空值弱化，不跟真结果抢视线 */
@@ -202,7 +203,7 @@
 
 /* 方框分区：这次认出的图鉴 */
 .log-box {
-  margin-top: 26rpx;
+  margin-top: 20rpx;
   padding: 18rpx;
   border-radius: 20rpx;
   background: #F3F7FB;
