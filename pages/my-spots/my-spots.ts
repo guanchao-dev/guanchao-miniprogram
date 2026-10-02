@@ -98,10 +98,22 @@ Page({
       title: '删除点位',
       content: `确认删除「${item.name}」？`,
       confirmColor: '#E0533D',
-      success: (res) => {
+      success: async (res) => {
         if (!res.confirm) return
+        // 本地兜底生成的 id 不用动后端；后端点位必须真删，
+        // 否则退出页面再进来 refresh() 会把它从服务器又拉回来 —— 变成「假删除」。
+        if (!item.id.startsWith('spot_local_')) {
+          try {
+            await contentApi.deleteSpot(item.id)
+          } catch (err) {
+            // 后端删失败（例如已被删过）不阻断本地清理
+          }
+        }
         removeSpot(item.id)
-        this.applyList(loadSpots())
+        // 直接从当前展示的列表里摘掉。不能用 applyList(loadSpots())：
+        // 那读的是本地缓存，会把从服务器拉回来的其它点位整批丢掉。
+        const list = this.data.list.filter((it: ListItem) => it.id !== item.id)
+        this.setData({ list, empty: list.length === 0 })
         toast('已删除')
       }
     })

@@ -103,6 +103,10 @@ export const contentApi = {
       .then((data) => ({ raw: data, list: unwrapList(data) }))
       .catch(() => ({ raw: { list: [] }, list: [] }))
   },
+  /** 删除自己上传的点位。后端只允许删自己的，别人的一律返回 404。 */
+  deleteSpot(id: string) {
+    return http.delete(`/spots/${id}`)
+  },
   gear() {
     return http.get('/gear', {}, { auth: false }).then((data) => ({
       raw: data,
