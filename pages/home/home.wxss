@@ -517,6 +517,19 @@
   background: rgba(11, 31, 56, 0.56);
 }
 
+/* 只有「识别结果」那个弹窗的遮罩才加左边距 —— 图鉴按钮跨在它左上角、
+   向左要探出约 70rpx，原来的 24rpx 会让按钮超出屏幕左边缘。
+   出行建议 / 垃圾识别两个弹窗共用 .ai-mask，不能一起改。 */
+.ai-mask.with-corner-entry {
+  padding-left: 88rpx;
+}
+
+/* 图鉴按钮的定位层。它本身不带 overflow:hidden，按钮才能探出弹窗边框。 */
+.ai-modal-wrap {
+  position: relative;
+  width: 100%;
+}
+
 .ai-modal {
   width: 100%;
   max-height: 80vh;
@@ -524,9 +537,9 @@
   border: 4rpx solid #1C1C1C;
   border-radius: 32rpx;
   background: #EAF3FF;
-  /* 用 flex 列布局：头部高度会随图鉴按钮变化，让内容区自适应收缩并在内部滚动。
-     否则头部长高后，头部 + 内容区会超出 max-height:80vh，被 overflow:hidden
-     裁掉且无法滚动 —— 底部「就是这个物种」按钮会点不到。 */
+  /* flex 列布局：内容区自适应收缩并在内部滚动。
+     块级布局下头部 + 内容区(写死 max-height:68vh) 之和可能超过 80vh，
+     超出部分会被 overflow:hidden 裁掉且滚不到 —— 底部按钮会点不到。 */
   display: flex;
   flex-direction: column;
 }
@@ -535,9 +548,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  /* 上内边距 52rpx（原 24rpx）：左上角那个 288rpx 的图鉴按钮旋转 20° 后
-     上下各溢出约 40rpx，留不够会顶到弹窗边框 */
-  padding: 52rpx 28rpx 10rpx;
+  padding: 24rpx 28rpx 8rpx;
   font-size: 32rpx;
   font-weight: 850;
 }
@@ -547,18 +558,20 @@
   font-weight: 300;
 }
 
-.ai-head-left {
-  display: flex;
-  align-items: center;
-}
-
-/* 识别结果弹窗左上角的图鉴入口。逆时针旋转 20°。
-   rotate 后 288rpx 的方形外接框会涨到约 369rpx，上下各溢出约 40rpx ——
-   所以 .ai-modal-head 的上内边距至少要 41rpx（见下方的 52rpx），否则会顶到弹窗边框。 */
+/* 图鉴入口：跨在弹窗左上角边框上，一半在弹窗外、一半压着弹窗。
+   - 绝对定位到 .ai-modal-wrap（弹窗的定位父级），负的 top/left 各 70rpx
+     正好让 140rpx 的按钮中心落在弹窗左上角上；
+   - rotate 后 140rpx 的方形外接框约 180rpx，四周各再溢出约 20rpx，
+     遮罩左侧留了 88rpx 足够容纳；
+   - 20° 是逆时针（CSS 负角度）。
+   - z-index 要高过弹窗，否则会被弹窗盖住。 */
 .wiki-entry {
-  width: 288rpx;
-  height: 288rpx;
-  margin-right: 10rpx;
+  position: absolute;
+  top: -70rpx;
+  left: -70rpx;
+  width: 140rpx;
+  height: 140rpx;
+  z-index: 3;
   display: flex;
   align-items: center;
   justify-content: center;

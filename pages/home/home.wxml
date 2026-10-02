@@ -127,16 +127,13 @@
     </view>
   </view>
 
-  <view class="ai-mask" wx:if="{{showGuess}}" bindtap="closeGuess" catchtouchmove="noop">
-    <view class="ai-modal" catchtap="noop">
+  <view class="ai-mask with-corner-entry" wx:if="{{showGuess}}" bindtap="closeGuess" catchtouchmove="noop">
+    <!-- 图鉴入口定位在这一层：.ai-modal 有 overflow:hidden（圆角需要），
+         按钮要探出它的边框之外，作为子元素会被裁掉 -->
+    <view class="ai-modal-wrap" catchtap="noop">
+    <view class="ai-modal">
       <view class="ai-modal-head">
-        <view class="ai-head-left">
-          <!-- 图鉴入口：点开去看已点亮的图鉴。不关弹窗，返回时识别结果还在 -->
-          <view class="wiki-entry" bindtap="goWiki" hover-class="wiki-entry-hover" hover-stay-time="80">
-            <image class="wiki-entry-img" src="https://www.blueakaiwu.cn/api/v1/static/assets/home/home-wiki-entry.png" mode="aspectFit"></image>
-          </view>
-          <text class="ai-head-title">{{guess.isSeaCreature === false ? '小螃蟹看不懂' : '小螃蟹猜一猜'}}</text>
-        </view>
+        <text>{{guess.isSeaCreature === false ? '小螃蟹看不懂' : '小螃蟹猜一猜'}}</text>
         <text class="ai-close" bindtap="closeGuess">×</text>
       </view>
       <scroll-view scroll-y class="ai-modal-body">
@@ -243,6 +240,13 @@
 
         <text class="advice-disc">{{trash.disclaimer}}</text>
       </scroll-view>
+    </view>
+      <!-- 图鉴入口：跨在弹窗左上角边框上（一半在外、一半压着弹窗）。
+           放在 .ai-modal 之外，才不会被它的 overflow:hidden 裁掉。
+           点它不关弹窗 —— 用户看完图鉴返回时，这次的识别结果还在。 -->
+      <view class="wiki-entry" bindtap="goWiki" hover-class="wiki-entry-hover" hover-stay-time="80">
+        <image class="wiki-entry-img" src="https://www.blueakaiwu.cn/api/v1/static/assets/home/home-wiki-entry.png" mode="aspectFit"></image>
+      </view>
     </view>
   </view>
   <unlock-popup id="unlockPopup"></unlock-popup>
