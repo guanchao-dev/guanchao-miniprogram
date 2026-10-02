@@ -10,6 +10,7 @@ import { ONBOARDING_STEPS } from '../../utils/onboardingSteps'
 import {
   addWatchItem,
   getWatchSession,
+  hasTrashToday,
   isWatching,
   setWatchSessionId,
   startWatchSession,
@@ -705,6 +706,13 @@ Page({
       toast('先点首页的「开始观潮」，识别结果才会记入记录')
       return
     }
+    // 垃圾每天只允许记一次（拍照识别的生物不受限制）。
+    // 本地先拦一道是为了点完立刻有反馈；服务端 watch.py 里还会再拦一次，
+    // 防止换设备或清缓存绕过。
+    if (hasTrashToday()) {
+      toast('今天已经记过一次垃圾了，明天再来捡吧')
+      return
+    }
     const entry = {
       name: item.name,
       time: nowTime(),
@@ -714,12 +722,31 @@ Page({
       label: item.label,
       count: item.count
     }
-    addWatchItem(entry)
-    if (session.id) {
-      watchApi.addSpecies(session.id, entry).catch(() => {})
+    const done = () => {
+      this.setData({ [`trashItems[${oi}].confirmed`]: true })
+      toast('已记入观潮记录：' + item.name)
     }
-    this.setData({ [`trashItems[${oi}].confirmed`]: true })
-    toast('已记入观潮记录：' + item.name)
+    // 有服务端会话就先问服务端：它拒了（今日已记过）就不写本地，
+    // 免得本地留一条服务端没有的记录，结束后合并时又对不上。
+    if (session.id) {
+      watchApi.addSpecies(session.id, entry)
+        .then((res: any) => {
+          if (res && res.trashDailyLimit) {
+            toast('今天已经记过一次垃圾了，明天再来捡吧')
+            return
+          }
+          addWatchItem(entry)
+          done()
+        })
+        .catch(() => {
+          // 网络失败也记本地，保证这次观潮的收获不丢
+          addWatchItem(entry)
+          done()
+        })
+      return
+    }
+    addWatchItem(entry)
+    done()
   },
 
   closeGuess() {

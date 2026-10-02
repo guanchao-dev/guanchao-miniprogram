@@ -209,6 +209,12 @@
         <block wx:else>
           <text class="ai-hint">小螃蟹在照片里看到了 {{trashItems.length}} 件垃圾，每件按国家生活垃圾分类标准（四分类）给一个结论，可以直接照着投桶；各地细则略有不同，以当地规定为准。</text>
 
+          <!-- 这次的垃圾量：少 / 中等 / 多（AI 综合件数和体积判断） -->
+          <view class="trash-amount" wx:if="{{trash.amount}}">
+            <text class="trash-amount-k">这次的垃圾量</text>
+            <text class="trash-amount-v lv-{{trash.amount}}">{{trash.amountText}}</text>
+          </view>
+
           <block wx:for="{{trashItems}}" wx:for-item="obj" wx:for-index="oi" wx:key="key">
             <view class="candidate trash-item">
               <view class="guess-item-head">
@@ -238,8 +244,6 @@
             </view>
           </block>
         </block>
-
-        <text class="advice-disc">{{trash.disclaimer}}</text>
       </scroll-view>
     </view>
   </view>

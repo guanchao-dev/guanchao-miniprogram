@@ -751,6 +751,44 @@
   margin-top: 18rpx;
 }
 
+/* ===== 垃圾识别：这次的垃圾量（少 / 中等 / 多）===== */
+.trash-amount {
+  display: flex;
+  align-items: center;
+  margin: 16rpx 0 2rpx;
+}
+
+.trash-amount-k {
+  font-size: 26rpx;
+  font-weight: 800;
+  color: #4F6787;
+}
+
+.trash-amount-v {
+  margin-left: 14rpx;
+  padding: 4rpx 22rpx;
+  border-radius: 999rpx;
+  border: 2rpx solid #1C1C1C;
+  font-size: 26rpx;
+  font-weight: 850;
+}
+
+/* 越严重越暖：少=青绿，中等=琥珀，多=砖红 */
+.trash-amount-v.lv-little {
+  background: #D9F2E6;
+  color: #1F7A55;
+}
+
+.trash-amount-v.lv-some {
+  background: #FDF0D0;
+  color: #9A6B12;
+}
+
+.trash-amount-v.lv-much {
+  background: #FBDDD6;
+  color: #B03A22;
+}
+
 /* ===== 垃圾识别：国标四分类配色 ===== */
 .trash-cat {
   display: inline-block;

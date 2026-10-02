@@ -154,6 +154,25 @@ export function getWatchSession(): WatchSession | null {
   return wx.getStorageSync(SESSION_KEY) || null
 }
 
+/**
+ * 今天是否已经往观潮记录里记过一次垃圾。
+ *
+ * 垃圾每天只允许记一次（服务端 watch.py 里同样会拦）。本地先拦一道是为了
+ * 点完「就是它」能立刻给答复，不用等一次往返才发现记不进去。
+ * 「今天」既看进行中的会话，也看已经结束的日志。
+ */
+export function hasTrashToday(): boolean {
+  const today = dateKey(new Date())
+  const session = getWatchSession()
+  if (session && dateKey(parseISO(session.startedAt)) === today) {
+    if ((session.species || []).some((s) => s && s.kind === 'trash')) return true
+  }
+  const logs: WatchRecord[] = wx.getStorageSync(LOGS_KEY) || []
+  return logs.some(
+    (r) => r && r.date === today && (r.species || []).some((s) => s && s.kind === 'trash')
+  )
+}
+
 export function isWatching(): boolean {
   return !!getWatchSession()
 }
