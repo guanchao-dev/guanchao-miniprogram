@@ -68,6 +68,13 @@ export type WatchRecord = {
   summary: string
   mascot: string
   spot?: WatchSpot | null
+  /** 观潮记录卡上的栏目（服务端详情接口给）。本地旧记录没有，按空串处理 */
+  seq?: number
+  dateText?: string
+  timeText?: string
+  tempText?: string
+  weatherText?: string
+  tideText?: string
 }
 
 export type WatchDayGroup = {
@@ -311,6 +318,8 @@ export function fromApiRecord(item: any): WatchRecord | null {
         guessId: row.guessId || '',
         category: row.category || '',
         categoryLabel: row.categoryLabel || '',
+        // amount 漏了的话，服务端存好的垃圾量会被丢掉，观潮记录卡就只能走件数兜底
+        amount: row.amount || '',
         label: row.label || '',
         count: Number(row.count) > 1 ? Number(row.count) : 1
       })
@@ -328,7 +337,14 @@ export function fromApiRecord(item: any): WatchRecord | null {
     summary: item.summary || '',
     // 后端字段名是 mascotKey，不是 mascot——之前只读 mascot，导致服务端记录永远显示默认图
     mascot: item.mascotKey || item.mascot || 'https://www.blueakaiwu.cn/api/v1/static/assets/badges/crab-star.png',
-    spot: spotFromApi(item)
+    spot: spotFromApi(item),
+    // 观潮记录卡的栏目。本地旧记录没有这些，保持空串，卡片那一格就留白
+    seq: Number(item.seq) || 0,
+    dateText: item.dateText || '',
+    timeText: item.timeText || '',
+    tempText: item.tempText || '',
+    weatherText: item.weatherText || '',
+    tideText: item.tideText || ''
   }
   if (!record.id) return null
   if (!record.summary) record.summary = buildSummary(record)

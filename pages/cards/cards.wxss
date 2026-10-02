@@ -175,6 +175,37 @@
   margin-bottom: 24rpx;
 }
 
+/* 两列网格：一行放两个「标签 + 数值」 */
+.log-g2 {
+  display: flex;
+  margin-bottom: 24rpx;
+}
+
+.log-g2:last-child {
+  margin-bottom: 4rpx;
+}
+
+.log-cell {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: baseline;
+}
+
+.log-cell + .log-cell {
+  margin-left: 26rpx;
+}
+
+/* 网格里的数值字号小一档 —— 两列并排，太大会挤 */
+.log-cell .log-k {
+  font-size: 24rpx;
+}
+
+.log-cell .log-v {
+  margin-left: 12rpx;
+  font-size: 30rpx;
+}
+
 .log-k {
   flex: none;
   font-size: 26rpx;

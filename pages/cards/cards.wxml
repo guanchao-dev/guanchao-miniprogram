@@ -53,15 +53,47 @@
         <text class="sheet-close" bindtap="closeDetail">×</text>
       </view>
       <scroll-view scroll-y class="sheet-body">
-        <!-- 日志卡版式：一行一个条目，标签在左、数值压在右侧的横线上 -->
+        <!-- 观潮日志卡：两列网格，每格「标签在左、数值压在右侧横线上」 -->
         <view class="log-block">
-          <view class="log-line">
-            <text class="log-k">识别生物</text>
-            <text class="log-v {{detail.creatureCount ? '' : 'is-zero'}}">{{detail.creatureCount}} 种</text>
+          <view class="log-g2">
+            <view class="log-cell">
+              <text class="log-k">观潮编号</text>
+              <text class="log-v {{detail.seq ? '' : 'is-zero'}}">{{detail.seq ? detail.seq : '—'}}</text>
+            </view>
+            <view class="log-cell">
+              <text class="log-k">日期</text>
+              <text class="log-v {{detail.dateText ? '' : 'is-zero'}}">{{detail.dateText ? detail.dateText : '—'}}</text>
+            </view>
           </view>
-          <view class="log-line">
-            <text class="log-k">垃圾量</text>
-            <text class="log-v {{detail.trashAmountText === '无' ? 'is-zero' : ''}}">{{detail.trashAmountText}}</text>
+          <view class="log-g2">
+            <view class="log-cell">
+              <text class="log-k">温度</text>
+              <text class="log-v {{detail.tempText ? '' : 'is-zero'}}">{{detail.tempText ? detail.tempText : '—'}}</text>
+            </view>
+            <view class="log-cell">
+              <text class="log-k">天气</text>
+              <text class="log-v {{detail.weatherText ? '' : 'is-zero'}}">{{detail.weatherText ? detail.weatherText : '—'}}</text>
+            </view>
+          </view>
+          <view class="log-g2">
+            <view class="log-cell">
+              <text class="log-k">时间</text>
+              <text class="log-v {{detail.timeText ? '' : 'is-zero'}}">{{detail.timeText ? detail.timeText : '—'}}</text>
+            </view>
+            <view class="log-cell">
+              <text class="log-k">潮高</text>
+              <text class="log-v {{detail.tideText ? '' : 'is-zero'}}">{{detail.tideText ? detail.tideText : '—'}}</text>
+            </view>
+          </view>
+          <view class="log-g2">
+            <view class="log-cell">
+              <text class="log-k">识别生物</text>
+              <text class="log-v {{detail.creatureCount ? '' : 'is-zero'}}">{{detail.creatureCount}} 种</text>
+            </view>
+            <view class="log-cell">
+              <text class="log-k">垃圾量</text>
+              <text class="log-v {{detail.trashAmountText === '无' ? 'is-zero' : ''}}">{{detail.trashAmountText}}</text>
+            </view>
           </view>
         </view>
         <view class="log-box">
