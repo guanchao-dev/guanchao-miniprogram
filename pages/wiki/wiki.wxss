@@ -93,17 +93,18 @@
   color: #A8B3B0;
 }
 
-/* ===== 已点亮：静态金边 ===== */
+/* ===== 已点亮：金边 + 呼吸光晕（常驻）=====
+   光晕是「已收集」的持续标识，不区分新旧。
+   注意：box-shadow 动画会触发重绘，点亮的物种多时低端机上可能吃力 ——
+   真机上如果发现图鉴页滑动发涩，把这里改成静态 box-shadow 即可。 */
 .species-cell.unlocked {
   border: 3rpx solid #E8B84B;
-}
-
-/* ===== 新获得：在金边之上再加呼吸光晕 + 扫光，用来标识「这是刚拿到的」=====
-   判定在服务端（species_unlocks.seen）：图鉴页展示过一次就标记为已看过，
-   之后只保留上面的静态金边。 */
-.species-cell.unlocked.is-new {
   animation: goldBreath 2.4s ease-in-out infinite;
 }
+
+/* ===== 新获得：在金边光晕之上再加扫光（以及右上角的 NEW 角标）=====
+   扫光只给新获得的 —— 满屏都在扫会很吵，而且会让「新」失去区分度。
+   判定在服务端（species_unlocks.seen），打开该物种详情页后就算看过。 */
 
 @keyframes goldBreath {
   0%, 100% {
