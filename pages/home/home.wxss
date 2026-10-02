@@ -524,15 +524,20 @@
   border: 4rpx solid #1C1C1C;
   border-radius: 32rpx;
   background: #EAF3FF;
+  /* 用 flex 列布局：头部高度会随图鉴按钮变化，让内容区自适应收缩并在内部滚动。
+     否则头部长高后，头部 + 内容区会超出 max-height:80vh，被 overflow:hidden
+     裁掉且无法滚动 —— 底部「就是这个物种」按钮会点不到。 */
+  display: flex;
+  flex-direction: column;
 }
 
 .ai-modal-head {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  /* 上内边距 34rpx（原 24rpx）：左上角那个 144rpx 的图鉴按钮旋转后
-     上下各溢出约 20rpx，留不够会顶到弹窗边框 */
-  padding: 34rpx 28rpx 10rpx;
+  /* 上内边距 52rpx（原 24rpx）：左上角那个 288rpx 的图鉴按钮旋转 20° 后
+     上下各溢出约 40rpx，留不够会顶到弹窗边框 */
+  padding: 52rpx 28rpx 10rpx;
   font-size: 32rpx;
   font-weight: 850;
 }
@@ -548,11 +553,11 @@
 }
 
 /* 识别结果弹窗左上角的图鉴入口。逆时针旋转 20°。
-   rotate 后 144rpx 的方形外接框会涨到约 185rpx，上下各溢出约 20rpx ——
-   所以 .ai-modal-head 的上内边距要留够（见下方的 34rpx），否则会顶到弹窗边框。 */
+   rotate 后 288rpx 的方形外接框会涨到约 369rpx，上下各溢出约 40rpx ——
+   所以 .ai-modal-head 的上内边距至少要 41rpx（见下方的 52rpx），否则会顶到弹窗边框。 */
 .wiki-entry {
-  width: 144rpx;
-  height: 144rpx;
+  width: 288rpx;
+  height: 288rpx;
   margin-right: 10rpx;
   display: flex;
   align-items: center;
@@ -570,6 +575,10 @@
 }
 
 .ai-modal-body {
+  /* flex:1 + min-height:0 让内容区在头部变高时自动收缩并内部滚动。
+     min-height 必须显式置 0 —— flex 子项默认不会缩到内容高度以下。 */
+  flex: 1;
+  min-height: 0;
   max-height: 68vh;
   padding: 8rpx 32rpx 32rpx;
   box-sizing: border-box;
