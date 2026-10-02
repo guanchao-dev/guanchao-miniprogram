@@ -401,7 +401,6 @@
   box-sizing: border-box;
 }
 
-.advice-extra,
 .candidate-reason,
 .ai-hint,
 .obs {
@@ -544,6 +543,12 @@
   padding: 24rpx 28rpx 8rpx;
   font-size: 32rpx;
   font-weight: 850;
+}
+
+/* 识别弹窗的头部只剩关闭按钮（标题已按需求移除）。
+   space-between 在只有一个子元素时会把它顶到左边，这里改成靠右。 */
+.ai-modal-head.only-close {
+  justify-content: flex-end;
 }
 
 .ai-close {

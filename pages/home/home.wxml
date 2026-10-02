@@ -132,8 +132,7 @@
          按钮要探出它的边框之外，作为子元素会被裁掉 -->
     <view class="ai-modal-wrap" catchtap="noop">
     <view class="ai-modal">
-      <view class="ai-modal-head">
-        <text>{{guess.isSeaCreature === false ? '小螃蟹看不懂' : '小螃蟹猜一猜'}}</text>
+      <view class="ai-modal-head only-close">
         <text class="ai-close" bindtap="closeGuess">×</text>
       </view>
       <scroll-view scroll-y class="ai-modal-body">
@@ -146,7 +145,6 @@
           </view>
         </block>
         <block wx:else>
-          <text class="ai-hint">小螃蟹在照片里看到了 {{guessItems.length}} 个发现。每个发现都给了一两个可能的名字，百分比是它自己的把握程度；带「图鉴对照」的已经收录在图鉴里，可以点开看。每个发现都可以单独确认，点「就是这个物种」才会记进观潮记录。</text>
           <block wx:for="{{guessItems}}" wx:for-item="obj" wx:for-index="oi" wx:key="key">
             <view class="guess-item">
               <view class="guess-item-head">
@@ -184,9 +182,6 @@
           </block>
         </block>
 
-        <text class="advice-extra" wx:if="{{guess.observeTip}}">{{guess.observeTip}}</text>
-        <text class="advice-extra" wx:if="{{guess.safetyTip}}">{{guess.safetyTip}}</text>
-        <text class="advice-disc">{{guess.disclaimer}}</text>
       </scroll-view>
     </view>
       <!-- 图鉴入口：贴在弹窗左上角外侧。放在 .ai-modal 之外，才不会被它的
