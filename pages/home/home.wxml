@@ -127,7 +127,7 @@
     </view>
   </view>
 
-  <view class="ai-mask with-corner-entry" wx:if="{{showGuess}}" bindtap="closeGuess" catchtouchmove="noop">
+  <view class="ai-mask" wx:if="{{showGuess}}" bindtap="closeGuess" catchtouchmove="noop">
     <!-- 图鉴入口定位在这一层：.ai-modal 有 overflow:hidden（圆角需要），
          按钮要探出它的边框之外，作为子元素会被裁掉 -->
     <view class="ai-modal-wrap" catchtap="noop">
