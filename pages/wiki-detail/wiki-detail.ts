@@ -36,6 +36,9 @@ Page({
           if (src) this.setData({ coverSrc: src })
         })
         this.loadPhotos(id)
+        // 打开这个物种的详情才算「看过」—— 图鉴列表不再一渲染就标记
+        // （原因见 wiki.ts）。标记只影响闪光与 NEW 角标，失败不影响详情展示。
+        contentApi.markSpeciesSeen([id]).catch(() => {})
       })
       .catch((err) => showError(err, '图鉴加载失败'))
       .finally(() => this.setData({ loading: false }))

@@ -52,11 +52,11 @@ Page({
           totalCount: (d && d.totalCount) || 0
         })
         this.markLit()
-        // 已经展示给用户了，标记为「看过」—— 下次进图鉴这些物种只保留金边、不再闪光。
-        // 只动服务端标记，本地 newIds 不动，所以这一次进来还是会完整闪一遍。
-        if (newIds.length) {
-          contentApi.markSpeciesSeen(newIds).catch(() => {})
-        }
+        // 这里**不**标记「看过」。
+        // 之前是列表一渲染就把整批新物种标成已看过，等于用户还没看清是哪个、
+        // 状态就被消耗掉了，闪光和 NEW 角标几乎没法被观察到。
+        // 现在改成「点进那个物种的详情页」才算看过 —— 语义更准，效果也能留住。
+        // 见 pages/wiki-detail/wiki-detail.ts 的 load()。
       })
       .catch(() => {
         // 拿不到不影响看图鉴，只是不显示点亮态
