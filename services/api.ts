@@ -128,9 +128,17 @@ export const contentApi = {
       list: unwrapList(data)
     }))
   },
-  /** 我点亮的图鉴物种 + 总数（图鉴页进度条用）。身份同上，必须 auth: false。 */
+  /**
+   * 我点亮的图鉴物种 + 总数（图鉴页进度条用）。
+   * 返回里的 newSpeciesIds 是「刚点亮、还没在图鉴里看过」的，只给它们加闪光。
+   * 身份同上，必须 auth: false。
+   */
   encyclopediaUnlocked() {
     return http.get('/encyclopedia/unlocked', {}, { auth: false, cacheTtl: 0 })
+  },
+  /** 把图鉴里已经展示过的新物种标记为「看过了」，之后不再闪光。幂等。 */
+  markSpeciesSeen(speciesIds: string[]) {
+    return http.post('/encyclopedia/seen', { speciesIds }, { auth: false })
   },
   species(id: string) {
     return http.get(`/encyclopedia/${id}`, {}, { auth: false })

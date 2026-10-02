@@ -23,7 +23,8 @@ Page({
     emptyText: '暂无图鉴',
     litCount: 0,
     totalCount: 0,
-    litIds: [] as string[]
+    litIds: [] as string[],
+    newIds: [] as string[] // 刚点亮、还没看过 —— 只给这些加闪光
   },
 
   onShow() {
@@ -43,23 +44,34 @@ Page({
   refreshUnlocked() {
     contentApi.encyclopediaUnlocked()
       .then((d: any) => {
+        const newIds: string[] = (d && d.newSpeciesIds) || []
         this.setData({
           litIds: (d && d.speciesIds) || [],
+          newIds,
           litCount: (d && d.litCount) || 0,
           totalCount: (d && d.totalCount) || 0
         })
         this.markLit()
+        // 已经展示给用户了，标记为「看过」—— 下次进图鉴这些物种只保留金边、不再闪光。
+        // 只动服务端标记，本地 newIds 不动，所以这一次进来还是会完整闪一遍。
+        if (newIds.length) {
+          contentApi.markSpeciesSeen(newIds).catch(() => {})
+        }
       })
       .catch(() => {
         // 拿不到不影响看图鉴，只是不显示点亮态
       })
   },
 
-  /** 集合到位后回填已渲染列表的点亮态 */
+  /** 集合到位后回填已渲染列表的点亮态与「新获得」态 */
   markLit() {
-    const ids = this.data.litIds
+    const { litIds, newIds } = this.data
     this.setData({
-      list: this.data.list.map((it: any) => ({ ...it, lit: ids.indexOf(it.id) >= 0 }))
+      list: this.data.list.map((it: any) => ({
+        ...it,
+        lit: litIds.indexOf(it.id) >= 0,
+        isNew: newIds.indexOf(it.id) >= 0
+      }))
     })
   },
 
@@ -98,13 +110,14 @@ Page({
   },
 
   paint(raw: any[]) {
-    const ids = this.data.litIds
+    const { litIds, newIds } = this.data
     this.setData({
       list: raw.map((it: any) => ({
         id: it.id,
         name: it.name,
         coverSrc: '',
-        lit: ids.indexOf(it.id) >= 0
+        lit: litIds.indexOf(it.id) >= 0,
+        isNew: newIds.indexOf(it.id) >= 0
       }))
     })
     raw.forEach((it: any, i: number) => {

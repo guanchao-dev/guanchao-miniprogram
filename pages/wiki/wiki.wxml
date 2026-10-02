@@ -17,7 +17,7 @@
     </view>
     <view class="empty-tip" wx:elif="{{!list.length}}">{{emptyText}}</view>
     <view class="species-grid">
-      <view class="species-cell card {{item.lit ? 'unlocked' : 'locked'}}" wx:for="{{list}}" wx:key="id" data-id="{{item.id}}" bindtap="openDetail">
+      <view class="species-cell card {{item.lit ? 'unlocked' : 'locked'}} {{item.isNew ? 'is-new' : ''}}" wx:for="{{list}}" wx:key="id" data-id="{{item.id}}" bindtap="openDetail">
         <view class="species-thumb-wrap">
           <image class="species-thumb" src="{{item.coverSrc}}" mode="aspectFill"></image>
         </view>

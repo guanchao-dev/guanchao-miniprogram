@@ -71,9 +71,15 @@
   color: #A8B3B0;
 }
 
-/* ===== 已点亮：金边 + 呼吸光晕 ===== */
+/* ===== 已点亮：静态金边 ===== */
 .species-cell.unlocked {
   border: 3rpx solid #E8B84B;
+}
+
+/* ===== 新获得：在金边之上再加呼吸光晕 + 扫光，用来标识「这是刚拿到的」=====
+   判定在服务端（species_unlocks.seen）：图鉴页展示过一次就标记为已看过，
+   之后只保留上面的静态金边。 */
+.species-cell.unlocked.is-new {
   animation: goldBreath 2.4s ease-in-out infinite;
 }
 
@@ -86,8 +92,8 @@
   }
 }
 
-/* 不灵不灵：一道斜光周期性扫过缩略图 */
-.species-cell.unlocked .species-thumb-wrap::after {
+/* 不灵不灵：一道斜光周期性扫过缩略图。只有「新获得」的才扫 */
+.species-cell.unlocked.is-new .species-thumb-wrap::after {
   content: '';
   position: absolute;
   top: -60%;
