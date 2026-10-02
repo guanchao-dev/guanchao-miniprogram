@@ -2,6 +2,8 @@ import { achieveApi } from '../../services/api'
 import { toast } from '../../utils/format'
 import { flushUnlocks } from '../../utils/unlock'
 import { downloadImage, mediaUrl } from '../../utils/upload'
+import { isOnboarding, getOnboardingIndex, markOnboardingCompleted } from '../../utils/onboardingStore'
+import { ONBOARDING_STEPS } from '../../utils/onboardingSteps'
 
 const RARITY_STYLE: Record<string, { tag: string, tagColor: string, tagBg: string }> = {
   common: { tag: '普通', tagColor: '#5BA3E0', tagBg: '#D6EAF8' },
@@ -63,14 +65,47 @@ Page({
     medals: [],
     medalLoading: true,
     friends: [],
-    boardLoading: true
+    boardLoading: true,
+    showOnboarding: false,
+    onbStartIndex: 0,
+    onbRect: null as any
   },
 
   onShow() {
+    // 新手教程跨页续接：检测是否轮到 achieve
+    if (isOnboarding()) {
+      const idx = getOnboardingIndex()
+      const step = ONBOARDING_STEPS[idx]
+      if (step && step.tab === 'achieve') {
+        this.setData({ showOnboarding: true, onbStartIndex: idx })
+      } else {
+        this.setData({ showOnboarding: false })
+      }
+    }
     this.loadOverview()
     this.loadMedals()
     this.loadLeaderboard()
     flushUnlocks(this)
+  },
+
+  onOnboardingFinish() {
+    markOnboardingCompleted()
+    this.setData({ showOnboarding: false, onbRect: null })
+  },
+
+  onOnboardingLocate(e: any) {
+    const index = Number((e && e.detail && e.detail.index) || 0)
+    const step = ONBOARDING_STEPS[index]
+    if (!step) return
+    // 步骤不属于 achieve → 隐藏并跳转
+    if (step.tab && step.tab !== 'achieve') {
+      this.setData({ showOnboarding: false })
+      const url = step.tab === 'home' ? '/pages/home/home' : '/pages/profile/profile'
+      wx.switchTab({ url })
+      return
+    }
+    // achieve 步骤无锚点，居中展示
+    this.setData({ onbRect: { index, rect: null } })
   },
 
   openPendingMedal() {

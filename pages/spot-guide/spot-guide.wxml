@@ -48,6 +48,17 @@
           <text class="info-v">{{detail.openTime}}</text>
         </view>
 
+        <view class="nav-row" bindtap="onNavigate">
+          <view class="nav-row-main">
+            <text class="nav-row-title">导航到{{detail.navName || detail.name}}</text>
+            <text class="nav-row-sub">{{detail.distanceText}} · 高德 / 百度等地图一键导航</text>
+          </view>
+          <view class="nav-row-action">
+            <view class="nav-plane">✈</view>
+            <text class="nav-row-label">导航</text>
+          </view>
+        </view>
+
         <view class="block-title">今日潮汐</view>
         <text class="tide-summary">{{tideSummary}}</text>
         <view class="tide-table" wx:if="{{tideRows.length}}">

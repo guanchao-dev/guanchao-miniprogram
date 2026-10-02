@@ -46,6 +46,13 @@
   font-size: 22rpx;
 }
 
+.card-spot {
+  margin-top: 6rpx;
+  color: #0E7C92;
+  font-size: 22rpx;
+  font-weight: 700;
+}
+
 .card-arrow {
   color: #1888BF;
   font-size: 40rpx;
@@ -112,6 +119,18 @@
   color: #1888BF;
   font-size: 24rpx;
   font-weight: 700;
+}
+
+.detail-spot {
+  margin: 12rpx auto 0;
+  padding: 10rpx 20rpx;
+  width: fit-content;
+  border: 2rpx solid #1888BF;
+  border-radius: 999rpx;
+  color: #0E6E9F;
+  font-size: 22rpx;
+  font-weight: 700;
+  background: #EAF6FB;
 }
 
 .detail-summary {

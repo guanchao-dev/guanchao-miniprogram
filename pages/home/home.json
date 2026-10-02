@@ -1,6 +1,7 @@
 {
   "usingComponents": {
     "watch-ball": "/components/watch-ball/watch-ball",
-    "unlock-popup": "/components/unlock-popup/unlock-popup"
+    "unlock-popup": "/components/unlock-popup/unlock-popup",
+    "onboarding": "/components/onboarding/onboarding"
   }
 }

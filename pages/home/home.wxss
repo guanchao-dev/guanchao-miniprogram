@@ -43,13 +43,28 @@
 }
 
 .hero {
+  position: relative;
   display: flex;
   align-items: center;
   margin-top: 24rpx;
   min-height: 240rpx;
-  padding: 22rpx 20rpx 22rpx 24rpx;
+  padding: 24rpx 12rpx 20rpx 28rpx;
   overflow: hidden;
-  background: linear-gradient(135deg, #F7FCFF, #D8F3F6);
+  /* 透明底 Q 版章鱼配浅海青渐变，呼应插画里的海浪蓝 */
+  background: linear-gradient(135deg, #F0FAFC 0%, #DCF2F6 100%);
+}
+
+/* 左上柔光 */
+.hero-glow {
+  position: absolute;
+  top: -120rpx;
+  left: -80rpx;
+  width: 360rpx;
+  height: 360rpx;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0) 70%);
+  z-index: 1;
+  pointer-events: none;
 }
 
 .hero-copy {
@@ -95,63 +110,16 @@
   position: relative;
   z-index: 2;
   flex: 1;
-  height: 196rpx;
-  margin-left: 8rpx;
-}
-
-.hero-blob {
-  position: absolute;
-  right: 4rpx;
-  top: 20rpx;
-  width: 148rpx;
-  height: 148rpx;
-  border: 4rpx solid #1C1C1C;
-  border-radius: 40% 50% 45% 55%;
-  background: #34B8C5;
-  box-shadow: 3rpx 3rpx 0 rgba(28, 28, 28, 0.85);
-  transform: rotate(8deg);
-}
-
-.hero-dot-a {
-  position: absolute;
-  top: 6rpx;
-  right: 20rpx;
-  width: 22rpx;
-  height: 22rpx;
-  border: 3rpx solid #1C1C1C;
-  border-radius: 50%;
-  background: #F6D081;
-}
-
-.hero-dot-b {
-  position: absolute;
-  left: 12rpx;
-  bottom: 30rpx;
-  width: 14rpx;
-  height: 14rpx;
-  border-radius: 50%;
-  background: #184D97;
-  border: 3rpx solid #1C1C1C;
-}
-
-.hero-squiggle {
-  position: absolute;
-  left: 20rpx;
-  top: 48rpx;
-  width: 46rpx;
-  height: 14rpx;
-  border-radius: 999rpx;
-  background: #A7D9C7;
-  border: 3rpx solid #1C1C1C;
-  transform: rotate(-18deg);
+  height: 224rpx;
+  margin-left: 4rpx;
 }
 
 .hero-mascot {
   position: absolute;
-  right: -4rpx;
-  bottom: -8rpx;
-  width: 184rpx;
-  height: 184rpx;
+  right: 8rpx;
+  bottom: 6rpx;
+  width: 308rpx;
+  height: 221rpx;
   z-index: 2;
 }
 
@@ -337,6 +305,100 @@
   color: #4F6787;
   font-size: 24rpx;
   line-height: 1.6;
+}
+
+/* ===== 出门建议：泡泡对话式弹窗 ===== */
+.adv-card {
+  width: 100%;
+  max-height: 84vh;
+  overflow: hidden;
+  border: 4rpx solid #1C1C1C;
+  border-radius: 32rpx;
+  background: #FBF7EF;
+}
+
+/* 顶部蓝带：底色与吉祥物 PNG 背景 #A4C8DB 一致，图片无缝融入 */
+.adv-band {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 20rpx 24rpx 18rpx 24rpx;
+  background: #A4C8DB;
+}
+
+.adv-mascot {
+  width: 124rpx;
+  height: 126rpx;
+  flex-shrink: 0;
+}
+
+.adv-band-copy {
+  flex: 1;
+  min-width: 0;
+  margin-left: 8rpx;
+}
+
+.adv-title {
+  display: block;
+  font-size: 36rpx;
+  font-weight: 900;
+  color: #102A3D;
+}
+
+.adv-sub {
+  display: block;
+  margin-top: 6rpx;
+  font-size: 22rpx;
+  font-weight: 700;
+  color: #2F5E78;
+}
+
+.adv-close {
+  width: 56rpx;
+  height: 56rpx;
+  line-height: 52rpx;
+  text-align: center;
+  border: 3rpx solid #1C1C1C;
+  border-radius: 50%;
+  background: #FFFFFF;
+  font-size: 36rpx;
+  font-weight: 800;
+  color: #1C1C1C;
+  flex-shrink: 0;
+}
+
+/* 气泡：白底黑边硬阴影，小尾巴指向左上的泡泡 */
+.adv-bubble {
+  position: relative;
+  margin: 4rpx 24rpx 0;
+  padding: 24rpx 24rpx 26rpx;
+  border: 3rpx solid #1C1C1C;
+  border-radius: 24rpx;
+  background: #FFFFFF;
+  box-shadow: 4rpx 4rpx 0 rgba(28, 28, 28, 0.85);
+}
+
+.adv-bubble-tail {
+  position: absolute;
+  top: -11rpx;
+  left: 48rpx;
+  width: 20rpx;
+  height: 20rpx;
+  background: #FFFFFF;
+  border-left: 3rpx solid #1C1C1C;
+  border-top: 3rpx solid #1C1C1C;
+  transform: rotate(45deg);
+}
+
+.adv-bubble .advice-title {
+  font-size: 32rpx;
+  line-height: 1.4;
+}
+
+.adv-scroll {
+  max-height: 46vh;
+  padding: 22rpx 28rpx 30rpx;
+  box-sizing: border-box;
 }
 
 .advice-extra,
@@ -701,4 +763,181 @@
   display: block;
   font-size: 36rpx;
   font-weight: 900;
+}
+
+/* ===== 开始观潮：地点选择弹窗 ===== */
+.spot-mask {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: flex;
+  align-items: flex-end;
+  background: rgba(11, 31, 56, 0.56);
+}
+
+.spot-sheet {
+  width: 100%;
+  max-height: 78vh;
+  padding: 28rpx 28rpx calc(36rpx + env(safe-area-inset-bottom));
+  border: 3rpx solid #1C1C1C;
+  border-bottom: none;
+  border-radius: 32rpx 32rpx 0 0;
+  background: #FBF7EF;
+  box-shadow: 0 -6rpx 0 rgba(28, 28, 28, 0.15);
+  box-sizing: border-box;
+}
+
+.spot-sheet-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.spot-sheet-title {
+  font-size: 34rpx;
+  font-weight: 900;
+  color: #1C1C1C;
+}
+
+.spot-sheet-close {
+  width: 56rpx;
+  height: 56rpx;
+  line-height: 52rpx;
+  text-align: center;
+  border: 3rpx solid #1C1C1C;
+  border-radius: 50%;
+  background: #FFFFFF;
+  font-size: 36rpx;
+  font-weight: 800;
+  color: #1C1C1C;
+}
+
+.spot-sheet-tip {
+  margin-top: 10rpx;
+  font-size: 24rpx;
+  color: #7A6A4A;
+}
+
+.spot-loading,
+.spot-empty {
+  padding: 48rpx 0;
+  text-align: center;
+  font-size: 26rpx;
+  color: #7A6A4A;
+}
+
+.spot-list {
+  margin-top: 20rpx;
+}
+
+.spot-row {
+  display: flex;
+  align-items: center;
+  margin-top: 16rpx;
+  padding: 22rpx 20rpx;
+  border: 3rpx solid #1C1C1C;
+  border-radius: 20rpx;
+  background: #FFFFFF;
+  box-shadow: 4rpx 4rpx 0 rgba(28, 28, 28, 0.85);
+}
+
+.spot-rank {
+  width: 48rpx;
+  height: 48rpx;
+  margin-right: 18rpx;
+  line-height: 48rpx;
+  text-align: center;
+  border: 3rpx solid #1C1C1C;
+  border-radius: 50%;
+  background: #F6D081;
+  font-size: 26rpx;
+  font-weight: 900;
+  color: #1C1C1C;
+  flex-shrink: 0;
+}
+
+.spot-row:nth-child(1) .spot-rank { background: #F2B138; }
+.spot-row:nth-child(2) .spot-rank { background: #C9D6DE; }
+.spot-row:nth-child(3) .spot-rank { background: #E2A97B; }
+
+.spot-row-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.spot-row-name {
+  display: block;
+  font-size: 28rpx;
+  font-weight: 850;
+  color: #1C1C1C;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.spot-row-tags {
+  display: flex;
+  margin-top: 10rpx;
+}
+
+.spot-tag {
+  margin-right: 12rpx;
+  padding: 4rpx 14rpx;
+  border: 2rpx solid #1C1C1C;
+  border-radius: 999rpx;
+  font-size: 20rpx;
+  font-weight: 800;
+}
+
+.spot-tag.dist {
+  background: #DDF3F6;
+  color: #0E7C92;
+}
+
+.spot-tag.heat {
+  background: #FDECC8;
+  color: #8A5B00;
+}
+
+.spot-row-go {
+  margin-left: 12rpx;
+  font-size: 40rpx;
+  font-weight: 800;
+  color: #B7A98E;
+}
+
+/* 地图自选入口：青底与推荐行区分 */
+.spot-custom {
+  display: flex;
+  align-items: center;
+  margin-top: 22rpx;
+  padding: 22rpx 20rpx;
+  border: 3rpx solid #1C1C1C;
+  border-radius: 20rpx;
+  background: #CDEFF4;
+  box-shadow: 4rpx 4rpx 0 rgba(28, 28, 28, 0.85);
+}
+
+.spot-custom-icon {
+  margin-right: 16rpx;
+  font-size: 40rpx;
+}
+
+.spot-custom-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.spot-custom-title {
+  display: block;
+  font-size: 28rpx;
+  font-weight: 850;
+  color: #1C1C1C;
+}
+
+.spot-custom-sub {
+  display: block;
+  margin-top: 6rpx;
+  font-size: 22rpx;
+  color: #4F6787;
 }

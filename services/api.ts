@@ -85,6 +85,24 @@ export const contentApi = {
   spot(id: string) {
     return http.get(`/spots/${id}`, {}, { auth: false })
   },
+  /**
+   * 用户上传宝藏赶海点位。
+   * 后端 /spots POST 未就绪时 catch 兜底返回 mock 结构，调用方继续写本地缓存。
+   * 联调时移除 .catch 兜底分支即可。
+   */
+  createSpot(payload: Record<string, any>) {
+    return http.post('/spots', payload).catch(() => ({
+      id: 'spot_mock_' + Date.now(),
+      ...payload,
+      mock: true
+    }))
+  },
+  /** 当前用户上传过的点位；后端未就绪时返回空列表（由调用方回退本地缓存）。 */
+  mySpots() {
+    return http.get('/spots/mine')
+      .then((data) => ({ raw: data, list: unwrapList(data) }))
+      .catch(() => ({ raw: { list: [] }, list: [] }))
+  },
   gear() {
     return http.get('/gear', {}, { auth: false }).then((data) => ({
       raw: data,

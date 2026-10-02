@@ -36,10 +36,22 @@ function withKey(row: WatchSpecies): WatchSpecies {
   return { ...row, kind, count, key: `${kind}:${row.name}` }
 }
 
+/** 本次观潮选择的地点：推荐点位或地图自选 */
+export type WatchSpot = {
+  /** 推荐点位的后端 id；自选点位没有 */
+  spotId?: string
+  name: string
+  latitude?: number
+  longitude?: number
+  /** recommend=赶海点推荐；custom=用户地图自选 */
+  source: 'recommend' | 'custom'
+}
+
 export type WatchSession = {
   id?: string
   startedAt: string
   species: WatchSpecies[]
+  spot?: WatchSpot | null
 }
 
 export type WatchRecord = {
@@ -53,6 +65,7 @@ export type WatchRecord = {
   species: WatchSpecies[]
   summary: string
   mascot: string
+  spot?: WatchSpot | null
 }
 
 export type WatchDayGroup = {
@@ -145,8 +158,8 @@ export function isWatching(): boolean {
   return !!getWatchSession()
 }
 
-export function startWatchSession(startedAt: string, serverId?: string): WatchSession {
-  const session: WatchSession = { startedAt, species: [], id: serverId }
+export function startWatchSession(startedAt: string, serverId?: string, spot?: WatchSpot | null): WatchSession {
+  const session: WatchSession = { startedAt, species: [], id: serverId, spot: spot || null }
   wx.setStorageSync(SESSION_KEY, session)
   return session
 }
@@ -193,7 +206,8 @@ export function endWatchSession(endedAt: string): WatchRecord | null {
     durationText: durationText(start, end),
     species: (session.species || []).map(withKey),
     summary: '',
-    mascot: MASCOTS[logs.length % MASCOTS.length]
+    mascot: MASCOTS[logs.length % MASCOTS.length],
+    spot: session.spot || null
   }
   record.summary = buildSummary(record)
   wx.setStorageSync(LOGS_KEY, [record].concat(logs))
@@ -210,6 +224,22 @@ export function removeWatchRecord(id: string): void {
   const logs: WatchRecord[] = wx.getStorageSync(LOGS_KEY) || []
   const next = logs.filter((item) => item && item.id !== id)
   if (next.length !== logs.length) wx.setStorageSync(LOGS_KEY, next)
+}
+
+/** 服务端观潮记录里的地点字段 → 本地 WatchSpot，兼容几种可能的字段命名 */
+function spotFromApi(item: any): WatchSpot | null {
+  const raw = item.spot || {}
+  const name = item.spotName || item.placeName || raw.name
+  if (!name) return null
+  const lat = Number(item.latitude != null ? item.latitude : raw.latitude)
+  const lng = Number(item.longitude != null ? item.longitude : raw.longitude)
+  return {
+    spotId: item.spotId || raw.spotId || '',
+    name,
+    latitude: Number.isNaN(lat) ? undefined : lat,
+    longitude: Number.isNaN(lng) ? undefined : lng,
+    source: raw.source === 'custom' || item.spotSource === 'custom' ? 'custom' : 'recommend'
+  }
 }
 
 export function fromApiRecord(item: any): WatchRecord | null {
@@ -241,7 +271,8 @@ export function fromApiRecord(item: any): WatchRecord | null {
     species,
     summary: item.summary || '',
     // 后端字段名是 mascotKey，不是 mascot——之前只读 mascot，导致服务端记录永远显示默认图
-    mascot: item.mascotKey || item.mascot || 'https://www.blueakaiwu.cn/api/v1/static/assets/badges/crab-star.png'
+    mascot: item.mascotKey || item.mascot || 'https://www.blueakaiwu.cn/api/v1/static/assets/badges/crab-star.png',
+    spot: spotFromApi(item)
   }
   if (!record.id) return null
   if (!record.summary) record.summary = buildSummary(record)

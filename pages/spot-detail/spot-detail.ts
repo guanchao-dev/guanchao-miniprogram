@@ -1,5 +1,6 @@
 import { contentApi } from '../../services/api'
 import { showError, toast } from '../../utils/format'
+import { navigateSpot } from '../../utils/amapNav'
 
 Page({
   data: {
@@ -30,6 +31,16 @@ Page({
     }
     toast('已切换观察点')
     wx.switchTab({ url: '/pages/home/home' })
+  },
+
+  onNavigate() {
+    const spot: any = this.data.spot
+    navigateSpot({
+      name: spot.name,
+      navName: spot.navName || spot.parkingName,
+      latitude: Number(spot.latitude || spot.lat),
+      longitude: Number(spot.longitude || spot.lng)
+    })
   },
 
   goExplore() {

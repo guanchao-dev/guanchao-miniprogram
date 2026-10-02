@@ -29,6 +29,7 @@ desktop.ini
 # ===== 编辑器 / IDE =====
 .idea/
 .vscode/
+.trae/
 *.swp
 
 # ===== 日志与临时文件 =====

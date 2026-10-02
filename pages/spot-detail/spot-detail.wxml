@@ -13,6 +13,7 @@
         <text class="chip" wx:for="{{spot.gearList}}" wx:key="*this">{{item}}</text>
       </view>
       <view class="list-meta" wx:if="{{spot.source}}">来源：{{spot.source}}</view>
+      <view class="btn full-btn" style="background:#34B8C5; color:#fff;" bindtap="onNavigate">🧭 导航到{{spot.navName || spot.name}}</view>
       <view class="btn full-btn" bindtap="useSpot">设为当前观察点</view>
       <view class="btn full-btn ghost-btn" bindtap="goExplore">开始探索</view>
     </view>

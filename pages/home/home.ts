@@ -3,14 +3,17 @@ import { aiApi, contentApi, homeApi, watchApi } from '../../services/api'
 import { requireLogin } from '../../utils/auth'
 import { nowISO, nowTime, showError, toast } from '../../utils/format'
 import { chooseImage, mediaUrl, preloadImage, uploadImage } from '../../utils/upload'
-import { loadGuideSpots } from '../../utils/spotGuide'
+import { getCachedLocation, loadGuideSpots, rankWatchSpots } from '../../utils/spotGuide'
 import { enqueueUnlocks, flushUnlocks } from '../../utils/unlock'
+import { shouldShowOnboarding, markOnboardingCompleted, isOnboarding, getOnboardingIndex } from '../../utils/onboardingStore'
+import { ONBOARDING_STEPS } from '../../utils/onboardingSteps'
 import {
   addWatchItem,
   getWatchSession,
   isWatching,
   setWatchSessionId,
-  startWatchSession
+  startWatchSession,
+  WatchSpot
 } from '../../utils/watchLog'
 import { endWatchNow, notifyWatchBall, subscribeWatchBall } from '../../utils/watchBall'
 
@@ -19,7 +22,7 @@ const ASSET = 'https://www.blueakaiwu.cn/api/v1/static/assets'
 const DEFAULT_ACTIVITIES = [
   { id: 'theme-science', tag: '科普', title: '潮间带科普课', desc: '认识小螃蟹和贝类朋友', theme: 'teal', icon: `${ASSET}/home/home-fish.png`, url: '/pages/knowledge/knowledge' },
   { id: 'theme-study', tag: '研学', title: '赶海研学营', desc: '跟着导师探索潮间带', theme: 'yellow', icon: `${ASSET}/home/home-hero-mascot.png`, url: '' },
-  { id: 'theme-deepblue', tag: '科普', title: '深蓝百万里', desc: '探秘深海生物的世界', theme: 'banner', icon: `${ASSET}/home/home-deepblue.png`, url: '/pages/knowledge/knowledge' }
+  { id: 'theme-deepblue', tag: '科普', title: '深蓝百万里', desc: '全民参与的海洋科学十年行动', theme: 'banner', icon: `${ASSET}/home/home-deepblue.png`, appId: 'wxc625ddd20a55f6cd', miniPath: '' }
 ]
 
 /** 与赶海无关的句子：天气、穿戴、泛化安全叮嘱 */
@@ -173,7 +176,15 @@ Page({
     spotId: DEFAULT_SPOT_ID,
     tideHeightM: 0.8,
     tideTrend: 'falling',
-    tidePoints: []
+    tidePoints: [],
+    showOnboarding: false,
+    onbStartIndex: 0,
+    // 新手教程当前锚点的测量结果（{index, rect}，rect=null 表示居中步）
+    onbRect: null as any,
+    // 开始观潮前的地点选择弹窗
+    spotPickerVisible: false,
+    watchSpots: [] as any[],
+    watchSpotsLoading: false
   },
 
   onShow() {
@@ -181,6 +192,20 @@ Page({
     const self = this as any
     const spotId = (app.globalData && app.globalData.spotId) || this.data.spotId
     this.setData({ spotId, place: '青岛' })
+    // 新手教程：首次启动 或 跨页续接到 home
+    if (isOnboarding()) {
+      const idx = getOnboardingIndex()
+      const step = ONBOARDING_STEPS[idx]
+      if (step && step.tab === 'home') {
+        this.setData({ showOnboarding: true, onbStartIndex: idx })
+      } else {
+        // 不属于本页的步骤：隐藏，等待目标页接管
+        this.setData({ showOnboarding: false })
+      }
+    } else if (shouldShowOnboarding()) {
+      // 首次启动：从第 0 步开始
+      this.setData({ showOnboarding: true, onbStartIndex: 0 })
+    }
     if (!self._unsubWatch) {
       self._lastWatching = isWatching()
       self._unsubWatch = subscribeWatchBall((state) => {
@@ -205,6 +230,69 @@ Page({
       return
     }
     this.setData({ watchLabel: '开始观潮', watchClass: '' })
+  },
+
+  /** 新手教程关闭回调：写完成标记并隐藏 */
+  onOnboardingFinish() {
+    markOnboardingCompleted()
+    this.setData({ showOnboarding: false, onbRect: null })
+  },
+
+  /**
+   * 教程组件请求定位某一步：先把锚点滚动到可视区合适位置，
+   * 再测量 boundingClientRect 回传给组件做高亮/气泡定位。
+   */
+  onOnboardingLocate(e: any) {
+    const index = Number((e && e.detail && e.detail.index) || 0)
+    const step = ONBOARDING_STEPS[index]
+    if (!step) return
+
+    // 跨页：步骤不属于 home → 隐藏本页组件并跳转
+    if (step.tab && step.tab !== 'home') {
+      this.setData({ showOnboarding: false })
+      const url = step.tab === 'achieve' ? '/pages/achieve/achieve' : '/pages/profile/profile'
+      wx.switchTab({ url })
+      return
+    }
+
+    if (!step.selector) {
+      wx.pageScrollTo({ scrollTop: 0, duration: 0 })
+      this.setData({ onbRect: { index, rect: null } })
+      return
+    }
+    const winH = (wx.getWindowInfo ? wx.getWindowInfo() : wx.getSystemInfoSync()).windowHeight
+    let retries = 0
+    let lastScrollTop = -1
+
+    const doMeasure = () => {
+      const query = wx.createSelectorQuery()
+      query.selectViewport().scrollOffset()
+      query.select(step.selector as string).boundingClientRect()
+      query.exec((res: any[]) => {
+        const offset = (res[0] && res[0].scrollTop) || 0
+        const rect = res[1]
+        if (!rect) {
+          // 锚点测不到（可能还没渲染）：重试几次，仍失败则退化为居中
+          if (retries++ < 5) { setTimeout(doMeasure, 150); return }
+          this.setData({ onbRect: { index, rect: null } })
+          return
+        }
+        // 只要求元素顶部在视口合理区间内，不要求完整可见（高卡片 bottom 会超出但没关系）
+        if (rect.top < 40 || rect.top > winH * 0.55) {
+          // 已滚到底（scrollTop 不再变化，swiper 等底部元素常见）：接受当前位置
+          if (offset === lastScrollTop) {
+            this.setData({ onbRect: { index, rect } })
+            return
+          }
+          lastScrollTop = offset
+          const absTop = offset + rect.top
+          wx.pageScrollTo({ scrollTop: Math.max(0, absTop - 120), duration: 0 })
+          if (retries++ < 8) { setTimeout(doMeasure, 300); return }
+        }
+        this.setData({ onbRect: { index, rect } })
+      })
+    }
+    doMeasure()
   },
 
   /** 结束观潮：本地落记录 + 同步服务端，全局复位（按钮与悬浮球共用） */
@@ -240,24 +328,89 @@ Page({
       })
       return
     }
-    wx.showModal({
-      title: '开始观潮',
-      content: '确认开始这次观潮吗？将记录开始时间。',
-      confirmText: '开始',
-      success: (res) => {
-        if (!res.confirm) return
-        const startedAt = nowISO()
-        startWatchSession(startedAt)
-        notifyWatchBall()
-        this.syncWatchBtn()
-        toast('观潮已开始')
-        watchApi.start({ startedAt, spotId: this.data.spotId })
-          .then((data) => {
-            if (data && data.id) setWatchSessionId(data.id)
+    // 未开始：先选观潮地点（推荐点位 / 地图自选），选定即开始
+    this.openSpotPicker()
+  },
+
+  /** 打开地点选择弹窗，并按距离+热度加载推荐赶海点 */
+  openSpotPicker() {
+    this.setData({ spotPickerVisible: true, watchSpots: [], watchSpotsLoading: true })
+    loadGuideSpots()
+      .then((list) => {
+        this.setData({ watchSpots: rankWatchSpots(list, 5), watchSpotsLoading: false })
+      })
+      .catch(() => {
+        this.setData({ watchSpotsLoading: false })
+      })
+  },
+
+  closeSpotPicker() {
+    this.setData({ spotPickerVisible: false })
+  },
+
+  /** 选中一个推荐点位 → 直接开始观潮 */
+  onPickWatchSpot(e: any) {
+    const row = this.data.watchSpots[Number(e.currentTarget.dataset.index)]
+    if (!row) return
+    this.beginWatch({
+      spotId: row.id,
+      name: row.name,
+      latitude: row.latitude || undefined,
+      longitude: row.longitude || undefined,
+      source: 'recommend'
+    })
+  },
+
+  /** 在微信内置地图上自选点位（gcj02 坐标，与潮汐接口一致） */
+  onChooseCustomSpot() {
+    const cached = getCachedLocation() || ({} as any)
+    wx.chooseLocation({
+      latitude: cached.lat,
+      longitude: cached.lng,
+      success: (res: any) => {
+        if (!res || (!res.name && !res.address)) return
+        this.beginWatch({
+          name: res.name || res.address || '自选点位',
+          latitude: res.latitude,
+          longitude: res.longitude,
+          source: 'custom'
+        })
+      },
+      fail: (err: any) => {
+        const msg = String((err && err.errMsg) || '')
+        if (/auth|deny|permission/i.test(msg)) {
+          wx.showModal({
+            title: '需要位置权限',
+            content: '自选地点要先授权位置信息，去设置里开启后再试。',
+            confirmText: '知道了',
+            showCancel: false
           })
-          .catch(() => {})
+        }
+        // 用户主动取消时不提示
       }
     })
+  },
+
+  /** 选定地点后开始观潮：写本地会话（悬浮球随之出现）+ 上报服务端 */
+  beginWatch(spot: WatchSpot) {
+    const startedAt = nowISO()
+    this.setData({ spotPickerVisible: false })
+    startWatchSession(startedAt, undefined, spot)
+    notifyWatchBall()
+    this.syncWatchBtn()
+    toast(`已在${spot.name}开始观潮`)
+    watchApi.start({
+      startedAt,
+      spotId: spot.spotId || this.data.spotId,
+      spotName: spot.name,
+      latitude: spot.latitude,
+      longitude: spot.longitude,
+      spotSource: spot.source
+    })
+      .then((data) => {
+        if (data && data.id) setWatchSessionId(data.id)
+      })
+      .catch(() => {})
   },
 
   loadToday() {
@@ -313,7 +466,10 @@ Page({
           // banner 也是 theme 取值（图当背景 + 文字叠在上面），与前端同学的上传版本一致
           theme: it.theme === 'yellow' || it.theme === 'banner' ? it.theme : 'teal',
           icon: it.image || it.imageUrl || (it.tag === '研学' ? `${ASSET}/home/home-hero-mascot.png` : `${ASSET}/home/home-fish.png`),
-          url: it.url || it.linkUrl || ''
+          url: it.url || it.linkUrl || '',
+          // 跳第三方小程序（如深蓝两万里官方小程序），后端可配 appId + 落地页 path
+          appId: it.appId || it.miniAppId || '',
+          miniPath: it.miniPath || it.appPath || ''
         })).filter((it: any) => it.title)
         if (items.length) this.setData({ activities: items })
       })
@@ -324,6 +480,18 @@ Page({
 
   onActivity(e: any) {
     const item = e.currentTarget.dataset.item || {}
+    // 跳第三方小程序（如深蓝两万里官方小程序），必须由用户点击触发
+    if (item.appId) {
+      wx.navigateToMiniProgram({
+        appId: String(item.appId),
+        path: item.miniPath ? String(item.miniPath) : undefined,
+        fail: (err: any) => {
+          if (err && String(err.errMsg || '').indexOf('cancel') >= 0) return
+          toast('暂时无法打开，请稍后再试')
+        }
+      })
+      return
+    }
     const url = String(item.url || '')
     // 外部网页（如公众号文章）交给 web-view 承载页；小程序不能直接跳外链
     if (/^https?:\/\//.test(url)) {

@@ -1,0 +1,53 @@
+<view class="page memphis-bg">
+  <view class="memphis-layer">
+    <view class="geo-circle md" style="top: 30rpx; right: -40rpx; background:#34B8C5;"></view>
+    <view class="geo-square sm" style="bottom: 120rpx; left: -20rpx; background:#F6D081;"></view>
+  </view>
+
+  <view class="page-content">
+    <view class="hero">
+      <view class="hero-title">宝藏点位</view>
+      <view class="hero-sub">把你发现的好赶海点分享出来，方便自己回头导航</view>
+    </view>
+
+    <!-- 地图选点 -->
+    <view class="card field-card">
+      <view class="field-label">位置</view>
+      <view class="place-pick" bindtap="choosePlace">
+        <block wx:if="{{lat}}">
+          <view class="place-name">{{name || '未命名点位'}}</view>
+          <view class="place-addr" wx:if="{{address}}">{{address}}</view>
+          <view class="place-coord">{{lat}}, {{lng}}</view>
+        </block>
+        <view class="place-empty" wx:else>
+          <text class="place-empty-icon">📍</text>
+          <text>点此在地图上选点</text>
+        </view>
+      </view>
+      <map wx:if="{{lat}}" class="place-map" latitude="{{mapLat}}" longitude="{{mapLng}}" markers="{{markers}}"></map>
+    </view>
+
+    <!-- 名称 -->
+    <view class="card field-card">
+      <view class="field-label">点位名称</view>
+      <input class="field-input" placeholder="例如：石老人海滩南礁" value="{{name}}" bindinput="onInputName" maxlength="30" />
+    </view>
+
+    <!-- 地址 -->
+    <view class="card field-card">
+      <view class="field-label">地址（可选）</view>
+      <input class="field-input" placeholder="选点后自动填入，可修改" value="{{address}}" bindinput="onInputAddress" maxlength="80" />
+    </view>
+
+    <!-- 备注 -->
+    <view class="card field-card">
+      <view class="field-label">赶海备注（可选）</view>
+      <textarea class="field-textarea" placeholder="例如：低潮前后两小时最佳，注意西侧暗礁" value="{{note}}" bindinput="onInputNote" maxlength="200" />
+    </view>
+
+    <!-- 提交 -->
+    <button class="submit-btn {{canSubmit ? '' : 'disabled'}}" bindtap="submit" loading="{{submitting}}" disabled="{{!canSubmit}}">
+      {{submitting ? '提交中…' : '上传点位'}}
+    </button>
+  </view>
+</view>

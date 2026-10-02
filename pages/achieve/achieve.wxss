@@ -36,71 +36,48 @@
   flex-shrink: 0;
 }
 
-.hero-blob {
-  position: absolute;
-  right: 8rpx;
-  top: 28rpx;
-  width: 176rpx;
-  height: 176rpx;
-  border: 4rpx solid #1C1C1C;
-  border-radius: 42% 52% 48% 58%;
-  background: #34B8C5;
-  box-shadow: 3rpx 3rpx 0 rgba(28, 28, 28, 0.85);
-  transform: rotate(-8deg);
-}
-
-.hero-ring {
-  position: absolute;
-  left: 8rpx;
-  top: 18rpx;
-  width: 70rpx;
-  height: 70rpx;
-  border: 8rpx solid #F6D081;
-  border-radius: 50%;
-  opacity: 0.95;
-}
-
 .hero-dot-a {
   position: absolute;
-  top: 8rpx;
-  right: 18rpx;
-  width: 26rpx;
-  height: 26rpx;
+  top: 2rpx;
+  right: 4rpx;
+  width: 22rpx;
+  height: 22rpx;
   border: 3rpx solid #1C1C1C;
   border-radius: 50%;
   background: #1888BF;
+  z-index: 3;
 }
 
 .hero-dot-b {
   position: absolute;
-  left: 18rpx;
-  bottom: 42rpx;
+  left: -2rpx;
+  bottom: 18rpx;
   width: 18rpx;
   height: 18rpx;
   border: 3rpx solid #1C1C1C;
   border-radius: 50%;
   background: #A7D9C7;
+  z-index: 3;
 }
 
-.hero-bar {
+/* 男版吉祥物是带 #F9EAC5 奶油底的方图：盒子同底色，图片无缝铺满 */
+.hero-mascot-box {
   position: absolute;
-  left: 12rpx;
-  top: 100rpx;
-  width: 42rpx;
-  height: 14rpx;
-  border: 3rpx solid #1C1C1C;
-  border-radius: 999rpx;
-  background: #184D97;
-  transform: rotate(16deg);
+  right: 0;
+  top: 12rpx;
+  width: 224rpx;
+  height: 224rpx;
+  overflow: hidden;
+  border: 4rpx solid #1C1C1C;
+  border-radius: 28rpx;
+  background: #F9EAC5;
+  box-shadow: 4rpx 4rpx 0 rgba(28, 28, 28, 0.85);
+  transform: rotate(2deg);
 }
 
 .hero-mascot {
-  position: absolute;
-  right: -6rpx;
-  bottom: -4rpx;
-  width: 220rpx;
-  height: 220rpx;
-  z-index: 2;
+  width: 100%;
+  height: 100%;
 }
 
 .progress {

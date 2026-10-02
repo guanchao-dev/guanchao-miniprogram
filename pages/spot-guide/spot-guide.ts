@@ -1,6 +1,7 @@
 import { contentApi, homeApi } from '../../services/api'
 import { trendText } from '../../utils/format'
 import { GuideSpot, loadGuideSpots } from '../../utils/spotGuide'
+import { navigateSpot } from '../../utils/amapNav'
 
 function tideLabel(type?: string): string {
   const map: Record<string, string> = {
@@ -91,6 +92,16 @@ Page({
 
   closeDetail() {
     this.setData({ showDetail: false })
+  },
+
+  onNavigate() {
+    const spot = this.data.detail || {}
+    navigateSpot({
+      name: spot.name,
+      navName: spot.navName,
+      latitude: spot.latitude,
+      longitude: spot.longitude
+    })
   },
 
   noop() {},

@@ -18,6 +18,7 @@
         <view class="card-body">
           <view class="card-name">{{row.startTime}} – {{row.endTime}}</view>
           <view class="card-meta">时长 {{row.durationText}} · {{row.species.length}} 项发现</view>
+          <view class="card-spot" wx:if="{{row.spot}}">📍 {{row.spot.name}}{{row.spot.source === 'custom' ? '（自选）' : ''}}</view>
         </view>
         <text class="card-arrow">›</text>
       </view>
@@ -34,6 +35,7 @@
         <image class="detail-mascot" src="{{detail.mascot}}" mode="aspectFit"></image>
         <view class="detail-time">{{detail.date}} · {{detail.startTime}} 到 {{detail.endTime}}</view>
         <view class="detail-sub">这次一共观潮 {{detail.durationText}}</view>
+        <view class="detail-spot" wx:if="{{detail.spot}}">📍 观潮地点：{{detail.spot.name}}{{detail.spot.source === 'custom' ? '（地图自选）' : ''}}</view>
         <text class="detail-summary">{{detail.summary}}</text>
         <view class="species-box" wx:if="{{detail.groups.length}}">
           <view class="species-title">这次发现</view>

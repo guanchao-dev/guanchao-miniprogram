@@ -20,6 +20,12 @@
     </view>
 
     <view class="card list-card">
+      <view class="list-title">新手教程</view>
+      <view class="list-meta">再看一遍特色功能介绍：开始观潮、AI 识别、生态净滩、宝藏点位…</view>
+      <view class="btn full-btn" bindtap="onReplayOnboarding">再次查看新手教程</view>
+    </view>
+
+    <view class="card list-card">
       <view class="list-title">隐私与协议</view>
       <view class="list-meta" wx:if="{{version}}">当前版本 {{version}}</view>
       <view class="btn full-btn ghost-btn" bindtap="openPrivacy">查看用户协议 / 隐私政策</view>

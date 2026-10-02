@@ -1,6 +1,7 @@
 import { authApi, contentApi } from '../../services/api'
 import { clearSession, isLoggedIn, requireLogin } from '../../utils/auth'
 import { showError, toast } from '../../utils/format'
+import { resetOnboarding } from '../../utils/onboardingStore'
 
 Page({
   data: {
@@ -42,6 +43,12 @@ Page({
     contentApi.guardianConsent(true, this.data.version || '2026-08-01')
       .then(() => toast('已记录监护人同意'))
       .catch((err) => showError(err, '提交失败'))
+  },
+
+  /** 再次查看新手教程：清完成标记 → 跳首页 → onShow 自动启动 */
+  onReplayOnboarding() {
+    resetOnboarding()
+    wx.switchTab({ url: '/pages/home/home' })
   },
 
   onWithdrawConsent() {

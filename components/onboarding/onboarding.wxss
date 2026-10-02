@@ -1,0 +1,200 @@
+/* ===== 新手教程：锚点高亮 + 泡泡对话气泡（缩小版） ===== */
+
+.onb-root {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+}
+
+/* 高亮框：自身透明，超大外阴影当蒙层，中间露出真实功能区 */
+.onb-hole {
+  position: fixed;
+  border: 3rpx solid #34B8C5;
+  border-radius: 14px;
+  background: transparent;
+  box-shadow: 0 0 0 9999rpx rgba(9, 26, 44, 0.66), 0 0 0 8rpx rgba(52, 184, 197, 0.25);
+  pointer-events: none;
+  z-index: 101;
+  transition: all 0.18s ease;
+}
+
+/* center / moving 初始：全屏蒙层，无描边无圆角 */
+.onb-hole.full {
+  border: none;
+  border-radius: 0;
+  background: rgba(9, 26, 44, 0.66);
+  box-shadow: none;
+}
+
+.onb-pop {
+  position: fixed;
+  left: 32rpx;
+  right: 32rpx;
+  z-index: 102;
+  transition: opacity 0.15s ease;
+}
+
+.onb-pop-moving {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* 居中步：整屏居中 */
+.onb-pop-center {
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  padding: 0 56rpx;
+  box-sizing: border-box;
+}
+
+.onb-bubble {
+  position: relative;
+  margin-top: 32rpx;
+  padding: 20rpx 22rpx 18rpx;
+  border: 3rpx solid #1C1C1C;
+  border-radius: 22rpx;
+  background: #FFFFFF;
+  box-shadow: 4rpx 4rpx 0 rgba(28, 28, 28, 0.85);
+}
+
+.onb-pop-center .onb-bubble {
+  margin-top: 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* 尾巴 */
+.onb-tail {
+  position: absolute;
+  width: 20rpx;
+  height: 20rpx;
+  background: #FFFFFF;
+  z-index: 1;
+}
+
+.pop-below .onb-tail {
+  top: -12rpx;
+  border-left: 3rpx solid #1C1C1C;
+  border-top: 3rpx solid #1C1C1C;
+  transform: rotate(45deg);
+}
+
+.pop-above .onb-tail {
+  bottom: -12rpx;
+  border-right: 3rpx solid #1C1C1C;
+  border-bottom: 3rpx solid #1C1C1C;
+  transform: rotate(45deg);
+}
+
+.pop-center .onb-tail,
+.pop-moving .onb-tail {
+  display: none;
+}
+
+/* 头像：缩小到 80rpx */
+.onb-mascot {
+  position: absolute;
+  top: -40rpx;
+  left: 22rpx;
+  width: 80rpx;
+  height: 80rpx;
+  border: 3rpx solid #1C1C1C;
+  border-radius: 50%;
+  background: #A4C8DB;
+  box-shadow: 2rpx 2rpx 0 rgba(28, 28, 28, 0.85);
+  z-index: 2;
+}
+
+.onb-pop-center .onb-mascot {
+  top: -40rpx;
+  left: 50%;
+  margin-left: -40rpx;
+}
+
+.onb-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 28rpx;
+}
+
+.onb-pop-center .onb-meta {
+  justify-content: center;
+}
+
+.onb-name {
+  font-size: 20rpx;
+  font-weight: 900;
+  color: #0E7C92;
+  background: #DDF3F6;
+  border: 2rpx solid #0E7C92;
+  border-radius: 999rpx;
+  padding: 2rpx 14rpx;
+}
+
+.onb-count {
+  font-size: 20rpx;
+  font-weight: 800;
+  color: #9AA8B2;
+}
+
+.onb-pop-center .onb-count {
+  display: none;
+}
+
+.onb-title {
+  margin-top: 10rpx;
+  font-size: 28rpx;
+  font-weight: 900;
+  color: #1C1C1C;
+  line-height: 1.4;
+}
+
+.onb-pop-center .onb-title {
+  text-align: center;
+}
+
+.onb-desc {
+  margin-top: 8rpx;
+  font-size: 24rpx;
+  line-height: 1.6;
+  color: #4A5866;
+}
+
+.onb-pop-center .onb-desc {
+  text-align: center;
+}
+
+.onb-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 16rpx;
+}
+
+.onb-skip {
+  padding: 10rpx 8rpx;
+  font-size: 24rpx;
+  font-weight: 800;
+  color: #9AA8B2;
+}
+
+.onb-next {
+  padding: 12rpx 36rpx;
+  border: 3rpx solid #1C1C1C;
+  border-radius: 999rpx;
+  background: #34B8C5;
+  box-shadow: 3rpx 3rpx 0 rgba(28, 28, 28, 0.85);
+  font-size: 26rpx;
+  font-weight: 900;
+  color: #FFFFFF;
+}
+
+.onb-next:active {
+  transform: translate(2rpx, 2rpx);
+  box-shadow: 1rpx 1rpx 0 rgba(28, 28, 28, 0.85);
+}

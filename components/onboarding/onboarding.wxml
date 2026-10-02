@@ -1,0 +1,21 @@
+<view wx:if="{{visible}}" class="onb-root" catchtap="noop" catchtouchmove="noop">
+  <!-- 蒙层常驻：高亮框用超大 box-shadow 压暗四周，center 时变全屏蒙层 -->
+  <view class="onb-hole {{placement === 'center' ? 'full' : ''}}" style="{{holeStyle}}"></view>
+
+  <view class="onb-pop pop-{{placement}}" style="{{bubbleStyle}}" catchtap="noop">
+    <view class="onb-tail" style="{{tailStyle}}"></view>
+    <view class="onb-bubble">
+      <image class="onb-mascot" src="/assets/temp_png/mascot-girl.png" mode="aspectFill"></image>
+      <view class="onb-meta">
+        <text class="onb-name">泡泡</text>
+        <text class="onb-count">{{current + 1}}/{{total}}</text>
+      </view>
+      <view class="onb-title">{{step.title}}</view>
+      <view class="onb-desc">{{step.desc}}</view>
+      <view class="onb-actions">
+        <view class="onb-skip" catchtap="onSkip">跳过</view>
+        <view class="onb-next" catchtap="onNext">{{current === total - 1 ? '开始探索' : '下一步'}}</view>
+      </view>
+    </view>
+  </view>
+</view>

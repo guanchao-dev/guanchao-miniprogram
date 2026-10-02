@@ -14,6 +14,8 @@
     "pages/spots/spots",
     "pages/spot-guide/spot-guide",
     "pages/spot-detail/spot-detail",
+    "pages/my-spots/my-spots",
+    "pages/spot-share/spot-share",
     "pages/explore/explore",
     "pages/light-map/light-map",
     "pages/wiki/wiki",
@@ -74,6 +76,9 @@
     "onLocationChange"
   ],
   "style": "v2",
+  "navigateToMiniProgramAppIdList": [
+    "wxc625ddd20a55f6cd"
+  ],
   "lazyCodeLoading": "requiredComponents",
   "sitemapLocation": "sitemap.json",
   "usingComponents": {

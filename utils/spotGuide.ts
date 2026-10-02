@@ -21,9 +21,42 @@ export type GuideSpot = {
   species: GuideSpecies[]
   distanceM?: number
   distanceText: string
+  /** 导航目的地名称（如「红石崖赶海停车场」），缺省时用点位名 */
+  navName?: string
 }
 
 const CITY = '青岛'
+
+/**
+ * 内置默认赶海点：后端未收录 / 接口不可用时也一定展示。
+ * 后端返回同 id 点位时会覆盖本地条目。
+ */
+const FALLBACK_SPOTS: GuideSpot[] = [
+  {
+    id: 'spot_qd_hongshiya',
+    name: '红石崖',
+    city: '黄岛',
+    heat: 70,
+    // 近似坐标（胶州湾西南岸红石崖街道沿海），导航以地名为准，待后端按实地校正
+    latitude: 36.1085,
+    longitude: 120.2355,
+    coverUrl: '',
+    icon: 'https://www.blueakaiwu.cn/api/v1/static/assets/home/home-nearby.png',
+    photos: [],
+    openTime: '全年开放（退潮时段）',
+    observeHint: '泥滩地，适合赶海老手，新手容易陷在泥坑、迷路，特别是晚上！建议穿连体涉水裤',
+    safetyTags: ['泥滩易陷', '新手夜间勿入', '穿连体涉水裤'],
+    species: [
+      { name: '皮皮虾' },
+      { name: '海螺' },
+      { name: '八爪鱼' },
+      { name: '螃蟹' },
+      { name: '毛蛤' }
+    ],
+    navName: '红石崖赶海停车场',
+    distanceText: ''
+  }
+]
 
 
 function toRad(deg: number): number {
@@ -107,7 +140,8 @@ export function mergeGuideSpots(apiList: any[], loc?: { lat: number; lng: number
       safetyTags: (item.safetyTags && item.safetyTags.length) ? item.safetyTags : base.safetyTags,
       photos: photosOf(item, base.photos),
       species: speciesOf(item, base.species),
-      distanceM: item.distanceM != null ? Number(item.distanceM) : base.distanceM
+      distanceM: item.distanceM != null ? Number(item.distanceM) : base.distanceM,
+      navName: item.navName || item.parkingName || base.navName
     })
   })
 
@@ -122,6 +156,33 @@ export function mergeGuideSpots(apiList: any[], loc?: { lat: number; lng: number
       distanceText: formatDistance(distanceM)
     })
   }).sort((a, b) => b.heat - a.heat)
+}
+
+/**
+ * 观潮选点推荐：距离与热度综合排序（复用赶海点推荐的同一套数据）。
+ *
+ * 打分口径：热度 0~100，距离每 1km 折抵 10 分，
+ * 即 score = heat - distanceM / 100。有距离的点位排在无距离点位之前；
+ * 定位失败全部无距离时退化为纯热度排序。
+ */
+export function rankWatchSpots(list: GuideSpot[], limit = 5): GuideSpot[] {
+  const rows = (list || []).filter((s) => s && s.id && s.name)
+  const scored = rows.map((s) => {
+    const heat = Math.max(0, Math.min(100, Number(s.heat) || 0))
+    const dist = typeof s.distanceM === 'number' && s.distanceM >= 0 ? s.distanceM : null
+    return {
+      spot: s,
+      hasDist: dist !== null,
+      score: dist === null ? heat * 0.5 : heat - dist / 100
+    }
+  })
+  return scored
+    .sort((a, b) => {
+      if (a.hasDist !== b.hasDist) return a.hasDist ? -1 : 1
+      return b.score - a.score
+    })
+    .slice(0, limit)
+    .map((x) => x.spot)
 }
 
 export function nearestGuideSpot(list: GuideSpot[]): GuideSpot | null {
@@ -162,6 +223,26 @@ export function requestLocation(): Promise<{ lat: number; lng: number } | null> 
   })
 }
 
+/**
+ * 把内置默认点位并入接口结果：同 id 以后端为准，缺失的补到末尾，
+ * 并统一补算距离。接口整体失败时只剩默认点位。
+ */
+export function withFallbackSpots(list: GuideSpot[], loc?: { lat: number; lng: number } | null): GuideSpot[] {
+  const apiIds: Record<string, boolean> = {}
+  ;(list || []).forEach((s) => { apiIds[s.id] = true })
+  const extra = FALLBACK_SPOTS.filter((s) => !apiIds[s.id])
+  return list
+    .concat(extra)
+    .map((spot) => {
+      let distanceM = spot.distanceM
+      if ((distanceM == null || Number.isNaN(distanceM)) && loc && spot.latitude && spot.longitude) {
+        distanceM = haversineM(loc.lat, loc.lng, spot.latitude, spot.longitude)
+      }
+      return Object.assign({}, spot, { distanceM, distanceText: formatDistance(distanceM) })
+    })
+    .sort((a, b) => b.heat - a.heat)
+}
+
 export function loadGuideSpots(): Promise<GuideSpot[]> {
   return requestLocation().then((loc) => {
     const params: Record<string, any> = { city: CITY, page: 1, pageSize: 50 }
@@ -170,7 +251,7 @@ export function loadGuideSpots(): Promise<GuideSpot[]> {
       params.lng = loc.lng
     }
     return contentApi.spots(params)
-      .then((res) => mergeGuideSpots(res.list || [], loc))
-      .catch(() => mergeGuideSpots([], loc))
+      .then((res) => withFallbackSpots(mergeGuideSpots(res.list || [], loc), loc))
+      .catch(() => withFallbackSpots(mergeGuideSpots([], loc), loc))
   })
 }

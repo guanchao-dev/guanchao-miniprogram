@@ -38,6 +38,7 @@
           class="service-item"
           wx:for="{{services}}"
           wx:key="title"
+          id="{{item.title === '宝藏点位' ? 'onb-spot-entry' : ''}}"
           data-url="{{item.url}}"
           data-tab="{{item.tab}}"
           bindtap="onService"
@@ -60,5 +61,13 @@
   </view>
   <unlock-popup id="unlockPopup"></unlock-popup>
 </view>
+
+<onboarding
+  visible="{{showOnboarding}}"
+  start-index="{{onbStartIndex}}"
+  target-rect="{{onbRect}}"
+  bind:finish="onOnboardingFinish"
+  bind:locate="onOnboardingLocate"
+/>
 
 <watch-ball />
