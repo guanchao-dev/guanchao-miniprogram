@@ -130,14 +130,17 @@
   margin-left: 26rpx;
 }
 
-/* 网格里的数值字号小一档 —— 两列并排，太大会挤 */
+/* 网格里每格只有半栏宽（约 290rpx），标签和数值都要收一档，
+   并且禁止换行 —— 时间这种较长的值一旦折行，两列就参差不齐了 */
 .log-cell .log-k {
   font-size: 24rpx;
+  white-space: nowrap;
 }
 
 .log-cell .log-v {
   margin-left: 12rpx;
-  font-size: 30rpx;
+  font-size: 28rpx;
+  white-space: nowrap;
 }
 
 .log-k {
