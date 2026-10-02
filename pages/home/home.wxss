@@ -402,7 +402,6 @@
 }
 
 .candidate-reason,
-.ai-hint,
 .obs {
   display: block;
   margin-top: 8rpx;
@@ -417,11 +416,6 @@
   color: #8A7A6B;
   font-size: 20rpx;
   line-height: 1.5;
-}
-
-.ai-hint {
-  color: #8A7A6B;
-  font-size: 20rpx;
 }
 
 /* ===== 相关活动自动轮播 ===== */

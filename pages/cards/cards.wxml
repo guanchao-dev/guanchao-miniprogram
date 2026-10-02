@@ -15,25 +15,33 @@
     <view class="day-block" wx:for="{{groups}}" wx:key="date">
       <view class="day-label">{{item.label}}</view>
       <view class="log-card card" wx:for="{{item.items}}" wx:for-item="row" wx:key="id" data-id="{{row.id}}" bindtap="onOpen">
-        <view class="log-row">
-          <text class="log-k">识别生物</text>
-          <text class="log-v {{row.creatureCount ? '' : 'is-zero'}}">{{row.creatureCount}} 种</text>
+        <!-- 两列统计格：标签在上、大号数值在下、数值压在一条横线上 -->
+        <view class="log-grid">
+          <view class="log-cell">
+            <text class="log-k">识别生物</text>
+            <text class="log-v {{row.creatureCount ? '' : 'is-zero'}}">{{row.creatureCount}} 种</text>
+          </view>
+          <view class="log-cell">
+            <text class="log-k">垃圾量</text>
+            <text class="log-v {{row.trashAmountText === '无' ? 'is-zero' : ''}}">{{row.trashAmountText}}</text>
+          </view>
         </view>
-        <view class="log-row">
-          <text class="log-k">垃圾量</text>
-          <text class="log-v {{row.trashAmountText === '无' ? 'is-zero' : ''}}">{{row.trashAmountText}}</text>
+
+        <!-- 方框分区：这次认出的图鉴 -->
+        <view class="log-box">
+          <text class="log-box-title">这次认出的图鉴</text>
+          <view class="log-thumbs" wx:if="{{row.creatureCovers.length}}">
+            <image
+              class="log-thumb"
+              wx:for="{{row.creatureCovers}}"
+              wx:for-item="cv"
+              wx:key="*this"
+              src="{{cv}}"
+              mode="aspectFill"
+            ></image>
+          </view>
+          <view class="log-thumbs-empty" wx:else>这次没有认出生物</view>
         </view>
-        <view class="log-thumbs" wx:if="{{row.creatureCovers.length}}">
-          <image
-            class="log-thumb"
-            wx:for="{{row.creatureCovers}}"
-            wx:for-item="cv"
-            wx:key="*this"
-            src="{{cv}}"
-            mode="aspectFill"
-          ></image>
-        </view>
-        <view class="log-thumbs-empty" wx:else>这次没有认出生物</view>
       </view>
     </view>
   </view>
@@ -45,26 +53,31 @@
         <text class="sheet-close" bindtap="closeDetail">×</text>
       </view>
       <scroll-view scroll-y class="sheet-body">
-        <!-- 与列表页同一套版式：只留「认了几种生物 / 垃圾量」，底部铺图鉴图 -->
-        <view class="log-row">
-          <text class="log-k">识别生物</text>
-          <text class="log-v {{detail.creatureCount ? '' : 'is-zero'}}">{{detail.creatureCount}} 种</text>
+        <!-- 与列表页同一套版式：两列统计格 + 方框分区 -->
+        <view class="log-grid">
+          <view class="log-cell">
+            <text class="log-k">识别生物</text>
+            <text class="log-v {{detail.creatureCount ? '' : 'is-zero'}}">{{detail.creatureCount}} 种</text>
+          </view>
+          <view class="log-cell">
+            <text class="log-k">垃圾量</text>
+            <text class="log-v {{detail.trashAmountText === '无' ? 'is-zero' : ''}}">{{detail.trashAmountText}}</text>
+          </view>
         </view>
-        <view class="log-row">
-          <text class="log-k">垃圾量</text>
-          <text class="log-v {{detail.trashAmountText === '无' ? 'is-zero' : ''}}">{{detail.trashAmountText}}</text>
+        <view class="log-box">
+          <text class="log-box-title">这次认出的图鉴</text>
+          <view class="log-thumbs" wx:if="{{detail.creatureCovers.length}}">
+            <image
+              class="log-thumb"
+              wx:for="{{detail.creatureCovers}}"
+              wx:for-item="cv"
+              wx:key="*this"
+              src="{{cv}}"
+              mode="aspectFill"
+            ></image>
+          </view>
+          <view class="log-thumbs-empty" wx:else>这次没有认出生物</view>
         </view>
-        <view class="log-thumbs" wx:if="{{detail.creatureCovers.length}}">
-          <image
-            class="log-thumb"
-            wx:for="{{detail.creatureCovers}}"
-            wx:for-item="cv"
-            wx:key="*this"
-            src="{{cv}}"
-            mode="aspectFill"
-          ></image>
-        </view>
-        <view class="log-thumbs-empty" wx:else>这次没有认出生物</view>
 
         <view class="detail-spot" wx:if="{{detail.spot}}">📍 观潮地点：{{detail.spot.name}}{{detail.spot.source === 'custom' ? '（地图自选）' : ''}}</view>
         <view class="species-box" wx:if="{{detail.groups.length}}">

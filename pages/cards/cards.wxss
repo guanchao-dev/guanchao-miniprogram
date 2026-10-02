@@ -155,40 +155,65 @@
   line-height: 1.5;
 }
 
-/* ===== 观潮记录卡：标签 + 下划线数值 + 底部图鉴图 ===== */
+/* ===== 观潮记录卡：两列统计格 + 方框分区 ===== */
 .log-card {
-  padding: 26rpx 28rpx 18rpx;
+  padding: 26rpx 28rpx 22rpx;
   margin-bottom: 18rpx;
 }
 
-.log-row {
+/* 两列统计格：标签在上，大号数值在下，数值压在一条横线上 */
+.log-grid {
   display: flex;
-  align-items: baseline;
-  margin-bottom: 18rpx;
+}
+
+.log-cell {
+  flex: 1;
+  min-width: 0;
+  padding-right: 28rpx;
+}
+
+.log-cell + .log-cell {
+  padding-right: 0;
 }
 
 .log-k {
-  flex: none;
-  width: 150rpx;
-  font-size: 26rpx;
+  display: block;
+  font-size: 24rpx;
   font-weight: 700;
   color: #6B7F8F;
 }
 
-/* 数值落在一条下划线上，像纸质日志的填写栏 */
+/* 数值落在横线上，像纸质日志的填写栏 */
 .log-v {
-  flex: 1;
-  padding-bottom: 6rpx;
+  display: block;
+  margin-top: 14rpx;
+  padding-bottom: 8rpx;
   border-bottom: 3rpx solid #1C1C1C;
-  font-size: 34rpx;
+  font-size: 40rpx;
   font-weight: 850;
-  line-height: 1.25;
+  line-height: 1.15;
 }
 
 /* 「0 种」「无」这类空值弱化，不跟真结果抢视线 */
 .log-v.is-zero {
   color: #A8B3B0;
   border-bottom-color: #C9D4D1;
+}
+
+/* 方框分区：这次认出的图鉴 */
+.log-box {
+  margin-top: 26rpx;
+  padding: 18rpx;
+  border-radius: 20rpx;
+  background: #F3F7FB;
+}
+
+.log-box-title {
+  display: block;
+  margin-bottom: 14rpx;
+  font-size: 24rpx;
+  font-weight: 800;
+  color: #6B7F8F;
 }
 
 .log-thumbs {
