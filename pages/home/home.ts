@@ -726,5 +726,13 @@ Page({
     this.setData({ showGuess: false, guessItems: [] })
   },
 
+  /**
+   * 识别结果弹窗右上角的图鉴入口。
+   * 刻意不关弹窗：用户去图鉴看完返回时，这次的识别结果还在，可以接着确认物种。
+   */
+  goWiki() {
+    wx.navigateTo({ url: '/pages/wiki/wiki' })
+  },
+
   noop() {}
 })

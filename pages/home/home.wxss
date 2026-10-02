@@ -540,6 +540,33 @@
   font-weight: 300;
 }
 
+.ai-head-right {
+  display: flex;
+  align-items: center;
+}
+
+/* 识别结果弹窗右上角的图鉴入口。逆时针旋转 45°，书本呈菱形朝向。
+   rotate 后 72rpx 的方形外接框会涨到约 102rpx，所以右边要留够间距，
+   否则会和 × 视觉贴住；左侧同理靠弹窗自身的内边距兜住。 */
+.wiki-entry {
+  width: 72rpx;
+  height: 72rpx;
+  margin-right: 18rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: rotate(-45deg);
+}
+
+.wiki-entry-hover {
+  opacity: 0.6;
+}
+
+.wiki-entry-img {
+  width: 100%;
+  height: 100%;
+}
+
 .ai-modal-body {
   max-height: 68vh;
   padding: 8rpx 32rpx 32rpx;

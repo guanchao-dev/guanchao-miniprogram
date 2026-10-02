@@ -131,7 +131,13 @@
     <view class="ai-modal" catchtap="noop">
       <view class="ai-modal-head">
         <text>{{guess.isSeaCreature === false ? '小螃蟹看不懂' : '小螃蟹猜一猜'}}</text>
-        <text class="ai-close" bindtap="closeGuess">×</text>
+        <view class="ai-head-right">
+          <!-- 图鉴入口：点开去看已点亮的图鉴。不关弹窗，返回时识别结果还在 -->
+          <view class="wiki-entry" bindtap="goWiki" hover-class="wiki-entry-hover" hover-stay-time="80">
+            <image class="wiki-entry-img" src="https://www.blueakaiwu.cn/api/v1/static/assets/home/home-wiki-entry.png" mode="aspectFit"></image>
+          </view>
+          <text class="ai-close" bindtap="closeGuess">×</text>
+        </view>
       </view>
       <scroll-view scroll-y class="ai-modal-body">
         <image wx:if="{{guessImage}}" class="guess-photo" src="{{guessImage}}" mode="aspectFit"></image>
