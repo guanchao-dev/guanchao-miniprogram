@@ -16,49 +16,6 @@
   color: #1888BF;
 }
 
-.card-item {
-  display: flex;
-  align-items: center;
-  gap: 16rpx;
-  margin-bottom: 16rpx;
-  padding: 20rpx;
-}
-
-.card-mascot {
-  width: 88rpx;
-  height: 88rpx;
-  flex-shrink: 0;
-}
-
-.card-body {
-  flex: 1;
-  min-width: 0;
-}
-
-.card-name {
-  font-size: 32rpx;
-  font-weight: 850;
-}
-
-.card-meta {
-  margin-top: 8rpx;
-  color: #6B7C8A;
-  font-size: 22rpx;
-}
-
-.card-spot {
-  margin-top: 6rpx;
-  color: #0E7C92;
-  font-size: 22rpx;
-  font-weight: 700;
-}
-
-.card-arrow {
-  color: #1888BF;
-  font-size: 40rpx;
-  font-weight: 300;
-}
-
 .mask {
   position: fixed;
   inset: 0;
@@ -100,27 +57,6 @@
   box-sizing: border-box;
 }
 
-.detail-mascot {
-  display: block;
-  width: 180rpx;
-  height: 180rpx;
-  margin: 8rpx auto 16rpx;
-}
-
-.detail-time {
-  text-align: center;
-  font-size: 30rpx;
-  font-weight: 850;
-}
-
-.detail-sub {
-  margin-top: 8rpx;
-  text-align: center;
-  color: #1888BF;
-  font-size: 24rpx;
-  font-weight: 700;
-}
-
 .detail-spot {
   margin: 12rpx auto 0;
   padding: 10rpx 20rpx;
@@ -131,14 +67,6 @@
   font-size: 22rpx;
   font-weight: 700;
   background: #EAF6FB;
-}
-
-.detail-summary {
-  display: block;
-  margin-top: 20rpx;
-  color: #4F6787;
-  font-size: 26rpx;
-  line-height: 1.65;
 }
 
 .species-box {
@@ -225,4 +153,61 @@
   color: #9AA6B4;
   font-size: 22rpx;
   line-height: 1.5;
+}
+
+/* ===== 观潮记录卡：标签 + 下划线数值 + 底部图鉴图 ===== */
+.log-card {
+  padding: 26rpx 28rpx 18rpx;
+  margin-bottom: 18rpx;
+}
+
+.log-row {
+  display: flex;
+  align-items: baseline;
+  margin-bottom: 18rpx;
+}
+
+.log-k {
+  flex: none;
+  width: 150rpx;
+  font-size: 26rpx;
+  font-weight: 700;
+  color: #6B7F8F;
+}
+
+/* 数值落在一条下划线上，像纸质日志的填写栏 */
+.log-v {
+  flex: 1;
+  padding-bottom: 6rpx;
+  border-bottom: 3rpx solid #1C1C1C;
+  font-size: 34rpx;
+  font-weight: 850;
+  line-height: 1.25;
+}
+
+/* 「0 种」「无」这类空值弱化，不跟真结果抢视线 */
+.log-v.is-zero {
+  color: #A8B3B0;
+  border-bottom-color: #C9D4D1;
+}
+
+.log-thumbs {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 6rpx;
+}
+
+.log-thumb {
+  width: 112rpx;
+  height: 112rpx;
+  margin: 0 12rpx 12rpx 0;
+  border-radius: 16rpx;
+  border: 3rpx solid #1C1C1C;
+  background: #F3FBFA;
+}
+
+.log-thumbs-empty {
+  margin-top: 6rpx;
+  font-size: 26rpx;
+  color: #A8B3B0;
 }

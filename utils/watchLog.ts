@@ -21,6 +21,8 @@ export type WatchSpecies = {
   /** 仅垃圾：国标四分类的英文值与中文名 */
   category?: string
   categoryLabel?: string
+  /** 仅垃圾：这张照片的垃圾总量档位 little/some/much */
+  amount?: string
   /** 这一条在照片里的位置描述（「左边礁石上的螃蟹」） */
   label?: string
   /** 同一物种 / 同类垃圾在照片里的个数 */
@@ -97,6 +99,41 @@ export function groupFindings(species: WatchSpecies[] = []): FindingGroup[] {
   if (creatures.length) groups.push({ key: 'species', title: '认出的生物', items: creatures })
   if (trash.length) groups.push({ key: 'trash', title: '捡到的垃圾', items: trash })
   return groups
+}
+
+/** 垃圾量档位的中文名。与后端 trash_guess 的 amount 用同一套 key。 */
+export const TRASH_AMOUNT_TEXT: Record<string, string> = {
+  none: '无',
+  little: '少',
+  some: '中等',
+  much: '多'
+}
+
+/** 一次观潮里认出的生物**种数**（垃圾不算）。 */
+export function creatureCount(species: WatchSpecies[] = []): number {
+  return (species || []).filter((s) => s && s.name && (s.kind || 'species') === 'species').length
+}
+
+/** 一次观潮里认出的生物条目（观潮记录底部要展示它们的图鉴图）。 */
+export function creatureItems(species: WatchSpecies[] = []): WatchSpecies[] {
+  return (species || []).filter((s) => s && s.name && (s.kind || 'species') === 'species')
+}
+
+/**
+ * 一次观潮的垃圾量档位（little / some / much / none）。
+ *
+ * 优先用记录里存好的 —— 那是 AI 综合件数与体积判断的。老记录没存 amount，
+ * 就按件数兜底；兜底规则与后端 _trash_amount 保持一致，避免同一份数据
+ * 在两端算出不同档位。
+ */
+export function trashAmount(species: WatchSpecies[] = []): string {
+  const trash = (species || []).filter((s) => s && s.name && s.kind === 'trash')
+  if (!trash.length) return 'none'
+  const stored = trash.find((t) => t.amount && TRASH_AMOUNT_TEXT[t.amount])
+  if (stored) return String(stored.amount)
+  const total = trash.reduce((n, t) => n + (Number(t.count) > 1 ? Number(t.count) : 1), 0)
+  if (total <= 2) return 'little'
+  return total <= 5 ? 'some' : 'much'
 }
 
 function pad(n: number): string {

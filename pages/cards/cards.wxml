@@ -11,16 +11,29 @@
     </view>
     <view class="empty" wx:elif="{{!groups.length}}">还没有观潮记录。回首页点「开始观潮」，结束一次就会出现在这里。</view>
 
+    <!-- 观潮记录卡：只留「认了几种生物 / 垃圾量」，底部铺这次认出的图鉴图 -->
     <view class="day-block" wx:for="{{groups}}" wx:key="date">
       <view class="day-label">{{item.label}}</view>
-      <view class="card-item card" wx:for="{{item.items}}" wx:for-item="row" wx:key="id" data-id="{{row.id}}" bindtap="onOpen">
-        <image class="card-mascot" src="{{row.mascot}}" mode="aspectFit"></image>
-        <view class="card-body">
-          <view class="card-name">{{row.startTime}} – {{row.endTime}}</view>
-          <view class="card-meta">时长 {{row.durationText}} · {{row.species.length}} 项发现</view>
-          <view class="card-spot" wx:if="{{row.spot}}">📍 {{row.spot.name}}{{row.spot.source === 'custom' ? '（自选）' : ''}}</view>
+      <view class="log-card card" wx:for="{{item.items}}" wx:for-item="row" wx:key="id" data-id="{{row.id}}" bindtap="onOpen">
+        <view class="log-row">
+          <text class="log-k">识别生物</text>
+          <text class="log-v {{row.creatureCount ? '' : 'is-zero'}}">{{row.creatureCount}} 种</text>
         </view>
-        <text class="card-arrow">›</text>
+        <view class="log-row">
+          <text class="log-k">垃圾量</text>
+          <text class="log-v {{row.trashAmountText === '无' ? 'is-zero' : ''}}">{{row.trashAmountText}}</text>
+        </view>
+        <view class="log-thumbs" wx:if="{{row.creatureCovers.length}}">
+          <image
+            class="log-thumb"
+            wx:for="{{row.creatureCovers}}"
+            wx:for-item="cv"
+            wx:key="*this"
+            src="{{cv}}"
+            mode="aspectFill"
+          ></image>
+        </view>
+        <view class="log-thumbs-empty" wx:else>这次没有认出生物</view>
       </view>
     </view>
   </view>
@@ -32,11 +45,28 @@
         <text class="sheet-close" bindtap="closeDetail">×</text>
       </view>
       <scroll-view scroll-y class="sheet-body">
-        <image class="detail-mascot" src="{{detail.mascot}}" mode="aspectFit"></image>
-        <view class="detail-time">{{detail.date}} · {{detail.startTime}} 到 {{detail.endTime}}</view>
-        <view class="detail-sub">这次一共观潮 {{detail.durationText}}</view>
+        <!-- 与列表页同一套版式：只留「认了几种生物 / 垃圾量」，底部铺图鉴图 -->
+        <view class="log-row">
+          <text class="log-k">识别生物</text>
+          <text class="log-v {{detail.creatureCount ? '' : 'is-zero'}}">{{detail.creatureCount}} 种</text>
+        </view>
+        <view class="log-row">
+          <text class="log-k">垃圾量</text>
+          <text class="log-v {{detail.trashAmountText === '无' ? 'is-zero' : ''}}">{{detail.trashAmountText}}</text>
+        </view>
+        <view class="log-thumbs" wx:if="{{detail.creatureCovers.length}}">
+          <image
+            class="log-thumb"
+            wx:for="{{detail.creatureCovers}}"
+            wx:for-item="cv"
+            wx:key="*this"
+            src="{{cv}}"
+            mode="aspectFill"
+          ></image>
+        </view>
+        <view class="log-thumbs-empty" wx:else>这次没有认出生物</view>
+
         <view class="detail-spot" wx:if="{{detail.spot}}">📍 观潮地点：{{detail.spot.name}}{{detail.spot.source === 'custom' ? '（地图自选）' : ''}}</view>
-        <text class="detail-summary">{{detail.summary}}</text>
         <view class="species-box" wx:if="{{detail.groups.length}}">
           <view class="species-title">这次发现</view>
           <!-- 生物 / 垃圾各成一组，组内按时间排序，不混在一起 -->

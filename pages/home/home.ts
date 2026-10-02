@@ -720,7 +720,9 @@ Page({
       category: item.category,
       categoryLabel: item.categoryLabel,
       label: item.label,
-      count: item.count
+      count: item.count,
+      // 这张照片的垃圾总量档位，观潮记录里要展示「垃圾量」
+      amount: (this.data.trash as any)?.amount || ''
     }
     const done = () => {
       this.setData({ [`trashItems[${oi}].confirmed`]: true })
