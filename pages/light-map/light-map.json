@@ -1,6 +1,0 @@
-{
-  "navigationBarTitleText": "点亮地图",
-  "usingComponents": {
-    "watch-ball": "/components/watch-ball/watch-ball"
-  }
-}

@@ -16,8 +16,6 @@
     "pages/spot-detail/spot-detail",
     "pages/my-spots/my-spots",
     "pages/spot-share/spot-share",
-    "pages/explore/explore",
-    "pages/light-map/light-map",
     "pages/wiki/wiki",
     "pages/wiki-detail/wiki-detail",
     "pages/knowledge/knowledge",
@@ -67,7 +65,7 @@
   },
   "permission": {
     "scope.userLocation": {
-      "desc": "用于查找附近赶海点、签到定位与场地探索"
+      "desc": "用于查找附近赶海点与签到定位"
     }
   },
   "requiredPrivateInfos": [

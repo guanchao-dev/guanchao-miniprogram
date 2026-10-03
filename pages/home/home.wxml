@@ -94,36 +94,57 @@
     </swiper>
   </view>
 
+  <!-- 出门建议弹窗 -->
   <view class="ai-mask" wx:if="{{showAdvice}}" bindtap="closeAdvice" catchtouchmove="noop">
     <view class="adv-card" catchtap="noop">
-      <view class="adv-band">
+      <!-- 顶部：透明背景人物 + 标题 + 关闭 -->
+      <view class="adv-header">
         <image class="adv-mascot" src="/assets/temp_png/mascot-girl.png" mode="aspectFit"></image>
-        <view class="adv-band-copy">
-          <text class="adv-title">出门建议</text>
+        <view class="adv-header-right">
           <text class="adv-sub">泡泡的赶海小提醒</text>
         </view>
         <text class="adv-close" bindtap="closeAdvice" hover-class="tap">×</text>
       </view>
 
-      <view class="adv-bubble">
-        <view class="adv-bubble-tail"></view>
-        <text class="advice-title">{{advice.headline}}</text>
-        <view class="advice-key" wx:if="{{advice.suitableNow !== undefined || advice.risingText || advice.leaveBefore}}">
-          <text class="advice-key-item key-go" wx:if="{{advice.suitableNow}}">今日适合赶海</text>
-          <text class="advice-key-item key-no" wx:elif="{{advice.suitableNow === false}}">今日不太适合赶海</text>
-          <text class="advice-key-item" wx:if="{{advice.risingText}}">{{advice.risingText}}</text>
-          <text class="advice-key-item" wx:if="{{advice.leaveBefore}}">{{advice.leaveBefore}} 前离场</text>
-        </view>
-      </view>
+      <!-- 核心判断：一句话告诉游客现在能不能去 -->
+      <view class="adv-verdict {{advice.suitableNow ? 'go' : 'no'}}">{{advice.verdict}}</view>
 
-      <scroll-view scroll-y class="adv-scroll">
-        <text class="advice-body" wx:if="{{advice.body}}">{{advice.body}}</text>
-        <view class="advice-safety" wx:if="{{advice.safetyLine}}">
-          <text class="advice-safety-label">安全提示</text>
-          <text class="advice-safety-text">{{advice.safetyLine}}</text>
+      <!-- 适合赶海时才显示具体时间和推荐地点 -->
+      <block wx:if="{{advice.suitableNow}}">
+        <!-- 关键数据：最佳窗口 + 截止离场 -->
+        <view class="adv-stats">
+          <view class="adv-stat">
+            <text class="adv-stat-num">{{advice.bestWindow}}</text>
+            <text class="adv-stat-label">最佳赶海窗口</text>
+          </view>
+          <view class="adv-stat adv-stat-alert">
+            <text class="adv-stat-num">{{advice.leaveBefore}}</text>
+            <text class="adv-stat-label">涨潮前必须离场</text>
+          </view>
         </view>
-        <text class="advice-disc">{{advice.disclaimer}}</text>
-      </scroll-view>
+
+        <!-- 推荐地点 -->
+        <view class="adv-spots" wx:if="{{advice.recommendedSpots.length}}">
+          <view class="adv-spots-title">推荐赶海地点</view>
+          <view
+            class="adv-spot-item"
+            wx:for="{{advice.recommendedSpots}}"
+            wx:key="id"
+            data-id="{{item.id}}"
+            bindtap="onAdviceSpot"
+            hover-class="tap"
+          >
+            <view class="adv-spot-info">
+              <text class="adv-spot-name">{{item.name}}</text>
+              <text class="adv-spot-reason">{{item.reason}}</text>
+            </view>
+            <view class="adv-spot-right">
+              <text class="adv-spot-dist">{{item.distance}}</text>
+              <text class="adv-spot-arrow">›</text>
+            </view>
+          </view>
+        </view>
+      </block>
     </view>
   </view>
 
@@ -255,7 +276,6 @@
       <text class="spot-sheet-title">选择观潮地点</text>
       <text class="spot-sheet-close" bindtap="closeSpotPicker" hover-class="tap">×</text>
     </view>
-    <view class="spot-sheet-tip">选一个离你近、人气高的赶海点，或在地图上自己选</view>
 
     <view class="spot-loading" wx:if="{{watchSpotsLoading}}">推荐地点加载中…</view>
     <block wx:else>

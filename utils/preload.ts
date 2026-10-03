@@ -9,7 +9,7 @@
  *   避免白烧 AI 调用。潮汐表用 withAdvice=0，不耗 AI。
  */
 import { DEFAULT_SPOT_ID } from '../config/env'
-import { achieveApi, contentApi, homeApi, lightMapApi } from '../services/api'
+import { achieveApi, contentApi, homeApi } from '../services/api'
 import { todayDate } from './format'
 
 let kicked = false
@@ -42,9 +42,7 @@ export function preloadOnLaunch(spotId: string = DEFAULT_SPOT_ID): void {
     () => { contentApi.encyclopedia({ page: 1, pageSize: 50 }).catch(() => {}) },
     // ⑤ 科普知识
     () => { contentApi.knowledge().catch(() => {}) },
-    // ⑥ 点亮地图目录
-    () => { lightMapApi.list().catch(() => {}) },
-    // ⑦ 成就页：总览 + 勋章墙 + 排行榜
+    // ⑥ 成就页：总览 + 勋章墙 + 排行榜
     () => { achieveApi.overview().catch(() => {}) },
     () => { achieveApi.medals().catch(() => {}) },
     () => { achieveApi.leaderboard().catch(() => {}) },

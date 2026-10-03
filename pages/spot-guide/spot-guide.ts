@@ -120,10 +120,5 @@ Page({
       current: url || photos[0],
       urls: photos.length ? photos : [url]
     })
-  },
-
-  goExplore() {
-    const id = (this.data.detail && this.data.detail.id) || 'spot_qd_shilaoren'
-    wx.navigateTo({ url: `/pages/explore/explore?venueId=${id}` })
   }
 })

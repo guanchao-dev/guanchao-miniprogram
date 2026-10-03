@@ -84,8 +84,6 @@
         <view class="chip-row" wx:if="{{detail.safetyTags.length}}">
           <text class="chip" wx:for="{{detail.safetyTags}}" wx:key="*this">{{item}}</text>
         </view>
-
-        <view class="btn full-btn" bindtap="goExplore" hover-class="tap">开始探索</view>
       </scroll-view>
     </view>
   </view>

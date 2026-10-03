@@ -295,7 +295,4 @@ Page({
     }
   },
 
-  goLightMap() {
-    wx.navigateTo({ url: '/pages/light-map/light-map' })
-  }
 })

@@ -72,7 +72,7 @@
         <image class="level-medal" src="https://www.blueakaiwu.cn/api/v1/static/assets/badges/medal-wing.png" mode="aspectFit"></image>
         <view class="level-title">Lv.24 海洋探索家</view>
         <view class="mini-bar"><view style="width: 64%;"></view></view>
-        <view class="btn level-btn" bindtap="goLightMap" hover-class="tap">继续探索</view>
+        <view class="btn level-btn" bindtap="goLeaderboard" hover-class="tap">排行榜</view>
       </view>
 
       <view class="rank-card card">

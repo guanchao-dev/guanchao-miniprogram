@@ -5,16 +5,24 @@
   <view class="onb-pop pop-{{placement}}" style="{{bubbleStyle}}" catchtap="noop">
     <view class="onb-tail" style="{{tailStyle}}"></view>
     <view class="onb-bubble">
-      <image class="onb-mascot" src="/assets/temp_png/mascot-girl.png" mode="aspectFill"></image>
-      <view class="onb-meta">
-        <text class="onb-name">泡泡</text>
-        <text class="onb-count">{{current + 1}}/{{total}}</text>
+      <view class="onb-body">
+        <!-- 左侧：吉祥物探出气泡上沿 -->
+        <image class="onb-mascot" src="/assets/temp_png/mascot-girl.png" mode="aspectFit"></image>
+        <!-- 右侧：文本 -->
+        <view class="onb-text">
+          <view class="onb-meta">
+            <view class="onb-dots">
+              <view wx:for="{{total}}" wx:key="*this" class="onb-dot {{index === current ? 'on' : ''}}"></view>
+            </view>
+          </view>
+          <view class="onb-title">{{step.title}}</view>
+          <view class="onb-desc">{{step.desc}}</view>
+        </view>
       </view>
-      <view class="onb-title">{{step.title}}</view>
-      <view class="onb-desc">{{step.desc}}</view>
+      <!-- 底部通栏：跳过左下、下一步右下 -->
       <view class="onb-actions">
         <view class="onb-skip" catchtap="onSkip">跳过</view>
-        <view class="onb-next" catchtap="onNext">{{current === total - 1 ? '开始探索' : '下一步'}}</view>
+        <view class="onb-next" catchtap="onNext">{{current === total - 1 ? '开始使用' : '下一步'}}</view>
       </view>
     </view>
   </view>

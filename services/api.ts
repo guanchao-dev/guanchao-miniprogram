@@ -273,21 +273,6 @@ export const watchApi = {
   }
 }
 
-export const lightMapApi = {
-  list() {
-    return http.get('/light-maps', {}, { auth: false }).then((data) => unwrapList(data))
-  },
-  detail(mapId: string) {
-    return http.get(`/light-maps/${mapId}`, {}, { auth: false })
-  },
-  visit(mapId: string, body: Record<string, any>) {
-    return http.post(`/light-maps/${mapId}/visits`, body, { auth: false })
-  },
-  progress(mapId: string) {
-    return http.get(`/light-maps/${mapId}/progress`, {}, { auth: false })
-  }
-}
-
 export const cardApi = {
   create(body: Record<string, any>) {
     return http.post('/cards', body, { timeout: 25000, idempotency: true })
@@ -309,21 +294,6 @@ export const cardApi = {
   },
   share(cardId: string, channel = 'wechatFriend') {
     return http.post(`/cards/${cardId}/share`, { channel })
-  }
-}
-
-export const exploreApi = {
-  venue(venueId: string) {
-    return http.get(`/explore/venues/${venueId}`, {}, { auth: false })
-  },
-  submit(body: Record<string, any>) {
-    return http.post('/explore/sessions', body, { idempotency: true })
-  },
-  qrUnlock(code: string) {
-    return http.post('/explore/qr-unlock', { code }, { idempotency: true })
-  },
-  share(sessionId: string) {
-    return http.get(`/explore/sessions/${sessionId}/share`)
   }
 }
 

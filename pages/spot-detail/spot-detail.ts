@@ -41,11 +41,5 @@ Page({
       latitude: Number(spot.latitude || spot.lat),
       longitude: Number(spot.longitude || spot.lng)
     })
-  },
-
-  goExplore() {
-    const spot: any = this.data.spot
-    const id = spot.id || 'spot_qd_shilaoren'
-    wx.navigateTo({ url: `/pages/explore/explore?venueId=${id}` })
   }
 })

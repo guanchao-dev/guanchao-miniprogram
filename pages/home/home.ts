@@ -1,7 +1,7 @@
 import { DEFAULT_SPOT_ID } from '../../config/env'
 import { aiApi, contentApi, homeApi, watchApi } from '../../services/api'
 import { requireLogin } from '../../utils/auth'
-import { nowISO, nowTime, showError, toast } from '../../utils/format'
+import { nowISO, nowTime, showError, todayDate, toast } from '../../utils/format'
 import { chooseImage, mediaUrl, preloadImage, uploadImage } from '../../utils/upload'
 import { getCachedLocation, loadGuideSpots, rankWatchSpots } from '../../utils/spotGuide'
 import { enqueueUnlocks, flushUnlocks } from '../../utils/unlock'
@@ -527,25 +527,46 @@ Page({
   },
 
   onRefreshAdvice() {
-    wx.showLoading({ title: '生成建议', mask: true })
-    aiApi.tideAdvice(this.data.spotId)
-      .then((raw) => {
-        wx.hideLoading()
-        const advice = raw || {}
-        this.setData({
-          advice: {
-            ...advice,
-            body: filterAdviceBody(advice.body),
-            risingText: nextTideText(advice, this.data.tidePoints)
-          },
-          showAdvice: true
-        })
-      })
-      .catch((err) => {
-        // 先 hideLoading 再 showError，否则提示会被 hideLoading 一起关掉
-        wx.hideLoading()
-        showError(err, '出门建议失败')
-      })
+    // 前端先使用本地 mock 数据，后端看完前端效果后重新设计接口
+    const mockAdvice = this.normalizeAdvice({
+      suitableNow: true,
+      goodTime: '17:00',
+      bestWindow: '17:00-18:00',
+      leaveBefore: '18:10',
+      recommendedSpots: [
+        { id: 'spot_qd_hongshiya', name: '红石崖赶海场', distance: '12km', reason: '皮皮虾、海螺多' },
+        { id: 'spot_qd_shilaoren', name: '石老人海水浴场', distance: '8km', reason: '沙滩平缓、新手友好' }
+      ]
+    })
+    this.setData({ advice: mockAdvice, showAdvice: true })
+  },
+
+  /** 把后端 / mock 数据规整成弹窗渲染结构 */
+  normalizeAdvice(raw: any) {
+    // 前端默认适合赶海，只有后端明确返回 suitableNow: false 才判为不适合
+    const suitable = raw.suitableNow !== false
+    const goodTime = raw.goodTime || ''
+    const spots = Array.isArray(raw.recommendedSpots) ? raw.recommendedSpots.map((s: any) => ({
+      id: s.id || '',
+      name: s.name || '',
+      distance: s.distance || '',
+      reason: s.reason || ''
+    })) : []
+    return {
+      suitableNow: suitable,
+      verdict: suitable ? `${goodTime}适合赶海` : '目前不适合赶海',
+      bestWindow: raw.bestWindow || '',
+      leaveBefore: raw.leaveBefore || '',
+      recommendedSpots: spots
+    }
+  },
+
+  /** 弹窗里点击推荐地点：跳详情页 */
+  onAdviceSpot(e: any) {
+    const id = e.currentTarget.dataset.id
+    if (!id) return
+    this.setData({ showAdvice: false })
+    wx.navigateTo({ url: `/pages/spot-detail/spot-detail?id=${id}` })
   },
 
   closeAdvice() {
