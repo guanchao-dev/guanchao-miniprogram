@@ -1,21 +1,32 @@
-<view class="page">
+<view class="page memphis-bg">
+  <view class="memphis-layer">
+    <view class="geo-circle md" style="top: 30rpx; right: -40rpx; background:#F6D081;"></view>
+  </view>
+
   <view class="page-content">
-    <view class="card list-card" wx:if="{{legal.userAgreementUrl}}">
-      <view class="list-title">用户协议</view>
-      <view class="list-meta">{{legal.userAgreementUrl}}</view>
-      <view class="btn full-btn" data-url="{{legal.userAgreementUrl}}" bindtap="copyUrl" hover-class="tap">复制链接</view>
+    <view class="card legal-row" bindtap="openDoc" data-type="agreement" hover-class="tap">
+      <view class="legal-main">
+        <view class="legal-title">用户协议</view>
+        <view class="legal-desc">使用追潮记的规则与约定</view>
+      </view>
+      <text class="legal-arrow">›</text>
     </view>
-    <view class="card list-card" wx:if="{{legal.privacyPolicyUrl}}">
-      <view class="list-title">隐私政策</view>
-      <view class="list-meta">{{legal.privacyPolicyUrl}}</view>
-      <view class="btn full-btn" data-url="{{legal.privacyPolicyUrl}}" bindtap="copyUrl" hover-class="tap">复制链接</view>
+
+    <view class="card legal-row" bindtap="openDoc" data-type="privacy" hover-class="tap">
+      <view class="legal-main">
+        <view class="legal-title">隐私政策</view>
+        <view class="legal-desc">我们如何收集与保护你的信息</view>
+      </view>
+      <text class="legal-arrow">›</text>
     </view>
-    <view class="card list-card" wx:if="{{legal.childrenRuleUrl}}">
-      <view class="list-title">儿童个人信息保护规则</view>
-      <view class="list-meta">{{legal.childrenRuleUrl}}</view>
-      <view class="btn full-btn" data-url="{{legal.childrenRuleUrl}}" bindtap="copyUrl" hover-class="tap">复制链接</view>
+
+    <view class="card legal-row" bindtap="openDoc" data-type="children" hover-class="tap">
+      <view class="legal-main">
+        <view class="legal-title">儿童个人信息保护规则</view>
+        <view class="legal-desc">未满 14 周岁儿童的信息保护</view>
+      </view>
+      <text class="legal-arrow">›</text>
     </view>
-    <view class="empty-tip" wx:if="{{!legal.userAgreementUrl && !legal.privacyPolicyUrl && !legal.childrenRuleUrl}}">暂无法规文本</view>
   </view>
 </view>
 

@@ -2,7 +2,7 @@ import { contentApi } from '../../services/api'
 import { toast, showError } from '../../utils/format'
 import { mediaUrl } from '../../utils/upload'
 import { loadSpots, removeSpot, TreasureSpot } from '../../utils/spotStore'
-import { openSpotMap, copyAmapLink } from '../../utils/amapNav'
+import { openSpotMap } from '../../utils/amapNav'
 
 interface ListItem {
   id: string
@@ -81,13 +81,6 @@ Page({
     const item = this.data.list[idx]
     if (!item) return
     openSpotMap(item.lat, item.lng, item.name, item.address)
-  },
-
-  onCopyAmap(e: any) {
-    const idx = Number(e.currentTarget.dataset.index)
-    const item = this.data.list[idx]
-    if (!item) return
-    copyAmapLink(item.lat, item.lng, item.name)
   },
 
   onDelete(e: any) {

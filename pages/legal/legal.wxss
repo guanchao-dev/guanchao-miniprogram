@@ -1,0 +1,39 @@
+.legal-row {
+  display: flex;
+  align-items: center;
+  gap: 18rpx;
+  margin-bottom: 20rpx;
+  padding: 28rpx 26rpx;
+}
+
+.legal-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.legal-title {
+  font-size: 30rpx;
+  font-weight: 850;
+  color: #1C1C1C;
+}
+
+.legal-desc {
+  margin-top: 8rpx;
+  color: #6B7C8A;
+  font-size: 22rpx;
+  line-height: 1.5;
+}
+
+.legal-arrow {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36rpx;
+  height: 36rpx;
+  border-radius: 50%;
+  background: rgba(28, 28, 28, 0.06);
+  font-size: 30rpx;
+  line-height: 1;
+  color: #9AA6B4;
+}

@@ -5,7 +5,6 @@
   </view>
 
   <view class="page-content">
-    <view class="intro card">一条一条看赶海常识。先安全，再观察，不确定的对照图鉴。</view>
     <view class="page-loading" wx:if="{{loading}}">
       <view class="spinner"></view>
       <text>加载中…</text>

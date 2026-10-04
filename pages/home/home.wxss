@@ -3,6 +3,71 @@
   overflow: auto;
 }
 
+/* ===== 气泡背景：呼应吉祥物"泡泡"，缓慢上浮 ===== */
+.bubble-layer {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.bubble {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.8), rgba(52,184,197,0.3) 55%, rgba(24,136,191,0.18));
+  box-shadow: inset -3rpx -3rpx 10rpx rgba(255,255,255,0.4), 0 0 12rpx rgba(52,184,197,0.25);
+  animation: bubbleRise linear infinite;
+}
+
+/* 14 个气泡：从页面底部开始上浮，大小、位置、速度各异 */
+.b1  { width: 90rpx;  height: 90rpx;  left: 6%;  top: 1200rpx; animation-duration: 13s; animation-delay: 0s; }
+.b2  { width: 52rpx;  height: 52rpx;  left: 18%; top: 1300rpx; animation-duration: 10s; animation-delay: 2s; }
+.b3  { width: 130rpx; height: 130rpx; left: 72%; top: 1150rpx; animation-duration: 17s; animation-delay: 1s; }
+.b4  { width: 40rpx;  height: 40rpx;  left: 88%; top: 1280rpx; animation-duration: 8s;  animation-delay: 3s; }
+.b5  { width: 70rpx;  height: 70rpx;  left: 42%; top: 1350rpx; animation-duration: 12s; animation-delay: 0.5s; }
+.b6  { width: 32rpx;  height: 32rpx;  left: 12%; top: 1400rpx; animation-duration: 9s;  animation-delay: 4s; }
+.b7  { width: 100rpx; height: 100rpx; left: 58%; top: 1250rpx; animation-duration: 15s; animation-delay: 2.5s; }
+.b8  { width: 46rpx;  height: 46rpx;  left: 90%; top: 1380rpx; animation-duration: 11s; animation-delay: 1.5s; }
+.b9  { width: 60rpx;  height: 60rpx;  left: 30%; top: 1450rpx; animation-duration: 14s; animation-delay: 5s; }
+.b10 { width: 36rpx;  height: 36rpx;  left: 75%; top: 1420rpx; animation-duration: 8.5s; animation-delay: 6s; }
+.b11 { width: 80rpx;  height: 80rpx;  left: 50%; top: 1480rpx; animation-duration: 16s; animation-delay: 3.5s; }
+.b12 { width: 28rpx;  height: 28rpx;  left: 5%;  top: 1500rpx; animation-duration: 7.5s; animation-delay: 4.5s; }
+.b13 { width: 110rpx; height: 110rpx; left: 82%; top: 1520rpx; animation-duration: 18s; animation-delay: 7s; }
+.b14 { width: 50rpx;  height: 50rpx;  left: 38%; top: 1550rpx; animation-duration: 10.5s; animation-delay: 5.5s; }
+
+@keyframes bubbleRise {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 0;
+  }
+  8% { opacity: 0.85; }
+  92% { opacity: 0.7; }
+  100% {
+    transform: translateY(-1700rpx) scale(1.15);
+    opacity: 0;
+  }
+}
+
+/* ===== 卡片浮游动效 ===== */
+.card,
+.ai-card,
+.activity-card,
+.hot-box {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.tap.card,
+.tap.ai-card,
+.tap.activity-card,
+.tap.hot-box,
+.card:active,
+.ai-card:active,
+.activity-card:active,
+.hot-box:active {
+  transform: translateY(-4rpx);
+}
+
 .top-row {
   position: relative;
   z-index: 2;
@@ -44,14 +109,29 @@
 
 .hero {
   position: relative;
+  z-index: 5;
   display: flex;
   align-items: center;
   margin-top: 24rpx;
-  min-height: 240rpx;
+  min-height: 260rpx;
   padding: 24rpx 12rpx 20rpx 28rpx;
-  overflow: hidden;
-  /* 透明底 Q 版章鱼配浅海青渐变，呼应插画里的海浪蓝 */
-  background: linear-gradient(135deg, #F0FAFC 0%, #DCF2F6 100%);
+  overflow: visible;
+  /* 海浪渐变 + 珊瑚粉点缀 */
+  background: linear-gradient(135deg, #F0FAFC 0%, #DCF2F6 55%, #FBE4E1 100%);
+}
+
+/* 珊瑚粉点缀光斑 */
+.hero::after {
+  content: '';
+  position: absolute;
+  right: -20rpx;
+  top: -20rpx;
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 138, 128, 0.25), rgba(255, 138, 128, 0) 70%);
+  z-index: 1;
+  pointer-events: none;
 }
 
 /* 左上柔光 */
@@ -82,9 +162,10 @@
 
 .hero-title {
   margin-top: 4rpx;
-  font-size: 36rpx;
-  font-weight: 850;
-  line-height: 1.2;
+  font-size: 44rpx;
+  font-weight: 900;
+  line-height: 1.15;
+  color: #14324A;
 }
 
 .hero-kicker + .hero-title {
@@ -94,6 +175,16 @@
 .watch-btn {
   margin-top: 18rpx;
   min-width: 180rpx;
+}
+
+/* 未开始观潮时，按钮呼吸动效吸引点击 */
+.watch-btn:not(.is-on):not(.is-end) {
+  animation: watchPulse 2s ease-in-out infinite;
+}
+
+@keyframes watchPulse {
+  0%, 100% { box-shadow: 3rpx 3rpx 0 rgba(28, 28, 28, 0.85), 0 0 0 0 rgba(52, 184, 197, 0.5); }
+  50% { box-shadow: 3rpx 3rpx 0 rgba(28, 28, 28, 0.85), 0 0 0 12rpx rgba(52, 184, 197, 0); }
 }
 
 .watch-btn.is-on {
@@ -110,31 +201,32 @@
   position: relative;
   z-index: 2;
   flex: 1;
-  height: 224rpx;
+  height: 260rpx;
   margin-left: 4rpx;
+  overflow: visible;
 }
 
 .hero-mascot {
   position: absolute;
-  right: 8rpx;
-  bottom: 6rpx;
-  width: 308rpx;
-  height: 221rpx;
-  z-index: 2;
+  right: -8rpx;
+  bottom: -38rpx;
+  width: 380rpx;
+  height: 272rpx;
+  z-index: 5;
 }
 
 .ai-row {
   display: flex;
-  gap: 16rpx;
-  margin-top: 22rpx;
+  gap: 18rpx;
+  margin-top: 24rpx;
 }
 
 .ai-card {
   position: relative;
   z-index: 2;
   flex: 1;
-  height: 212rpx;
-  padding: 20rpx 12rpx 16rpx;
+  height: 230rpx;
+  padding: 24rpx 12rpx 18rpx;
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -142,12 +234,16 @@
   justify-content: center;
   box-sizing: border-box;
   border: 4rpx solid #1C1C1C;
-  border-radius: 28rpx;
-  box-shadow: 3rpx 3rpx 0 rgba(28, 28, 28, 0.85);
+  border-radius: 32rpx;
+  box-shadow: 4rpx 4rpx 0 rgba(28, 28, 28, 0.85);
 }
 
 .ai-card.photo {
   background: linear-gradient(165deg, #E7FBFC 0%, #5EC9D4 100%);
+}
+
+.ai-card.trash {
+  background: linear-gradient(165deg, #E8F8EE 0%, #7BC896 100%);
 }
 
 .ai-card.advice {
@@ -156,26 +252,30 @@
 
 .ai-orb {
   position: absolute;
-  top: 14rpx;
-  width: 120rpx;
-  height: 120rpx;
+  top: 16rpx;
+  width: 130rpx;
+  height: 130rpx;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.55);
+  background: rgba(255, 255, 255, 0.5);
+  border: 3rpx solid rgba(255, 255, 255, 0.7);
 }
 
 .ai-icon {
   position: relative;
   z-index: 1;
-  width: 112rpx;
-  height: 112rpx;
+  width: 120rpx;
+  height: 120rpx;
+  filter: drop-shadow(2rpx 2rpx 4rpx rgba(0, 0, 0, 0.15));
 }
 
 .ai-name {
   position: relative;
   z-index: 1;
-  margin-top: 10rpx;
+  margin-top: 12rpx;
   font-size: 26rpx;
-  font-weight: 850;
+  font-weight: 900;
+  color: #1C1C1C;
+  letter-spacing: 1rpx;
 }
 
 .spot-section {
@@ -214,16 +314,37 @@
 }
 
 .hot-rank {
-  width: 40rpx;
-  font-size: 30rpx;
+  width: 44rpx;
+  height: 44rpx;
+  line-height: 44rpx;
+  font-size: 26rpx;
   font-weight: 900;
   text-align: center;
   flex-shrink: 0;
+  border-radius: 50%;
+  border: 2rpx solid #1C1C1C;
+  background: #F0F2F5;
+  color: #6B7C8A;
 }
 
-.hot-rank.rank-1 { color: #E23D3D; }
-.hot-rank.rank-2 { color: #E8892E; }
-.hot-rank.rank-3 { color: #1888BF; }
+/* 前三名：金 / 银 / 铜 徽章 */
+.hot-rank.rank-1 {
+  background: linear-gradient(135deg, #FFD700 0%, #E6B800 100%);
+  color: #5C4500;
+  box-shadow: 0 0 0 3rpx rgba(255, 215, 0, 0.25);
+}
+
+.hot-rank.rank-2 {
+  background: linear-gradient(135deg, #E8E8E8 0%, #B8B8B8 100%);
+  color: #4A4A4A;
+  box-shadow: 0 0 0 3rpx rgba(184, 184, 184, 0.25);
+}
+
+.hot-rank.rank-3 {
+  background: linear-gradient(135deg, #E8A87C 0%, #CD7F32 100%);
+  color: #5C3317;
+  box-shadow: 0 0 0 3rpx rgba(205, 127, 50, 0.25);
+}
 
 .hot-name {
   flex: 1;
@@ -233,14 +354,17 @@
 
 .hot-heat,
 .hot-dist {
-  color: #6B7C8A;
   font-size: 20rpx;
   font-weight: 650;
   flex-shrink: 0;
 }
 
 .hot-heat {
-  color: #184D97;
+  color: #E23D3D;
+}
+
+.hot-dist {
+  color: #2E9E5B;
 }
 
 .advice-title {
@@ -370,7 +494,7 @@
 }
 
 .adv-verdict.go {
-  color: #D63031;
+  color: #1888BF;
 }
 
 .adv-verdict.no {
@@ -497,6 +621,29 @@
   z-index: 2;
   height: 240rpx;
   margin-top: 24rpx;
+}
+
+/* 自定义圆点指示器 */
+.activity-dots {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10rpx;
+  margin-top: 14rpx;
+}
+
+.activity-dots .dot {
+  width: 12rpx;
+  height: 12rpx;
+  border-radius: 50%;
+  background: rgba(28, 28, 28, 0.18);
+  transition: all 0.3s ease;
+}
+
+.activity-dots .dot.active {
+  width: 32rpx;
+  border-radius: 999rpx;
+  background: #34B8C5;
 }
 
 .activity-card {

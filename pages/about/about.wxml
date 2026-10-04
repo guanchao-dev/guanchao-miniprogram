@@ -1,35 +1,71 @@
 <view class="page memphis-bg">
   <view class="memphis-layer">
     <view class="geo-circle md" style="top: 40rpx; right: -50rpx; background:#F6D081;"></view>
+    <view class="geo-square" style="bottom: 160rpx; left: -30rpx; background:#34B8C5;"></view>
   </view>
 
   <view class="page-content">
+    <!-- Hero 品牌区 -->
     <view class="card about-hero">
-      <image class="about-mascot" src="https://www.blueakaiwu.cn/api/v1/static/assets/home/home-hero-mascot.png" mode="aspectFit"></image>
+      <view class="hero-bubbles">
+        <view class="hb b1"></view>
+        <view class="hb b2"></view>
+        <view class="hb b3"></view>
+        <view class="hb b4"></view>
+        <view class="hb b5"></view>
+      </view>
+
+      <view class="about-logo">
+        <image class="about-mascot" src="https://www.blueakaiwu.cn/api/v1/static/assets/to-upload/%E6%88%91%E7%9A%84%E5%A4%B4%E5%83%8F%E5%90%89%E7%A5%A5%E7%89%A9@2x.png" mode="aspectFit"></image>
+      </view>
       <view class="about-name">追潮记</view>
       <view class="about-slogan">跟潮汐一起，出发探索</view>
-      <view class="about-version">v{{version}}</view>
-    </view>
 
-    <view class="card list-card">
-      <view class="list-title">关于追潮记</view>
-      <view class="list-meta about-text">追潮记是一款面向赶海爱好者的海洋素养小程序。我们把潮汐查询、潮间带生物识别、赶海知识科普和场地探索打卡结合在一起，希望让每一次赶海都更安全、更有趣，也让更多人了解和爱护潮间带。</view>
-    </view>
-
-    <view class="card list-card">
-      <view class="list-title">主要功能</view>
-      <view class="about-feature" wx:for="{{features}}" wx:key="title">
-        <text class="about-feature-name">{{item.title}}</text>
-        <text class="about-feature-desc">{{item.desc}}</text>
+      <view class="about-tags">
+        <text class="about-tag" wx:for="{{tags}}" wx:key="*this">{{item}}</text>
       </view>
     </view>
 
-    <view class="card list-card">
-      <view class="list-title">协议与隐私</view>
-      <view class="list-meta">我们重视你的个人信息与未成年人保护。</view>
-      <view class="btn full-btn" bindtap="goLegal" hover-class="tap">查看用户协议 / 隐私政策</view>
+    <!-- 品牌介绍 -->
+    <view class="card about-section">
+      <view class="section-label">
+        <text class="label-dot"></text>
+        <text>关于追潮记</text>
+      </view>
+      <view class="about-text">追潮记是一款面向赶海爱好者的海洋素养小程序。我们把潮汐查询、潮间带生物识别、赶海知识科普和场地探索打卡结合在一起，希望让每一次赶海都更安全、更有趣，也让更多人了解和爱护潮间带。</view>
     </view>
 
+    <!-- 意见反馈 -->
+    <view class="card about-section">
+      <view class="section-label">
+        <text class="label-dot"></text>
+        <text>意见反馈</text>
+      </view>
+      <view class="about-text">使用中遇到问题，或对追潮记有建议，欢迎告诉我们。</view>
+      <view class="feedback-box">
+        <textarea
+          class="feedback-input"
+          value="{{feedback}}"
+          placeholder="写下你的建议或遇到的问题…"
+          placeholder-class="feedback-ph"
+          maxlength="500"
+          bindinput="onFeedbackInput"
+        ></textarea>
+        <input
+          class="contact-input"
+          value="{{contact}}"
+          placeholder="联系方式（选填）"
+          placeholder-class="feedback-ph"
+          maxlength="60"
+          bindinput="onContactInput"
+        />
+      </view>
+      <view class="btn full-btn about-submit" bindtap="onSubmitFeedback" hover-class="tap">
+        <text>{{submitting ? '提交中…' : '提交反馈'}}</text>
+      </view>
+    </view>
+
+    <view class="about-copy">让每一次赶海，都更安全、更有趣</view>
     <view class="about-copy">© 2026 追潮记团队</view>
   </view>
 </view>

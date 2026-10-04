@@ -1,8 +1,10 @@
 .edit-card {
   position: relative;
   z-index: 2;
+  margin-bottom: 24rpx;
 }
 
+/* 头像卡片 */
 .edit-avatar-card {
   display: flex;
   flex-direction: column;
@@ -11,8 +13,11 @@
 }
 
 .avatar-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   padding: 0;
-  margin: 0;
+  margin: 0 auto;
   border: none;
   background: transparent;
   line-height: 1;
@@ -23,6 +28,7 @@
 }
 
 .edit-avatar {
+  display: block;
   width: 160rpx;
   height: 160rpx;
   border: 4rpx solid #1C1C1C;
@@ -34,34 +40,59 @@
 
 .edit-avatar-tip {
   margin-top: 14rpx;
-  padding: 4rpx 20rpx;
+  padding: 4rpx 16rpx;
   border: 3rpx solid #1C1C1C;
   border-radius: 999rpx;
   background: #F6D081;
   color: #1C1C1C;
   font-size: 22rpx;
   font-weight: 800;
+  width: auto;
 }
 
 .edit-level {
   margin-top: 16rpx;
-  padding: 4rpx 18rpx;
+  padding: 6rpx 20rpx;
   border: 3rpx solid #1C1C1C;
   border-radius: 999rpx;
-  background: #D6EEF8;
-  color: #1C1C1C;
+  background: #34B8C5;
+  color: #FFFFFF;
   font-size: 22rpx;
-  font-weight: 800;
+  font-weight: 850;
 }
 
-.edit-input {
-  margin-top: 16rpx;
-  padding: 16rpx 20rpx;
+/* 昵称卡片：去掉外层框，内层框与上方对齐 */
+.nickname-card {
+  padding: 0 24rpx;
+}
+
+.nickname-row {
+  display: flex;
+  align-items: center;
   border: 3rpx solid #1C1C1C;
   border-radius: 16rpx;
   background: #F7FCFF;
+  box-shadow: inset 2rpx 2rpx 0 rgba(28, 28, 28, 0.06);
+  overflow: hidden;
+}
+
+.nickname-label {
+  flex-shrink: 0;
+  padding: 0 16rpx 0 20rpx;
+  font-size: 28rpx;
+  font-weight: 850;
+  color: #1C1C1C;
+}
+
+.edit-input {
+  flex: 1;
+  min-width: 0;
+  padding: 18rpx 20rpx 18rpx 0;
+  border: none;
+  background: transparent;
   font-size: 28rpx;
   font-weight: 700;
+  text-align: center;
 }
 
 .edit-placeholder {
@@ -70,12 +101,27 @@
 }
 
 .edit-hint {
-  margin-top: 12rpx;
+  margin-top: 14rpx;
   color: #6B7C8A;
   font-size: 22rpx;
   line-height: 1.6;
 }
 
+/* 保存按钮 */
 .edit-save {
-  margin-top: 32rpx;
+  margin-top: 12rpx;
+  padding: 22rpx 0;
+  border: 3rpx solid #1C1C1C;
+  border-radius: 999rpx;
+  background: #34B8C5;
+  box-shadow: 4rpx 4rpx 0 rgba(28, 28, 28, 0.85);
+  font-size: 30rpx;
+  font-weight: 900;
+  color: #FFFFFF;
+  text-align: center;
+}
+
+.edit-save:active {
+  transform: translate(2rpx, 2rpx);
+  box-shadow: 2rpx 2rpx 0 rgba(28, 28, 28, 0.85);
 }

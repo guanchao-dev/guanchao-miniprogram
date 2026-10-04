@@ -1,6 +1,7 @@
 <view class="page memphis-bg">
   <view class="memphis-layer">
     <view class="geo-circle md" style="top: 30rpx; right: -40rpx; background:#F6D081;"></view>
+    <view class="geo-square" style="top: 200rpx; left: -30rpx; background:#34B8C5;"></view>
   </view>
 
   <view class="page-content">
@@ -11,29 +12,35 @@
     </view>
 
     <block wx:else>
-      <view class="card edit-card edit-avatar-card">
+      <!-- 头像区 -->
+      <view class="edit-card edit-avatar-card">
         <button class="avatar-btn" open-type="chooseAvatar" bindchooseavatar="onChooseAvatar">
           <image class="edit-avatar" src="{{avatarPreview}}" mode="aspectFill"></image>
           <view class="edit-avatar-tip">换个头像</view>
         </button>
-        <view class="edit-level" wx:if="{{levelText}}">{{levelText}}</view>
+        <view class="edit-level" wx:if="{{levelText}}">🌊 {{levelText}}</view>
       </view>
 
-      <view class="card edit-card">
-        <view class="list-title">昵称</view>
-        <input
-          class="edit-input"
-          type="nickname"
-          maxlength="20"
-          value="{{nickname}}"
-          placeholder="给自己起个赶海名号"
-          placeholder-class="edit-placeholder"
-          bindinput="onNickname"
-        />
-        <view class="edit-hint">头像来自微信授权选择，昵称保存后展示在个人主页。</view>
+      <!-- 昵称区 -->
+      <view class="edit-card nickname-card">
+        <view class="nickname-row">
+          <text class="nickname-label">昵称：</text>
+          <input
+            class="edit-input"
+            type="nickname"
+            maxlength="20"
+            value="{{nickname}}"
+            placeholder="给自己起个赶海名号"
+            placeholder-class="edit-placeholder"
+            bindinput="onNickname"
+          />
+        </view>
       </view>
 
-      <view class="btn full-btn edit-save" bindtap="onSave" hover-class="tap">{{saving ? '保存中…' : '保存'}}</view>
+      <!-- 保存按钮 -->
+      <view class="btn full-btn edit-save" bindtap="onSave" hover-class="tap">
+        <text>{{saving ? '保存中…' : '保存资料'}}</text>
+      </view>
     </block>
   </view>
 </view>

@@ -156,25 +156,3 @@
   font-weight: 700;
   color: #1C1C1C;
 }
-
-.compliance-links {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 8rpx 20rpx;
-  margin-top: 28rpx;
-  padding: 0 12rpx;
-}
-
-.compliance-link {
-  color: #087CFF;
-  font-size: 22rpx;
-  font-weight: 650;
-}
-
-.version {
-  margin-top: 36rpx;
-  color: #6B7C8A;
-  font-size: 20rpx;
-  text-align: center;
-}

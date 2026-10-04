@@ -17,6 +17,12 @@ Page({
   data: {
     loading: true,
     list: [] as GuideSpot[],
+    /** 筛选后的列表 */
+    filteredList: [] as GuideSpot[],
+    /** 所有区域列表，包含「全部」 */
+    districts: [] as string[],
+    /** 当前选中区域，空串表示全部 */
+    currentDistrict: '',
     showDetail: false,
     detail: {} as GuideSpot,
     detailLoading: false,
@@ -28,9 +34,38 @@ Page({
   onShow() {
     this.setData({ loading: true })
     loadGuideSpots()
-      .then((list) => this.setData({ list: list || [] }))
+      .then((list) => {
+        const districts = this.extractDistricts(list)
+        this.setData({ list: list || [], districts })
+        this.applyFilter()
+      })
       .catch(() => this.setData({ list: [] }))
       .finally(() => this.setData({ loading: false }))
+  },
+
+  /** 从点位列表中提取所有区域，去重后前面加「全部」 */
+  extractDistricts(list: GuideSpot[]): string[] {
+    const set = new Set<string>()
+    ;(list || []).forEach((s) => {
+      if (s.district) set.add(s.district)
+    })
+    return ['全部'].concat(Array.from(set))
+  },
+
+  /** 切换区域筛选 */
+  onSelectDistrict(e: any) {
+    const district = e.currentTarget.dataset.district || ''
+    this.setData({ currentDistrict: district === '全部' ? '' : district })
+    this.applyFilter()
+  },
+
+  /** 按当前选中区域筛选列表 */
+  applyFilter() {
+    const { list, currentDistrict } = this.data
+    const filtered = !currentDistrict
+      ? (list || [])
+      : (list || []).filter((s) => s.district === currentDistrict)
+    this.setData({ filteredList: filtered })
   },
 
   onOpen(e: any) {

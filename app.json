@@ -28,7 +28,8 @@
     "pages/about/about",
     "pages/compliance/compliance",
     "pages/webview/webview",
-    "pages/legal/legal"
+    "pages/legal/legal",
+    "pages/legal-detail/legal-detail"
   ],
   "window": {
     "navigationBarTitleText": "追潮记",

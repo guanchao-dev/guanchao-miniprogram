@@ -1,0 +1,63 @@
+.doc-head {
+  margin-bottom: 24rpx;
+  padding: 32rpx 28rpx;
+  background: linear-gradient(150deg, #F0FAFC 0%, #DDF3F6 100%);
+}
+
+.doc-title {
+  font-size: 38rpx;
+  font-weight: 900;
+  color: #14324A;
+}
+
+.doc-updated {
+  margin-top: 10rpx;
+  color: #6B7C8A;
+  font-size: 22rpx;
+}
+
+.doc-body {
+  padding: 32rpx 28rpx 40rpx;
+}
+
+.doc-summary {
+  padding: 20rpx 22rpx;
+  border: 3rpx solid #1C1C1C;
+  border-radius: 16rpx;
+  background: #F7FCFF;
+  color: #4F6787;
+  font-size: 25rpx;
+  line-height: 1.7;
+}
+
+.doc-section {
+  margin-top: 32rpx;
+}
+
+.doc-heading {
+  position: relative;
+  padding-left: 24rpx;
+  font-size: 29rpx;
+  font-weight: 850;
+  color: #14324A;
+  line-height: 1.5;
+}
+
+.doc-heading::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 8rpx;
+  width: 10rpx;
+  height: 26rpx;
+  border: 2rpx solid #1C1C1C;
+  border-radius: 4rpx;
+  background: #34B8C5;
+}
+
+.doc-para {
+  margin-top: 14rpx;
+  color: #3C556B;
+  font-size: 26rpx;
+  line-height: 1.8;
+}

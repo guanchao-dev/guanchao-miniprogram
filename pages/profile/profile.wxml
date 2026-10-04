@@ -49,14 +49,6 @@
           <text class="service-label">{{item.title}}</text>
         </view>
       </view>
-
-      <view class="compliance-links">
-        <text class="compliance-link" data-type="collection" bindtap="onCompliance" hover-class="tap">《个人信息收集清单》</text>
-        <text class="compliance-link" data-type="sdk" bindtap="onCompliance" hover-class="tap">《SDK共享清单》</text>
-        <text class="compliance-link" data-type="sensitive" bindtap="onCompliance" hover-class="tap">《敏感个人信息处理说明》</text>
-      </view>
-
-      <view class="version">追潮记 · 0.1.0 测试版</view>
     </view>
   </view>
   <unlock-popup id="unlockPopup"></unlock-popup>

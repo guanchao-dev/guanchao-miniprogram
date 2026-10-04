@@ -1,7 +1,23 @@
 <view class="page memphis-bg home-page">
   <view class="memphis-layer">
-    <view class="geo-circle lg" style="top: 40rpx; right: -40rpx; background:#F6D081;"></view>
     <view class="geo-square" style="bottom: 160rpx; left: -30rpx; background:#34B8C5;"></view>
+    <!-- 气泡背景：呼应吉祥物"泡泡"，从底部缓慢上浮 -->
+    <view class="bubble-layer">
+      <view class="bubble b1"></view>
+      <view class="bubble b2"></view>
+      <view class="bubble b3"></view>
+      <view class="bubble b4"></view>
+      <view class="bubble b5"></view>
+      <view class="bubble b6"></view>
+      <view class="bubble b7"></view>
+      <view class="bubble b8"></view>
+      <view class="bubble b9"></view>
+      <view class="bubble b10"></view>
+      <view class="bubble b11"></view>
+      <view class="bubble b12"></view>
+      <view class="bubble b13"></view>
+      <view class="bubble b14"></view>
+    </view>
   </view>
 
   <view class="page-content">
@@ -25,13 +41,13 @@
         <view id="onb-watch" class="btn watch-btn {{watchClass}}" bindtap="onWatchToggle" hover-class="tap">{{watchLabel}}</view>
       </view>
       <view class="hero-visual">
-        <image class="hero-mascot" src="/assets/temp_png/paopao-q-2x.png" mode="aspectFit"></image>
+        <image class="hero-mascot" src="https://www.blueakaiwu.cn/api/v1/static/assets/to-upload/paopao-q-2x.png" mode="aspectFit"></image>
       </view>
     </view>
 
     <view id="onb-spots" class="hot-box card">
       <view class="hot-head">
-        <text class="section-title">赶海地点推荐</text>
+        <text class="section-title">赶海地点热度排名</text>
         <text class="section-more" bindtap="goRecommend" hover-class="tap">全部 ›</text>
       </view>
       <view class="page-loading" wx:if="{{recLoading}}">
@@ -42,7 +58,7 @@
       <view class="hot-row" wx:for="{{recommended}}" wx:key="id" bindtap="goRecommend" hover-class="tap">
         <text class="hot-rank rank-{{index + 1}}">{{index + 1}}</text>
         <text class="hot-name">{{item.name}}</text>
-        <text class="hot-heat">热 {{item.heat}}</text>
+        <text class="hot-heat">🔥 {{item.heat}}</text>
         <text class="hot-dist">{{item.distanceText}}</text>
       </view>
     </view>
@@ -72,9 +88,7 @@
       circular
       interval="3500"
       duration="500"
-      indicator-dots
-      indicator-color="rgba(28,28,28,0.18)"
-      indicator-active-color="#1888BF"
+      bindchange="onActivityChange"
     >
       <swiper-item wx:for="{{activities}}" wx:key="id">
         <view class="activity-card {{item.theme}}" data-item="{{item}}" bindtap="onActivity" hover-class="tap">
@@ -92,6 +106,14 @@
         </view>
       </swiper-item>
     </swiper>
+    <!-- 自定义圆点指示器 -->
+    <view class="activity-dots">
+      <view
+        class="dot {{activityIndex === index ? 'active' : ''}}"
+        wx:for="{{activities}}"
+        wx:key="id"
+      ></view>
+    </view>
   </view>
 
   <!-- 出门建议弹窗 -->
@@ -99,7 +121,7 @@
     <view class="adv-card" catchtap="noop">
       <!-- 顶部：透明背景人物 + 标题 + 关闭 -->
       <view class="adv-header">
-        <image class="adv-mascot" src="/assets/temp_png/mascot-girl.png" mode="aspectFit"></image>
+        <image class="adv-mascot" src="https://www.blueakaiwu.cn/api/v1/static/assets/to-upload/mascot-girl.png" mode="aspectFit"></image>
         <view class="adv-header-right">
           <text class="adv-sub">泡泡的赶海小提醒</text>
         </view>

@@ -7,7 +7,7 @@
     <view class="onb-bubble">
       <view class="onb-body">
         <!-- 左侧：吉祥物探出气泡上沿 -->
-        <image class="onb-mascot" src="/assets/temp_png/mascot-girl.png" mode="aspectFit"></image>
+        <image class="onb-mascot" src="https://www.blueakaiwu.cn/api/v1/static/assets/to-upload/mascot-girl.png" mode="aspectFit"></image>
         <!-- 右侧：文本 -->
         <view class="onb-text">
           <view class="onb-meta">

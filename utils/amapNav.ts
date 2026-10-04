@@ -29,27 +29,9 @@ export function openSpotMap(lat: number, lng: number, name: string, address?: st
 }
 
 /**
- * 复制高德地图 H5 链接到剪贴板，用户可去浏览器粘贴打开、调起高德 App。
- * 因微信 web-view 业务域名无法放 amap.com 校验文件，无法在 web-view 里直接加载，
- * 这是 mp 限制下的兜底方案。
- */
-export function copyAmapLink(lat: number, lng: number, name: string): void {
-  if (!lat || !lng) {
-    toast('点位坐标缺失')
-    return
-  }
-  const url = `https://uri.amap.com/marker?position=${lng},${lat}&name=${encodeURIComponent(name || '赶海点位')}&callnative=1`
-  wx.setClipboardData({
-    data: url,
-    success: () => toast('高德链接已复制，去浏览器粘贴打开')
-  })
-}
-
-/**
  * 赶海点位的统一导航入口：
  * 1) 微信内置地图（点导航可转高德/百度/腾讯 App，最常用）
- * 2) 复制高德地图链接（浏览器打开可调起高德 App）
- * 3) 复制地点名称（坐标不准时，去高德搜索精确地点）
+ * 2) 复制地点名称（坐标不准时，去高德搜索精确地点）
  */
 export function navigateSpot(target: NavTarget): void {
   const destName = target.navName || target.name || '赶海点位'
@@ -67,13 +49,11 @@ export function navigateSpot(target: NavTarget): void {
   }
 
   wx.showActionSheet({
-    itemList: ['地图导航（高德/百度/腾讯）', '复制高德地图链接', '复制地点名称'],
+    itemList: ['地图导航（高德/百度/腾讯）', '复制地点名称'],
     success: (res) => {
       if (res.tapIndex === 0) {
         openSpotMap(lat, lng, destName)
       } else if (res.tapIndex === 1) {
-        copyAmapLink(lat, lng, destName)
-      } else if (res.tapIndex === 2) {
         wx.setClipboardData({
           data: destName,
           success: () => toast('地点名已复制')

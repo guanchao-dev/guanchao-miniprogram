@@ -3,7 +3,7 @@ import { aiApi, contentApi, homeApi, watchApi } from '../../services/api'
 import { requireLogin } from '../../utils/auth'
 import { nowISO, nowTime, showError, todayDate, toast } from '../../utils/format'
 import { chooseImage, mediaUrl, preloadImage, uploadImage } from '../../utils/upload'
-import { getCachedLocation, loadGuideSpots, rankWatchSpots } from '../../utils/spotGuide'
+import { getCachedLocation, loadGuideSpots, rankWatchSpots, requestLocation } from '../../utils/spotGuide'
 import { enqueueUnlocks, flushUnlocks } from '../../utils/unlock'
 import { shouldShowOnboarding, markOnboardingCompleted, isOnboarding, getOnboardingIndex } from '../../utils/onboardingStore'
 import { ONBOARDING_STEPS } from '../../utils/onboardingSteps'
@@ -165,6 +165,7 @@ Page({
     recommended: [],
     recLoading: true,
     activities: DEFAULT_ACTIVITIES,
+    activityIndex: 0,
     showAdvice: false,
     showGuess: false,
     showTrash: false,
@@ -479,6 +480,11 @@ Page({
       })
   },
 
+  /** 活动轮播切换时更新指示器 */
+  onActivityChange(e: any) {
+    this.setData({ activityIndex: e.detail.current })
+  },
+
   onActivity(e: any) {
     const item = e.currentTarget.dataset.item || {}
     // 跳第三方小程序（如深蓝两万里官方小程序），必须由用户点击触发
@@ -527,36 +533,54 @@ Page({
   },
 
   onRefreshAdvice() {
-    // 前端先使用本地 mock 数据，后端看完前端效果后重新设计接口
-    const mockAdvice = this.normalizeAdvice({
-      suitableNow: true,
-      goodTime: '17:00',
-      bestWindow: '17:00-18:00',
-      leaveBefore: '18:10',
-      recommendedSpots: [
-        { id: 'spot_qd_hongshiya', name: '红石崖赶海场', distance: '12km', reason: '皮皮虾、海螺多' },
-        { id: 'spot_qd_shilaoren', name: '石老人海水浴场', distance: '8km', reason: '沙滩平缓、新手友好' }
-      ]
+    // 获取用户当前坐标传给后端，拿推荐时间与推荐地点
+    requestLocation().then((loc) => {
+      const spotId = this.data.spotId || DEFAULT_SPOT_ID
+      const date = todayDate()
+      const lat = loc ? loc.lat : undefined
+      const lng = loc ? loc.lng : undefined
+      aiApi.tideAdvice(lat, lng, date, spotId)
+        .then((data) => {
+          this.setData({ advice: this.normalizeAdvice(data), showAdvice: true })
+        })
+        .catch(() => {
+          // 接口未就绪时用 mock 兜底，保证前端可演示
+          this.setData({
+            advice: this.normalizeAdvice({
+              suitableNow: true,
+              bestTimeFrom: '17:00',
+              bestTimeTo: '18:10',
+              recommendedSpot: {
+                id: 'spot_qd_hongshiya',
+                name: '红石崖',
+                district: '黄岛区',
+                distanceText: '12km'
+              }
+            }),
+            showAdvice: true
+          })
+        })
     })
-    this.setData({ advice: mockAdvice, showAdvice: true })
   },
 
-  /** 把后端 / mock 数据规整成弹窗渲染结构 */
+  /** 把后端数据规整成弹窗渲染结构 */
   normalizeAdvice(raw: any) {
     // 前端默认适合赶海，只有后端明确返回 suitableNow: false 才判为不适合
-    const suitable = raw.suitableNow !== false
-    const goodTime = raw.goodTime || ''
-    const spots = Array.isArray(raw.recommendedSpots) ? raw.recommendedSpots.map((s: any) => ({
-      id: s.id || '',
-      name: s.name || '',
-      distance: s.distance || '',
-      reason: s.reason || ''
-    })) : []
+    const suitable = (raw && raw.suitableNow) !== false
+    const from = (raw && raw.bestTimeFrom) || ''
+    const to = (raw && raw.bestTimeTo) || ''
+    const spot = raw && raw.recommendedSpot
+    const spots = spot ? [{
+      id: spot.id || '',
+      name: spot.name || '',
+      distance: spot.distanceText || '',
+      reason: spot.district ? spot.district : ''
+    }] : []
     return {
       suitableNow: suitable,
-      verdict: suitable ? `${goodTime}适合赶海` : '目前不适合赶海',
-      bestWindow: raw.bestWindow || '',
-      leaveBefore: raw.leaveBefore || '',
+      verdict: suitable ? `${from}适合赶海` : '目前不适合赶海',
+      bestWindow: from && to ? `${from}-${to}` : '',
+      leaveBefore: to || '',
       recommendedSpots: spots
     }
   },

@@ -1,10 +1,27 @@
-.intro {
-  padding: 20rpx 22rpx;
-  margin-bottom: 18rpx;
-  background: #F3FBFA;
-  color: #4F6787;
+/* 区域筛选栏 */
+.district-bar {
+  white-space: nowrap;
+  margin-bottom: 16rpx;
+  padding: 4rpx 0;
+}
+
+.district-chip {
+  display: inline-block;
+  padding: 10rpx 24rpx;
+  margin-right: 12rpx;
+  border: 3rpx solid #1C1C1C;
+  border-radius: 999rpx;
+  background: #FFFFFF;
   font-size: 24rpx;
-  line-height: 1.55;
+  font-weight: 700;
+  color: #4A5866;
+  box-shadow: 2rpx 2rpx 0 rgba(28, 28, 28, 0.6);
+}
+
+.district-chip.active {
+  background: #34B8C5;
+  color: #FFFFFF;
+  font-weight: 900;
 }
 
 .spot-item {

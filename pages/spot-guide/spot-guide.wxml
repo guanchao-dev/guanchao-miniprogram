@@ -5,13 +5,23 @@
   </view>
 
   <view class="page-content">
-    <view class="intro card">按热度排列青岛赶海点。距离根据你的当前位置估算，不保存轨迹。</view>
+    <!-- 区域筛选 -->
+    <scroll-view scroll-x class="district-bar" wx:if="{{districts.length > 1}}">
+      <view
+        class="district-chip {{(!currentDistrict && item === '全部') || currentDistrict === item ? 'active' : ''}}"
+        wx:for="{{districts}}"
+        wx:key="*this"
+        data-district="{{item}}"
+        bindtap="onSelectDistrict"
+        hover-class="tap"
+      >{{item}}</view>
+    </scroll-view>
     <view class="page-loading" wx:if="{{loading}}">
       <view class="spinner"></view>
       <text>加载中…</text>
     </view>
-    <view class="empty-tip" wx:elif="{{!list.length}}">暂无赶海点</view>
-    <view class="spot-item card" wx:for="{{list}}" wx:key="id" data-id="{{item.id}}" bindtap="onOpen" hover-class="tap">
+    <view class="empty-tip" wx:elif="{{!filteredList.length}}">该区域暂无赶海点</view>
+    <view class="spot-item card" wx:for="{{filteredList}}" wx:key="id" data-id="{{item.id}}" bindtap="onOpen" hover-class="tap">
       <view class="item-rank">{{index + 1}}</view>
       <image class="item-icon" src="{{item.icon}}" mode="aspectFit"></image>
       <view class="item-body">

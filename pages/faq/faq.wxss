@@ -1,10 +1,80 @@
-.faq-q {
-  font-size: 28rpx;
+/* 手风琴项 */
+.faq-item {
+  margin-bottom: 16rpx;
+  padding: 0;
+  overflow: hidden;
 }
 
-.faq-a {
-  margin-top: 8rpx;
-  color: #4F6787;
+.faq-q-row {
+  display: flex;
+  align-items: center;
+  gap: 14rpx;
+  padding: 24rpx 22rpx;
+}
+
+.faq-q-icon {
+  flex-shrink: 0;
+  width: 44rpx;
+  height: 44rpx;
+  line-height: 44rpx;
+  text-align: center;
+  border: 3rpx solid #1C1C1C;
+  border-radius: 50%;
+  background: #F6D081;
   font-size: 24rpx;
-  line-height: 1.6;
+  font-weight: 900;
+  color: #1C1C1C;
+}
+
+.faq-q-text {
+  flex: 1;
+  min-width: 0;
+  font-size: 28rpx;
+  font-weight: 800;
+  color: #1C1C1C;
+  line-height: 1.4;
+}
+
+.faq-arrow {
+  flex-shrink: 0;
+  font-size: 40rpx;
+  font-weight: 300;
+  color: #1888BF;
+  transition: transform 0.25s ease;
+}
+
+.faq-arrow.open {
+  transform: rotate(90deg);
+}
+
+/* 答案区 */
+.faq-a-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 14rpx;
+  padding: 0 22rpx 24rpx;
+  border-top: 2rpx solid rgba(28, 28, 28, 0.08);
+  padding-top: 18rpx;
+}
+
+.faq-a-icon {
+  flex-shrink: 0;
+  width: 44rpx;
+  height: 44rpx;
+  line-height: 44rpx;
+  text-align: center;
+  border: 3rpx solid #1C1C1C;
+  border-radius: 50%;
+  background: #34B8C5;
+  font-size: 24rpx;
+  font-weight: 900;
+  color: #FFFFFF;
+}
+
+.faq-a-text {
+  flex: 1;
+  min-width: 0;
+  color: #4F6787;
+  font-size: 26rpx;
+  line-height: 1.7;
 }

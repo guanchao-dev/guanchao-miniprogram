@@ -1,20 +1,88 @@
 <view class="page">
   <view class="page-content">
-    <view class="card list-card">
-      <image wx:if="{{spot.coverUrl}}" class="cover" src="{{spot.coverUrl}}" mode="aspectFill"></image>
-      <view class="list-title">{{spot.name}}</view>
-      <view class="list-meta">{{spot.city}} ｜ {{spot.openTime}}</view>
-      <view class="list-meta">{{spot.ageHint}}</view>
-      <view class="chip-row">
-        <text class="chip" wx:for="{{spot.safetyTags}}" wx:key="*this">{{item}}</text>
+    <view class="detail-card">
+      <!-- 封面/图标 -->
+      <swiper wx:if="{{photos.length}}" class="pano" indicator-dots circular>
+        <swiper-item wx:for="{{photos}}" wx:key="*this">
+          <image class="pano-img" src="{{item}}" mode="aspectFill" data-url="{{item}}" bindtap="previewPhoto" hover-class="tap"></image>
+        </swiper-item>
+      </swiper>
+      <view class="pano-fallback" wx:else>
+        <image src="{{spot.icon}}" mode="aspectFit"></image>
+        <text>暂无全景照片</text>
       </view>
-      <view class="list-meta">{{spot.description || spot.observeHint}}</view>
+
+      <!-- 标题区 -->
+      <view class="spot-title">{{spot.name}}</view>
+      <view class="spot-meta">{{spot.city}}{{spot.district ? ' · ' + spot.district : ''}}</view>
+
+      <!-- 基础信息 -->
+      <view class="info-row">
+        <text class="info-k">距离</text>
+        <text class="info-v">{{spot.distanceText || '—'}}</text>
+      </view>
+      <view class="info-row">
+        <text class="info-k">开放</text>
+        <text class="info-v">{{spot.openTime || '以现场管理为准'}}</text>
+      </view>
+      <view class="info-row" wx:if="{{spot.ageHint}}">
+        <text class="info-k">适合</text>
+        <text class="info-v">{{spot.ageHint}}</text>
+      </view>
+
+      <!-- 导航行 -->
+      <view class="nav-row" bindtap="onNavigate" hover-class="tap">
+        <view class="nav-row-main">
+          <text class="nav-row-title">导航到{{spot.navName || spot.name}}</text>
+          <text class="nav-row-sub">{{spot.distanceText || ''}} · 高德 / 百度等地图一键导航</text>
+        </view>
+        <view class="nav-row-action">
+          <view class="nav-plane">✈</view>
+          <text class="nav-row-label">导航</text>
+        </view>
+      </view>
+
+      <!-- 今日潮汐 -->
+      <view class="block-title">今日潮汐</view>
+      <text class="tide-summary">{{tideSummary}}</text>
+      <view class="tide-table" wx:if="{{tideRows.length}}">
+        <view class="tide-row" wx:for="{{tideRows}}" wx:key="time">
+          <text>{{item.time}}</text>
+          <text>{{item.label}}</text>
+          <text>{{item.height}}</text>
+        </view>
+      </view>
+
+      <!-- 可能遇到 -->
+      <view class="block-title">可能遇到</view>
+      <view class="chip-row" wx:if="{{spot.species.length}}">
+        <text
+          class="chip {{item.id ? 'active' : ''}}"
+          wx:for="{{spot.species}}"
+          wx:key="name"
+          data-id="{{item.id}}"
+          bindtap="openSpecies"
+          hover-class="tap">{{item.name}}</text>
+      </view>
+      <!-- 详细描述 -->
+      <text class="hint" wx:if="{{spot.description}}">{{spot.description}}</text>
+
+      <!-- 观察提示 -->
+      <text class="hint" wx:if="{{spot.observeHint}}">{{spot.observeHint}}</text>
+
+      <!-- 安全标签 -->
+      <view class="chip-row" wx:if="{{spot.safetyTags.length}}">
+        <text class="chip safety" wx:for="{{spot.safetyTags}}" wx:key="*this">{{item}}</text>
+      </view>
+
+      <!-- 装备 -->
+      <view class="block-title" wx:if="{{spot.gearList.length}}">建议装备</view>
       <view class="chip-row" wx:if="{{spot.gearList.length}}">
         <text class="chip" wx:for="{{spot.gearList}}" wx:key="*this">{{item}}</text>
       </view>
-      <view class="list-meta" wx:if="{{spot.source}}">来源：{{spot.source}}</view>
-      <view class="btn full-btn" style="background:#34B8C5; color:#fff;" bindtap="onNavigate" hover-class="tap">🧭 导航到{{spot.navName || spot.name}}</view>
-      <view class="btn full-btn" bindtap="useSpot" hover-class="tap">设为当前观察点</view>
+
+      <!-- 来源 -->
+      <view class="source" wx:if="{{spot.source}}">来源：{{spot.source}}</view>
     </view>
   </view>
 </view>

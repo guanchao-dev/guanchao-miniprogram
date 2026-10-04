@@ -1,16 +1,40 @@
+import { contentApi } from '../../services/api'
+import { requireLogin } from '../../utils/auth'
+import { showError, toast } from '../../utils/format'
+
 Page({
   data: {
-    version: '0.1.0 测试版',
-    features: [
-      { title: '潮汐表', desc: '查看附近赶海点的实时潮高与涨退潮' },
-      { title: '潮汐日历', desc: '按月浏览高潮低潮，安排赶海行程' },
-      { title: '海洋图鉴', desc: '认识潮间带常见生物，拍照即可识别' },
-      { title: '知识科普', desc: '一条一条积累赶海常识与海洋素养' },
-      { title: '探索打卡', desc: '在赶海场地驱散迷雾网格，记录探索足迹' }
-    ]
+    feedback: '',
+    contact: '',
+    submitting: false,
+    tags: ['🌊 潮汐查询', '🐚 生物识别', '🦀 赶海打卡']
   },
 
-  goLegal() {
-    wx.navigateTo({ url: '/pages/legal/legal' })
+  onFeedbackInput(e: any) {
+    this.setData({ feedback: e.detail.value })
+  },
+
+  onContactInput(e: any) {
+    this.setData({ contact: e.detail.value })
+  },
+
+  onSubmitFeedback() {
+    if (!requireLogin()) return
+    const content = (this.data.feedback || '').trim()
+    if (!content) {
+      toast('请先填写反馈内容')
+      return
+    }
+    if (this.data.submitting) return
+    this.setData({ submitting: true })
+    contentApi.feedback({ content, contact: (this.data.contact || '').trim() })
+      .then(() => {
+        this.setData({ feedback: '', contact: '', submitting: false })
+        toast('感谢你的反馈')
+      })
+      .catch((err) => {
+        this.setData({ submitting: false })
+        showError(err, '提交失败')
+      })
   }
 })

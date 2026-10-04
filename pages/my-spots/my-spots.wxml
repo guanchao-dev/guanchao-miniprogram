@@ -40,7 +40,6 @@
       </view>
       <view class="spot-actions">
         <view class="action-btn primary" data-index="{{idx}}" catchtap="onNavigate">导航</view>
-        <view class="action-btn ghost" data-index="{{idx}}" catchtap="onCopyAmap">高德链接</view>
         <view class="action-btn danger" data-index="{{idx}}" catchtap="onDelete">删除</view>
       </view>
     </view>

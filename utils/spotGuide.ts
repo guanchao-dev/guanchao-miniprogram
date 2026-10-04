@@ -9,6 +9,8 @@ export type GuideSpot = {
   id: string
   name: string
   city: string
+  /** 所属区，如「崂山区」「黄岛区」 */
+  district?: string
   heat: number
   latitude: number
   longitude: number
@@ -36,6 +38,7 @@ const FALLBACK_SPOTS: GuideSpot[] = [
     id: 'spot_qd_hongshiya',
     name: '红石崖',
     city: '黄岛',
+    district: '黄岛区',
     heat: 70,
     // 近似坐标（胶州湾西南岸红石崖街道沿海），导航以地名为准，待后端按实地校正
     latitude: 36.1085,
@@ -131,6 +134,7 @@ export function mergeGuideSpots(apiList: any[], loc?: { lat: number; lng: number
     map[item.id] = Object.assign({}, base, {
       name: cityName(item.name) || base.name,
       city: item.city || base.city,
+      district: item.district || base.district,
       heat: Number(item.heat || item.hotScore || item.visitCount) || base.heat,
       latitude: lat || base.latitude,
       longitude: lng || base.longitude,

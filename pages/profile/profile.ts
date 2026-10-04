@@ -6,7 +6,7 @@ import { downloadImage, mediaUrl } from '../../utils/upload'
 import { isOnboarding, getOnboardingIndex, markOnboardingCompleted } from '../../utils/onboardingStore'
 import { ONBOARDING_STEPS } from '../../utils/onboardingSteps'
 
-const DEFAULT_AVATAR = '/assets/temp_png/mascot-avatar.png'
+const DEFAULT_AVATAR = 'https://www.blueakaiwu.cn/api/v1/static/assets/to-upload/mascot-avatar.png'
 
 const DEFAULT_USER = {
   name: '点击登录',
@@ -162,10 +162,5 @@ Page({
     } else if (url) {
       wx.navigateTo({ url })
     }
-  },
-
-  onCompliance(e: any) {
-    const type = e.currentTarget.dataset.type
-    if (type) wx.navigateTo({ url: `/pages/compliance/compliance?type=${type}` })
   }
 })

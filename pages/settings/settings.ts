@@ -24,6 +24,14 @@ Page({
     wx.navigateTo({ url: '/pages/legal/legal' })
   },
 
+  goAbout() {
+    wx.navigateTo({ url: '/pages/about/about' })
+  },
+
+  goFaq() {
+    wx.navigateTo({ url: '/pages/faq/faq' })
+  },
+
   onLogout() {
     wx.showModal({
       title: '退出登录',
@@ -38,31 +46,10 @@ Page({
     })
   },
 
-  onConsent() {
-    if (!requireLogin()) return
-    contentApi.guardianConsent(true, this.data.version || '2026-08-01')
-      .then(() => toast('已记录监护人同意'))
-      .catch((err) => showError(err, '提交失败'))
-  },
-
   /** 再次查看新手教程：清完成标记 → 跳首页 → onShow 自动启动 */
   onReplayOnboarding() {
     resetOnboarding()
     wx.switchTab({ url: '/pages/home/home' })
-  },
-
-  onWithdrawConsent() {
-    if (!requireLogin()) return
-    wx.showModal({
-      title: '撤回同意',
-      content: '撤回后部分功能将不可用，公开课程仍可查看。',
-      success: (res) => {
-        if (!res.confirm) return
-        contentApi.withdrawConsent()
-          .then(() => toast('已撤回同意'))
-          .catch((err) => showError(err, '撤回失败'))
-      }
-    })
   },
 
   onDelete() {

@@ -237,8 +237,20 @@ export const contentApi = {
 }
 
 export const aiApi = {
-  tideAdvice(spotId?: string, date?: string) {
-    return http.post('/ai/tide-advice', { spotId, date }, { timeout: 25000, auth: false })
+  /**
+   * 出行建议：传用户当前坐标，后端返回推荐赶海时间、离场时间与推荐地点。
+   * 不适合赶海时 bestTimeFrom/bestTimeTo/recommendedSpot 均为 null。
+   */
+  tideAdvice(lat?: number, lng?: number, date?: string, spotId?: string) {
+    const body: Record<string, any> = {}
+    if (lat != null && lng != null) {
+      body.lat = lat
+      body.lng = lng
+    } else if (spotId) {
+      body.spotId = spotId
+    }
+    if (date) body.date = date
+    return http.post('/ai/tide-advice', body, { timeout: 25000, auth: false })
   },
   speciesGuess(body: Record<string, any>) {
     return http.post('/ai/species-guess', body, { timeout: 25000, idempotency: true, auth: false })
