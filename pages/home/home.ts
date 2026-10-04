@@ -26,6 +26,14 @@ const DEFAULT_ACTIVITIES = [
   { id: 'theme-deepblue', tag: '科普', title: '深蓝百万里', desc: '全民参与的海洋科学十年行动', theme: 'banner', icon: `${ASSET}/home/home-deepblue.png`, appId: 'wxc625ddd20a55f6cd', miniPath: '' }
 ]
 
+/**
+ * 跳第三方小程序的活动：后端 /activities 暂未下发 appId，按标题补全，
+ * 保证首页「深蓝百万里」banner 能跳到官方小程序；接口补上 appId 后自动以接口值为准。
+ */
+const MINI_APP_BY_TITLE: Record<string, { appId: string; miniPath: string }> = {
+  '深蓝百万里': { appId: 'wxc625ddd20a55f6cd', miniPath: '' }
+}
+
 /** 与赶海无关的句子：天气、穿戴、泛化安全叮嘱 */
 const SKIP_SENTENCE_RE = /(天气|气温|温度|\d+\s*℃|\d+\s*°|东南风|西南风|西北风|东北风|东风|南风|西风|北风|风力|风\s*\d+\s*级|轻浪|中浪|大浪|多云|晴天|阴天|小雨|中雨|大雨|阵雨|雷阵|防滑|穿鞋|雨具|雨伞|保暖|外套|体感|防晒|牵好|牵紧|大人的手|家长|大人陪|陪同|独自|湿滑|涨潮线|离岸流)/
 
@@ -460,19 +468,23 @@ Page({
   loadActivities() {
     contentApi.activities()
       .then((list) => {
-        const items = (list || []).map((it: any, i: number) => ({
-          id: it.id || `activity_${i}`,
-          tag: it.tag || it.category || '活动',
-          title: it.title || it.name || '',
-          desc: it.desc || it.subtitle || it.summary || '',
-          // banner 也是 theme 取值（图当背景 + 文字叠在上面），与前端同学的上传版本一致
-          theme: it.theme === 'yellow' || it.theme === 'banner' ? it.theme : 'teal',
-          icon: it.image || it.imageUrl || (it.tag === '研学' ? `${ASSET}/home/home-hero-mascot.png` : `${ASSET}/home/home-fish.png`),
-          url: it.url || it.linkUrl || '',
-          // 跳第三方小程序（如深蓝两万里官方小程序），后端可配 appId + 落地页 path
-          appId: it.appId || it.miniAppId || '',
-          miniPath: it.miniPath || it.appPath || ''
-        })).filter((it: any) => it.title)
+        const items = (list || []).map((it: any, i: number) => {
+          const title = it.title || it.name || ''
+          const mini = MINI_APP_BY_TITLE[title]
+          return {
+            id: it.id || `activity_${i}`,
+            tag: it.tag || it.category || '活动',
+            title,
+            desc: it.desc || it.subtitle || it.summary || '',
+            // banner 也是 theme 取值（图当背景 + 文字叠在上面），与前端同学的上传版本一致
+            theme: it.theme === 'yellow' || it.theme === 'banner' ? it.theme : 'teal',
+            icon: it.image || it.imageUrl || (it.tag === '研学' ? `${ASSET}/home/home-hero-mascot.png` : `${ASSET}/home/home-fish.png`),
+            url: it.url || it.linkUrl || '',
+            // 跳第三方小程序（如深蓝百万里官方小程序）：优先后端 appId，缺失时按标题兜底
+            appId: it.appId || it.miniAppId || (mini ? mini.appId : ''),
+            miniPath: it.miniPath || it.appPath || (mini ? mini.miniPath : '')
+          }
+        }).filter((it: any) => it.title)
         if (items.length) this.setData({ activities: items })
       })
       .catch(() => {
@@ -493,8 +505,10 @@ Page({
         appId: String(item.appId),
         path: item.miniPath ? String(item.miniPath) : undefined,
         fail: (err: any) => {
-          if (err && String(err.errMsg || '').indexOf('cancel') >= 0) return
-          toast('暂时无法打开，请稍后再试')
+          const msg = String((err && err.errMsg) || '')
+          if (msg.indexOf('cancel') >= 0) return
+          // 临时排查：把真实失败原因暴露出来，定位后改回友好提示
+          wx.showModal({ title: '跳转失败', content: msg || '未知错误', showCancel: false })
         }
       })
       return
