@@ -59,6 +59,14 @@
         "type": "folder"
       },
       {
+        "value": "assets/temp_png",
+        "type": "folder"
+      },
+      {
+        "value": "assets/to-upload",
+        "type": "folder"
+      },
+      {
         "value": "assets/icons/home",
         "type": "folder"
       },
