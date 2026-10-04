@@ -505,10 +505,8 @@ Page({
         appId: String(item.appId),
         path: item.miniPath ? String(item.miniPath) : undefined,
         fail: (err: any) => {
-          const msg = String((err && err.errMsg) || '')
-          if (msg.indexOf('cancel') >= 0) return
-          // 临时排查：把真实失败原因暴露出来，定位后改回友好提示
-          wx.showModal({ title: '跳转失败', content: msg || '未知错误', showCancel: false })
+          if (err && String(err.errMsg || '').indexOf('cancel') >= 0) return
+          toast('暂时无法打开，请稍后再试')
         }
       })
       return
