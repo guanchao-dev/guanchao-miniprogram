@@ -61,7 +61,10 @@ export function compressForUpload(filePath: string, quality = 75, width = 1280):
   })
 }
 
-export async function uploadImage(scene: 'speciesGuess' | 'observation' | 'card', filePath: string): Promise<string> {
+export async function uploadImage(
+  scene: 'speciesGuess' | 'observation' | 'card' | 'spot',
+  filePath: string
+): Promise<string> {
   // 先在本地压缩再传，减少上传体积
   const compressed = await compressForUpload(filePath)
   const data = await http.upload('/uploads', compressed, { scene })

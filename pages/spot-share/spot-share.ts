@@ -2,7 +2,7 @@ import { contentApi } from '../../services/api'
 import { toast, showError } from '../../utils/format'
 import { chooseImages, uploadImage } from '../../utils/upload'
 
-/** 现场照片上限 */
+/** 一条投稿最多几张图（与后端 spots.py 的 _MAX_PHOTOS 一致） */
 const MAX_PHOTOS = 3
 
 Page({
@@ -12,7 +12,9 @@ Page({
     lat: 0,
     lng: 0,
     note: '',
+    // 选的图片（本地临时路径），提交时才逐张上传
     photos: [] as string[],
+    maxPhotos: MAX_PHOTOS,
     mapLat: 36.06,
     mapLng: 120.38,
     markers: [] as any[],
@@ -62,14 +64,18 @@ Page({
     })
   },
 
-  /** 选照片：一次最多补到 3 张 */
+  refreshCanSubmit() {
+    const ok = !!(this.data.name && this.data.lat && this.data.lng)
+    this.setData({ canSubmit: ok })
+  },
+
+  /* ===== 照片（选填，最多 3 张）===== */
   choosePhotos() {
-    const remain = MAX_PHOTOS - this.data.photos.length
-    if (remain <= 0) return
-    chooseImages(remain)
+    const left = MAX_PHOTOS - this.data.photos.length
+    if (left <= 0) return
+    chooseImages(left)
       .then((list) => {
-        const photos = this.data.photos.concat(list).slice(0, MAX_PHOTOS)
-        this.setData({ photos })
+        this.setData({ photos: this.data.photos.concat(list).slice(0, MAX_PHOTOS) })
       })
       .catch((err) => {
         if (err && err.message === 'cancel') return
@@ -78,46 +84,45 @@ Page({
   },
 
   removePhoto(e: any) {
-    const index = Number(e.currentTarget.dataset.index)
-    this.setData({ photos: this.data.photos.filter((item, i) => i !== index) })
+    const idx = Number(e.currentTarget.dataset.index)
+    const photos = this.data.photos.slice()
+    photos.splice(idx, 1)
+    this.setData({ photos })
   },
 
   previewPhoto(e: any) {
-    const url = this.data.photos[Number(e.currentTarget.dataset.index)]
+    const url = e.currentTarget.dataset.url
     if (!url) return
-    wx.previewImage({ urls: this.data.photos, current: url })
-  },
-
-  refreshCanSubmit() {
-    const ok = !!(this.data.name && this.data.lat && this.data.lng)
-    this.setData({ canSubmit: ok })
+    wx.previewImage({ current: url, urls: this.data.photos })
   },
 
   async submit() {
     if (!this.data.canSubmit || this.data.submitting) return
     this.setData({ submitting: true })
-    wx.showLoading({ title: '上传中', mask: true })
     try {
-      // 照片先传成 uploadId，再由 /spots 关联到点位（1~3 张）
-      const photoIds = await Promise.all(
-        this.data.photos.map((path) => uploadImage('observation', path))
-      )
-      const payload: Record<string, any> = {
+      // 图片逐张上传换成 uploadId，服务端负责压缩和存储（COS）
+      const uploadIds: string[] = []
+      const total = this.data.photos.length
+      for (let i = 0; i < total; i++) {
+        wx.showLoading({ title: `上传图片 ${i + 1}/${total}`, mask: true })
+        uploadIds.push(await uploadImage('spot', this.data.photos[i]))
+      }
+      wx.hideLoading()
+
+      // 不再往本地缓存写副本：服务端是唯一数据源。
+      // 写副本会让「我的点位」出现重复卡片，而且那份副本删不掉，变成幽灵点位。
+      await contentApi.createSpot({
         name: this.data.name,
         address: this.data.address,
         lat: this.data.lat,
         lng: this.data.lng,
-        note: this.data.note
-      }
-      if (photoIds.length) payload.photoIds = photoIds
-      // 不再往本地缓存写副本：服务端是唯一数据源。
-      // 写副本会让「我的点位」出现重复卡片，而且那份副本删不掉，变成幽灵点位。
-      await contentApi.createSpot(payload)
-      // 先关 loading 再弹提示：两者共用同一个原生视图，反过来的话会互相顶掉
-      wx.hideLoading()
+        note: this.data.note,
+        photoUploadIds: uploadIds
+      })
       toast('点位上传成功')
       setTimeout(() => wx.navigateBack(), 600)
     } catch (err) {
+      // showLoading 和 showToast 共用一个原生视图，不先 hide 的话提示会被盖住
       wx.hideLoading()
       showError(err, '提交失败')
     } finally {

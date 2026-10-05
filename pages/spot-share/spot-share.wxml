@@ -45,20 +45,26 @@
       <textarea class="field-textarea" placeholder="例如：低潮前后两小时最佳，注意西侧暗礁" value="{{note}}" bindinput="onInputNote" maxlength="200" />
     </view>
 
-    <!-- 现场照片（1~3 张，可选） -->
+    <!-- 照片（选填，最多 3 张）-->
     <view class="card field-card">
-      <view class="field-label">现场照片（可选，最多 3 张）</view>
+      <view class="field-label">照片（选填，最多 {{maxPhotos}} 张）</view>
       <view class="photo-grid">
-        <view class="photo-cell" wx:for="{{photos}}" wx:key="*this">
-          <image class="photo-cell-img" src="{{item}}" mode="aspectFill" data-index="{{index}}" bindtap="previewPhoto" hover-class="tap"></image>
-          <view class="photo-del" data-index="{{index}}" catchtap="removePhoto" hover-class="tap">×</view>
+        <view class="photo-item" wx:for="{{photos}}" wx:key="*this" wx:for-item="p" wx:for-index="pi">
+          <image
+            class="photo-thumb"
+            src="{{p}}"
+            mode="aspectFill"
+            data-url="{{p}}"
+            bindtap="previewPhoto"
+            hover-class="tap"
+          ></image>
+          <view class="photo-del" data-index="{{pi}}" catchtap="removePhoto">×</view>
         </view>
-        <view class="photo-add" wx:if="{{photos.length < 3}}" bindtap="choosePhotos" hover-class="tap">
-          <text class="photo-add-icon">＋</text>
-          <text class="photo-add-tip">添加照片</text>
+        <view class="photo-add" wx:if="{{photos.length < maxPhotos}}" bindtap="choosePhotos" hover-class="tap">
+          <text class="photo-add-icon">+</text>
         </view>
       </view>
-      <view class="photo-count">{{photos.length}} / 3</view>
+      <view class="field-tip">拍点实地照片，我们会一起审核</view>
     </view>
 
     <!-- 提交 -->
