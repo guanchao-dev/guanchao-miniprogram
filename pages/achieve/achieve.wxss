@@ -4,7 +4,8 @@
 
 .hero {
   position: relative;
-  z-index: 2;
+  /* 必须高于下方 .card 的 z-index:2，否则吉祥物会被进度卡盖住 */
+  z-index: 3;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -34,93 +35,93 @@
   width: 240rpx;
   height: 240rpx;
   flex-shrink: 0;
-}
-
-.hero-dot-a {
-  position: absolute;
-  top: 2rpx;
-  right: 4rpx;
-  width: 22rpx;
-  height: 22rpx;
-  border: 3rpx solid #1C1C1C;
-  border-radius: 50%;
-  background: #1888BF;
+  /* 高于下方进度卡，人物才能压上去 */
   z-index: 3;
 }
 
-.hero-dot-b {
-  position: absolute;
-  left: -2rpx;
-  bottom: 18rpx;
-  width: 18rpx;
-  height: 18rpx;
-  border: 3rpx solid #1C1C1C;
-  border-radius: 50%;
-  background: #A7D9C7;
-  z-index: 3;
-}
-
-/* 男版吉祥物是带 #F9EAC5 奶油底的方图：盒子同底色，图片无缝铺满 */
+/* 男版吉祥物是自带圆形勋章底的方图：不裁切，允许人物溢出叠压 */
 .hero-mascot-box {
   position: absolute;
   right: 0;
   top: 12rpx;
   width: 224rpx;
   height: 224rpx;
-  overflow: hidden;
-  border: 4rpx solid #1C1C1C;
-  border-radius: 28rpx;
-  background: #F9EAC5;
-  box-shadow: 4rpx 4rpx 0 rgba(28, 28, 28, 0.85);
-  transform: rotate(2deg);
+  overflow: visible;
+  z-index: 3;
 }
 
 .hero-mascot {
-  width: 100%;
-  height: 100%;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 224rpx;
+  height: 224rpx;
+  z-index: 3;
+  /* 放大并往左下移，人物盖在下方卡片上，形成叠压层次 */
+  transform: scale(1.5) translate(2%, 25%);
+  transform-origin: 100% 100%;
 }
 
+/* 成就进度卡：黑边 + 暖白渐变底 */
 .progress {
-  padding: 22rpx 24rpx 18rpx;
+  padding: 22rpx 24rpx 20rpx;
+  background: linear-gradient(180deg, #FFFBF0 0%, #FFFFFF 48%);
 }
 
 .progress-top {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: space-between;
   gap: 16rpx;
 }
 
 .progress-num {
-  font-size: 36rpx;
+  font-size: 40rpx;
   font-weight: 850;
+  line-height: 1.1;
 }
 
 .progress-num text {
-  color: #8A7A6B;
+  color: #B07A18;
   font-size: 24rpx;
-  font-weight: 650;
+  font-weight: 700;
 }
 
 .progress-label {
-  margin-top: 4rpx;
+  margin-top: 6rpx;
   color: #8A7A6B;
   font-size: 22rpx;
 }
 
+/* 进度条：加金色内圈和一道高光，呼应金边 */
 .bar-track {
-  height: 22rpx;
+  position: relative;
+  height: 24rpx;
   margin-top: 18rpx;
   overflow: hidden;
   border: 3rpx solid #1C1C1C;
   border-radius: 999rpx;
   background: #FFF4E8;
+  box-shadow: inset 0 0 0 2rpx rgba(224, 168, 58, 0.35);
 }
 
 .bar-fill {
+  position: relative;
   height: 100%;
   border-radius: 999rpx;
-  background: linear-gradient(90deg, #184D97, #34B8C5);
+  background: linear-gradient(90deg, #184D97, #34B8C5 72%, #6FD3C4);
+}
+
+/* 进度条顶部高光 */
+.bar-fill::after {
+  content: '';
+  position: absolute;
+  left: 8rpx;
+  right: 8rpx;
+  top: 3rpx;
+  height: 4rpx;
+  border-radius: 999rpx;
+  background: rgba(255, 255, 255, 0.45);
 }
 
 .milestones {
@@ -131,12 +132,71 @@
   font-size: 18rpx;
 }
 
+/* 勋章墙这一块是这页的"战利品展柜"，整块走金色：金边、金投影、暖底 */
 .medal-wall {
-  padding: 16rpx 12rpx 12rpx;
+  padding: 34rpx 12rpx 14rpx;
+  border-color: #E0A83A;
+  box-shadow: 5rpx 5rpx 0 #E0A83A, inset 0 0 0 3rpx rgba(224, 168, 58, 0.2);
+  background: linear-gradient(180deg, #FFF7E6 0%, #FFFDF7 58%, #FFFFFF 100%);
 }
 
-.medal-scroll {
-  height: 380rpx;
+/* 展柜顶部一条金色饰线，中间一颗菱形，做出"陈列"的仪式感 */
+.wall-topline {
+  position: absolute;
+  top: 15rpx;
+  left: 28rpx;
+  right: 28rpx;
+  height: 5rpx;
+  border-radius: 999rpx;
+  background: linear-gradient(90deg, rgba(224, 168, 58, 0) 0%, #E0A83A 50%, rgba(224, 168, 58, 0) 100%);
+  opacity: 0.8;
+  pointer-events: none;
+}
+
+.wall-topline-dot {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 15rpx;
+  height: 15rpx;
+  margin: -7.5rpx 0 0 -7.5rpx;
+  border-radius: 3rpx;
+  background: #E0A83A;
+  transform: rotate(45deg);
+}
+
+/* 勋章墙入口：右侧「已解锁 x / y」+「全部 ›」，整块卡片也可点 */
+.section-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
+/* 标题前一抹金色，和展柜金边呼应 */
+.section-accent {
+  width: 10rpx;
+  height: 34rpx;
+  border-radius: 999rpx;
+  background: linear-gradient(180deg, #F6D081, #E0A83A);
+  box-shadow: 2rpx 2rpx 0 rgba(224, 168, 58, 0.35);
+}
+
+.section-link {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.section-more {
+  color: #8A7A6B;
+  font-size: 24rpx;
+  font-weight: 650;
+}
+
+.section-go {
+  color: #B07A18;
+  font-size: 24rpx;
+  font-weight: 800;
 }
 
 .medal-grid {
@@ -148,15 +208,16 @@
 .medal-card {
   position: relative;
   width: 23%;
-  height: 168rpx;
+  height: 176rpx;
   margin-right: 2.666%;
   margin-bottom: 12rpx;
-  padding: 20rpx 4rpx 8rpx;
+  padding: 22rpx 5rpx 6rpx;
   box-sizing: border-box;
-  border: 3rpx solid #1C1C1C;
+  /* 已解锁的勋章是这页的"战利品"，用金边点睛 */
+  border: 3rpx solid #E0A83A;
   border-radius: 18rpx;
   background: #FFFBF2;
-  box-shadow: 3rpx 3rpx 0 rgba(28, 28, 28, 0.85);
+  box-shadow: 3rpx 3rpx 0 rgba(224, 168, 58, 0.5);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -183,9 +244,10 @@
   white-space: nowrap;
 }
 
+/* 勋章图尽量铺满格子，只给名称留一行 */
 .medal-icon {
-  width: 78rpx;
-  height: 78rpx;
+  width: 118rpx;
+  height: 118rpx;
   margin-bottom: 2rpx;
 }
 
@@ -201,14 +263,17 @@
   white-space: nowrap;
 }
 
+/* 未解锁：弱化边框与投影，让勋章墙产生"点亮/待解锁"的层级 */
 .medal-card.locked {
+  border-color: #DCE2E7;
   background: #F3F5F7;
+  box-shadow: 3rpx 3rpx 0 rgba(28, 28, 28, 0.08);
 }
 
 .medal-card.locked .medal-icon {
-  width: 40rpx;
-  height: 40rpx;
-  margin-bottom: 14rpx;
+  width: 56rpx;
+  height: 56rpx;
+  margin-bottom: 24rpx;
   opacity: 0.75;
 }
 
@@ -228,6 +293,11 @@
 .rank-card {
   flex: 1;
   padding: 20rpx;
+}
+
+/* Lv 勋章图自带一块 #F6F8FA 方形底，卡片同色后与图片底无缝 */
+.level-card {
+  background: #F6F8FA;
 }
 
 .level-medal {
@@ -338,499 +408,3 @@
   color: #184D97;
 }
 
-.medal-modal-mask {
-  position: fixed;
-  inset: 0;
-  z-index: 100;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 32rpx 24rpx;
-  box-sizing: border-box;
-  background: rgba(11, 31, 56, 0.56);
-}
-
-.medal-modal {
-  position: relative;
-  width: 100%;
-  max-width: 680rpx;
-  max-height: 82vh;
-  overflow: hidden;
-  box-sizing: border-box;
-  border: 4rpx solid #4D83F4;
-  border-radius: 42rpx;
-  background: #EAF3FF;
-  box-shadow: 10rpx 14rpx 0 rgba(11, 31, 56, 0.24);
-}
-
-.modal-scroll {
-  max-height: 82vh;
-}
-
-.modal-actions {
-  position: absolute;
-  top: 24rpx;
-  right: 24rpx;
-  z-index: 3;
-  display: flex;
-  gap: 14rpx;
-}
-
-.modal-action {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 68rpx;
-  height: 68rpx;
-  min-width: 68rpx;
-  max-width: 68rpx;
-  flex: 0 0 68rpx;
-  box-sizing: border-box;
-  border-radius: 50%;
-  font-size: 42rpx;
-  font-weight: 500;
-  line-height: 1;
-  text-align: center;
-  overflow: hidden;
-  box-shadow: 0 6rpx 12rpx rgba(30, 65, 120, 0.14);
-}
-
-.share-action {
-  background: #2865E8;
-  color: #FFFFFF;
-}
-
-.close-action {
-  border: 2rpx solid #C9D9EF;
-  background: #FFFFFF;
-  color: #516986;
-}
-
-.modal-share-icon {
-  width: 38rpx;
-  height: 38rpx;
-}
-
-.modal-heading {
-  display: flex;
-  align-items: center;
-  gap: 16rpx;
-  min-height: 72rpx;
-  padding: 30rpx 174rpx 10rpx 34rpx;
-}
-
-.modal-title {
-  min-width: 0;
-  color: #132A4D;
-  font-size: 40rpx;
-  font-weight: 900;
-  line-height: 1.2;
-}
-
-.modal-rarity {
-  flex-shrink: 0;
-  padding: 5rpx 14rpx;
-  border-radius: 999rpx;
-  font-size: 20rpx;
-  font-weight: 800;
-}
-
-.modal-intro {
-  display: flex;
-  align-items: center;
-  gap: 24rpx;
-  padding: 18rpx 34rpx 24rpx;
-}
-
-.modal-medal-wrap {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 142rpx;
-  height: 142rpx;
-  flex-shrink: 0;
-  border: 4rpx solid #B7D1F5;
-  border-radius: 50%;
-  background: #FFFFFF;
-  box-shadow: 0 6rpx 12rpx rgba(43, 83, 145, 0.16);
-}
-
-.modal-medal-wrap.is-locked {
-  background: #F1F4F8;
-}
-
-.modal-medal-image {
-  width: 116rpx;
-  height: 116rpx;
-}
-
-.modal-medal-wrap.is-locked .modal-medal-image {
-  width: 64rpx;
-  height: 64rpx;
-  opacity: 0.65;
-}
-
-.modal-description {
-  color: #4F6787;
-  font-size: 25rpx;
-  line-height: 1.65;
-}
-
-.modal-section {
-  margin: 0 28rpx 18rpx;
-  padding: 24rpx;
-  border: 2rpx solid #C7DBF5;
-  border-radius: 26rpx;
-  background: rgba(255, 255, 255, 0.82);
-}
-
-.modal-section-title {
-  display: block;
-  margin-bottom: 18rpx;
-  color: #7890AC;
-  font-size: 24rpx;
-  font-weight: 850;
-}
-
-.requirement {
-  display: flex;
-  align-items: center;
-  gap: 14rpx;
-  margin-top: 14rpx;
-  color: #425A7A;
-  font-size: 25rpx;
-  font-weight: 700;
-  line-height: 1.35;
-}
-
-.requirement:first-of-type {
-  margin-top: 0;
-}
-
-.requirement-check {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 34rpx;
-  height: 34rpx;
-  flex-shrink: 0;
-  box-sizing: border-box;
-  border: 4rpx solid #9CB2CF;
-  border-radius: 50%;
-  color: #FFFFFF;
-  font-size: 24rpx;
-  font-weight: 900;
-  line-height: 1;
-}
-
-.requirement-check.done {
-  border-color: #2E68E8;
-  background: #2E68E8;
-}
-
-.reward-section {
-  margin-bottom: 28rpx;
-}
-
-.reward-list {
-  display: flex;
-  gap: 48rpx;
-}
-
-.reward-item {
-  display: flex;
-  align-items: center;
-  gap: 12rpx;
-  color: #29456D;
-  font-size: 28rpx;
-  font-weight: 850;
-}
-
-.reward-star {
-  color: #F4A51C;
-  font-size: 42rpx;
-  line-height: 1;
-}
-
-.reward-shell {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 38rpx;
-  height: 38rpx;
-  border-radius: 50%;
-  background: #2E68E8;
-  color: #FFFFFF;
-  font-size: 18rpx;
-}
-
-.share-panel-mask {
-  position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  z-index: 200;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 30rpx 24rpx;
-  box-sizing: border-box;
-  background: rgba(11, 31, 56, 0.64);
-}
-
-.share-panel {
-  width: 100%;
-  max-width: 680rpx;
-  max-height: 88vh;
-  overflow: hidden;
-  border-radius: 44rpx;
-  background: #FFFFFF;
-  box-shadow: 0 18rpx 50rpx rgba(5, 24, 52, 0.3);
-}
-
-.share-panel-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 108rpx;
-  padding: 0 30rpx 0 34rpx;
-  box-sizing: border-box;
-  background: linear-gradient(110deg, #2455D8, #4A7BE8);
-  color: #FFFFFF;
-}
-
-.share-panel-title {
-  display: flex;
-  align-items: center;
-  gap: 18rpx;
-  font-size: 32rpx;
-  font-weight: 850;
-}
-
-.share-panel-title image {
-  width: 38rpx;
-  height: 38rpx;
-}
-
-.share-panel-close {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 58rpx;
-  height: 58rpx;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.2);
-  font-size: 42rpx;
-  font-weight: 300;
-  line-height: 1;
-}
-
-.share-panel-scroll {
-  max-height: 72vh;
-}
-
-.share-achievement-card {
-  display: flex;
-  align-items: center;
-  gap: 24rpx;
-  margin: 30rpx 30rpx 0;
-  padding: 26rpx 28rpx;
-  border: 2rpx solid #D6E4F7;
-  border-radius: 28rpx;
-  background: #F0F6FF;
-}
-
-.share-achievement-card image {
-  width: 108rpx;
-  height: 108rpx;
-  flex-shrink: 0;
-}
-
-.share-achievement-status,
-.share-achievement-name {
-  display: block;
-}
-
-.share-achievement-status {
-  margin-bottom: 6rpx;
-  color: #8092AD;
-  font-size: 22rpx;
-  font-weight: 750;
-}
-
-.share-achievement-name {
-  color: #172E51;
-  font-size: 34rpx;
-  font-weight: 900;
-}
-
-.share-copy-card {
-  position: relative;
-  min-height: 128rpx;
-  margin: 24rpx 30rpx 0;
-  padding: 26rpx 84rpx 26rpx 28rpx;
-  box-sizing: border-box;
-  border: 2rpx solid #D6E4F7;
-  border-radius: 28rpx;
-  background: #F8FBFF;
-  color: #3E5B80;
-  font-size: 24rpx;
-  line-height: 1.65;
-}
-
-.share-refresh {
-  position: absolute;
-  top: 50%;
-  right: 22rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 54rpx;
-  height: 54rpx;
-  box-sizing: border-box;
-  border: 2rpx solid #C6D9F4;
-  border-radius: 50%;
-  background: #FFFFFF;
-  color: #2865E8;
-  font-size: 34rpx;
-  transform: translateY(-50%);
-}
-
-.share-copy-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 16rpx;
-  height: 74rpx;
-  margin: 24rpx 30rpx 0;
-  border: 2rpx solid #C6D9F4;
-  border-radius: 999rpx;
-  background: #F0F6FF;
-  color: #2865E8;
-  font-size: 26rpx;
-  font-weight: 800;
-}
-
-.copy-symbol {
-  position: relative;
-  width: 28rpx;
-  height: 28rpx;
-  box-sizing: border-box;
-  border: 3rpx solid #2865E8;
-  border-radius: 5rpx;
-}
-
-.copy-symbol view {
-  position: absolute;
-  left: -9rpx;
-  top: -9rpx;
-  width: 22rpx;
-  height: 22rpx;
-  box-sizing: border-box;
-  border: 3rpx solid #2865E8;
-  border-radius: 5rpx;
-  background: #F0F6FF;
-}
-
-.share-channel-list {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-around;
-  padding: 30rpx 26rpx 34rpx;
-}
-
-.share-channel {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 30%;
-  color: #7385A0;
-  font-size: 22rpx;
-  font-weight: 750;
-}
-
-.channel-icon {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 76rpx;
-  height: 76rpx;
-  margin-bottom: 12rpx;
-  border-radius: 24rpx;
-  color: #FFFFFF;
-  font-size: 36rpx;
-  font-weight: 900;
-  overflow: hidden;
-  box-shadow: 0 7rpx 14rpx rgba(30, 65, 120, 0.16);
-}
-
-.wechat-icon {
-  background: #20B85A;
-}
-
-.qq-icon {
-  background: #20A6E8;
-  font-family: Arial, sans-serif;
-}
-
-.weibo-icon {
-  background: #E53B3F;
-}
-
-.channel-hit {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  z-index: 3;
-  width: 76rpx;
-  height: 76rpx;
-  min-height: 0;
-  margin: 0;
-  padding: 0;
-  border: 0;
-  border-radius: 24rpx;
-  background: transparent;
-  opacity: 0;
-}
-
-.channel-hit::after {
-  border: 0;
-}
-
-.wechat-bubble {
-  position: absolute;
-  border-radius: 50%;
-  background: #FFFFFF;
-}
-
-.wechat-bubble::before {
-  content: "";
-  position: absolute;
-  top: 45%;
-  left: 28%;
-  width: 5rpx;
-  height: 5rpx;
-  border-radius: 50%;
-  background: #20B85A;
-  box-shadow: 11rpx 0 0 #20B85A;
-}
-
-.wechat-bubble-large {
-  left: 13rpx;
-  top: 17rpx;
-  width: 39rpx;
-  height: 31rpx;
-}
-
-.wechat-bubble-small {
-  right: 12rpx;
-  bottom: 15rpx;
-  width: 32rpx;
-  height: 25rpx;
-  border: 3rpx solid #20B85A;
-}

@@ -30,77 +30,6 @@
   text-align: center;
 }
 
-/* ===== 提醒 ===== */
-.remind-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.remind-meta {
-  flex: 1;
-}
-
-.remind-del {
-  color: #E64340;
-  border-color: #E64340;
-}
-
-.remind-mask {
-  position: fixed;
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.45);
-  z-index: 20;
-}
-
-.remind-sheet {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: #fff;
-  border-radius: 24rpx 24rpx 0 0;
-  padding: 32rpx 28rpx calc(28rpx + env(safe-area-inset-bottom));
-  z-index: 21;
-}
-
-.remind-title {
-  font-size: 30rpx;
-  font-weight: 800;
-  margin-bottom: 20rpx;
-}
-
-.remind-time {
-  padding: 20rpx;
-  border: 3rpx solid #1C1C1C;
-  border-radius: 16rpx;
-  font-size: 28rpx;
-  text-align: center;
-}
-
-.remind-val {
-  color: #087CFF;
-  font-weight: 800;
-}
-
-.remind-sub {
-  margin-top: 12rpx;
-  color: #6B7C8A;
-  font-size: 22rpx;
-  text-align: center;
-}
-
-.remind-btn {
-  margin-top: 24rpx;
-  width: 100%;
-  height: 84rpx;
-  background: #087CFF;
-  color: #fff;
-}
-
 .cal-card {
   margin-top: 16rpx;
   padding: 12rpx 8rpx;
@@ -170,33 +99,4 @@
   font-size: 18rpx;
   color: #C77F00;
   line-height: 1.2;
-}
-
-.cal-legend {
-  display: flex;
-  gap: 28rpx;
-  padding: 16rpx 8rpx;
-  color: #6B7C8A;
-  font-size: 20rpx;
-}
-
-.legend-item {
-  display: flex;
-  align-items: center;
-  gap: 6rpx;
-}
-
-.dot {
-  width: 12rpx;
-  height: 12rpx;
-  border-radius: 50%;
-  display: inline-block;
-}
-
-.dot.low {
-  background: #0E8A5F;
-}
-
-.dot.high {
-  background: #E64340;
 }

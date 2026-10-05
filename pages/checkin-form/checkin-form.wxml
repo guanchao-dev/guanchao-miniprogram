@@ -10,7 +10,6 @@
     <block wx:if="{{mode === ''}}">
       <view class="hero">
         <view class="hero-title">研学报到</view>
-        <view class="hero-sub">发起一场签到，或参与老师发起的签到</view>
       </view>
 
       <view class="entry-card" data-mode="create" bindtap="pickMode" hover-class="tap">

@@ -62,9 +62,20 @@
 }
 
 .item-meta {
+  display: flex;
+  align-items: center;
+  gap: 14rpx;
   margin-top: 6rpx;
-  color: #6B7C8A;
   font-size: 22rpx;
+  font-weight: 700;
+}
+
+.meta-heat {
+  color: #E23D3D;
+}
+
+.meta-dist {
+  color: #2E9E5B;
 }
 
 .item-arrow {
@@ -110,8 +121,12 @@
 
 .sheet-body {
   max-height: 72vh;
-  padding: 8rpx 28rpx 40rpx;
+  padding: 8rpx 28rpx 0;
   box-sizing: border-box;
+}
+
+.sheet-bottom-gap {
+  height: calc(60rpx + env(safe-area-inset-bottom));
 }
 
 .pano {
@@ -146,6 +161,35 @@
   width: 120rpx;
   height: 120rpx;
   margin-bottom: 8rpx;
+}
+
+/* 上传现场照片：只留一个轻量按钮 */
+.photo-upload-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8rpx;
+  height: 68rpx;
+  margin-bottom: 16rpx;
+  border: 2rpx dashed rgba(28, 28, 28, 0.4);
+  border-radius: 999rpx;
+  background: #F3FBFA;
+  color: #4F6787;
+  font-size: 26rpx;
+  font-weight: 700;
+}
+
+.photo-upload-btn:active {
+  background: #E3F2F5;
+}
+
+.photo-upload-btn-icon {
+  font-size: 32rpx;
+  line-height: 1;
+}
+
+.photo-upload-btn.disabled {
+  opacity: 0.6;
 }
 
 .info-row {

@@ -37,6 +37,8 @@
           </view>
           <text class="hint">{{detail.body}}</text>
         </block>
+        <!-- scroll-view 的 padding-bottom 不计入滚动高度，用占位块保证底部留白 -->
+        <view class="sheet-bottom-gap"></view>
       </scroll-view>
     </view>
   </view>

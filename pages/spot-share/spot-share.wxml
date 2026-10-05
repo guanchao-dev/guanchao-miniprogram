@@ -45,6 +45,22 @@
       <textarea class="field-textarea" placeholder="例如：低潮前后两小时最佳，注意西侧暗礁" value="{{note}}" bindinput="onInputNote" maxlength="200" />
     </view>
 
+    <!-- 现场照片（1~3 张，可选） -->
+    <view class="card field-card">
+      <view class="field-label">现场照片（可选，最多 3 张）</view>
+      <view class="photo-grid">
+        <view class="photo-cell" wx:for="{{photos}}" wx:key="*this">
+          <image class="photo-cell-img" src="{{item}}" mode="aspectFill" data-index="{{index}}" bindtap="previewPhoto" hover-class="tap"></image>
+          <view class="photo-del" data-index="{{index}}" catchtap="removePhoto" hover-class="tap">×</view>
+        </view>
+        <view class="photo-add" wx:if="{{photos.length < 3}}" bindtap="choosePhotos" hover-class="tap">
+          <text class="photo-add-icon">＋</text>
+          <text class="photo-add-tip">添加照片</text>
+        </view>
+      </view>
+      <view class="photo-count">{{photos.length}} / 3</view>
+    </view>
+
     <!-- 提交 -->
     <button class="submit-btn {{canSubmit ? '' : 'disabled'}}" bindtap="submit" loading="{{submitting}}" disabled="{{!canSubmit}}">
       {{submitting ? '提交中…' : '上传点位'}}

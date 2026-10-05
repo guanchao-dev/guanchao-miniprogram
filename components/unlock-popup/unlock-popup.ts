@@ -61,20 +61,14 @@ Component({
     onView() {
       const medal: any = this.data.medal
       this.setData({ visible: false, burst: false })
-      // 图鉴点亮 → 跳到该物种详情；勋章 → 跳成就页
+      // 图鉴点亮 → 跳到该物种详情；勋章 → 跳勋章详情页
       if (medal && medal.source === 'species') {
         wx.navigateTo({ url: `/pages/wiki-detail/wiki-detail?id=${medal.id || ''}` })
         return
       }
       const app = getApp()
-      if (app.globalData) app.globalData.openMedalId = medal && medal.id
-      const pages = getCurrentPages()
-      const cur = pages[pages.length - 1]
-      if (cur && cur.route === 'pages/achieve/achieve') {
-        if (cur.openUnlocked) cur.openUnlocked(medal)
-        return
-      }
-      wx.switchTab({ url: '/pages/achieve/achieve' })
+      if (app.globalData && medal) app.globalData.medalPreview = medal
+      wx.navigateTo({ url: `/pages/medal-detail/medal-detail?id=${(medal && medal.id) || ''}` })
     },
 
     noop() {}

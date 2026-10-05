@@ -2,6 +2,23 @@
   <view class="memphis-layer">
     <view class="geo-circle lg" style="top: 20rpx; right: -50rpx; background:#34B8C5;"></view>
     <view class="geo-star lg" style="bottom: 200rpx; left: -30rpx;"></view>
+    <!-- 气泡背景：呼应吉祥物"泡泡"，从底部缓慢上浮 -->
+    <view class="bubble-layer">
+      <view class="bubble b1"></view>
+      <view class="bubble b2"></view>
+      <view class="bubble b3"></view>
+      <view class="bubble b4"></view>
+      <view class="bubble b5"></view>
+      <view class="bubble b6"></view>
+      <view class="bubble b7"></view>
+      <view class="bubble b8"></view>
+      <view class="bubble b9"></view>
+      <view class="bubble b10"></view>
+      <view class="bubble b11"></view>
+      <view class="bubble b12"></view>
+      <view class="bubble b13"></view>
+      <view class="bubble b14"></view>
+    </view>
   </view>
 
   <view class="page-content">
@@ -40,7 +57,7 @@
       </view>
       <view class="service-grid card">
         <view
-          class="service-item"
+          class="service-item {{item.gold ? 'gold' : ''}}"
           wx:for="{{services}}"
           wx:key="title"
           id="{{item.title === '宝藏点位' ? 'onb-spot-entry' : ''}}"

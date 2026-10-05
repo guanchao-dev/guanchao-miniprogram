@@ -1,0 +1,68 @@
+<view class="page memphis-bg medal-page">
+  <view class="memphis-layer">
+    <view class="geo-circle lg" style="top: -40rpx; left: -70rpx; background:#A7D9C7;"></view>
+    <view class="geo-square sm" style="bottom: 160rpx; right: -26rpx; background:#F6D081;"></view>
+  </view>
+
+  <view class="page-content {{entered ? 'entered' : ''}}">
+    <view class="page-loading" wx:if="{{loading}}">
+      <view class="spinner"></view>
+      <text>加载中…</text>
+    </view>
+
+    <view class="empty-tip" wx:elif="{{notFound}}">勋章不存在或已下架</view>
+
+    <block wx:else>
+      <!-- 徽章登场：放大浮现 + 金色光扫一圈 + 光环脉冲，未解锁为灰调无光效 -->
+      <view class="medal-stage {{medal.locked ? 'is-locked' : ''}}">
+        <view class="medal-ring ring-a"></view>
+        <view class="medal-ring ring-b"></view>
+
+        <view class="medal-orb">
+          <view class="medal-glow"></view>
+          <image class="medal-orb-img" src="{{medal.icon}}" mode="aspectFit"></image>
+          <view class="sweep-clip" wx:if="{{!medal.locked}}">
+            <view class="sweep-bar"></view>
+          </view>
+        </view>
+
+        <view class="medal-badge" style="background: {{medal.tagBg}}; color: {{medal.tagColor}};">{{medal.tag}}</view>
+      </view>
+
+      <view class="medal-head">
+        <view class="medal-title">{{medal.displayTitle}}</view>
+        <view class="medal-state">{{medal.locked ? '尚未解锁' : '已解锁'}}</view>
+      </view>
+
+      <view class="medal-desc">{{medal.description}}</view>
+
+      <view class="medal-section card sec-1">
+        <text class="medal-section-title">解锁条件</text>
+        <view class="requirement" wx:for="{{medal.requirements}}" wx:key="text">
+          <view class="requirement-check {{item.done ? 'done' : ''}}">{{item.done ? '✓' : ''}}</view>
+          <text>{{item.text}}</text>
+        </view>
+        <view class="medal-none" wx:if="{{!medal.requirements.length}}">暂无解锁条件说明</view>
+      </view>
+
+      <view class="medal-section card sec-2">
+        <text class="medal-section-title">解锁奖励</text>
+        <view class="reward-list">
+          <view class="reward-item">
+            <text class="reward-star">★</text>
+            <text>x{{medal.starReward}}</text>
+          </view>
+          <view class="reward-item">
+            <view class="reward-shell">◆</view>
+            <text>x{{medal.shellReward}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="medal-actions sec-3">
+        <button class="btn medal-btn medal-share-btn" open-type="share">分享给好友</button>
+        <view class="btn medal-btn medal-copy-btn" bindtap="copyShareText" hover-class="tap">复制文案</view>
+      </view>
+    </block>
+  </view>
+</view>

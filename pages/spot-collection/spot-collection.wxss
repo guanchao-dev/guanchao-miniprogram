@@ -1,0 +1,103 @@
+.collection-page {
+  padding-top: 12rpx;
+}
+
+.col-header {
+  padding: 24rpx;
+}
+
+.col-title {
+  font-size: 34rpx;
+  font-weight: 850;
+}
+
+.col-sub {
+  margin-top: 8rpx;
+  color: #6B7C8A;
+  font-size: 22rpx;
+}
+
+.col-track {
+  height: 22rpx;
+  margin-top: 20rpx;
+  overflow: hidden;
+  border: 3rpx solid #1C1C1C;
+  border-radius: 999rpx;
+  background: #FFF4E8;
+}
+
+.col-fill {
+  height: 100%;
+  border-radius: 999rpx;
+  background: linear-gradient(90deg, #184D97, #34B8C5);
+}
+
+.col-empty {
+  margin-top: 24rpx;
+  padding: 48rpx 24rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.col-empty-text {
+  color: #6B7C8A;
+  font-size: 24rpx;
+}
+
+.col-login {
+  margin-top: 24rpx;
+  padding: 0 48rpx;
+  height: 76rpx;
+  background: #1888BF;
+  color: #fff;
+}
+
+/* 一排 4 个点位图标 */
+.spot-grid {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 24rpx;
+  padding: 20rpx 12rpx 8rpx;
+}
+
+.spot-cell {
+  width: 25%;
+  box-sizing: border-box;
+  padding: 10rpx 6rpx 22rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.spot-cell-icon {
+  width: 96rpx;
+  height: 96rpx;
+  border-radius: 24rpx;
+  background: #EEF2F5;
+  filter: grayscale(1);
+  opacity: 0.5;
+}
+
+/* 去过的点位点亮：恢复颜色 */
+.spot-cell.lit .spot-cell-icon {
+  background: #FFF4E8;
+  filter: none;
+  opacity: 1;
+}
+
+.spot-cell-name {
+  margin-top: 10rpx;
+  max-width: 100%;
+  color: #9AA3AF;
+  font-size: 18rpx;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.spot-cell.lit .spot-cell-name {
+  color: #1C1C1C;
+  font-weight: 750;
+}

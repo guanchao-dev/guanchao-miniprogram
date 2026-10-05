@@ -1,7 +1,12 @@
 import { contentApi, homeApi } from '../../services/api'
-import { trendText } from '../../utils/format'
+import { showError, trendText } from '../../utils/format'
+import { requireLogin } from '../../utils/auth'
+import { chooseImages, uploadImage } from '../../utils/upload'
 import { GuideSpot, loadGuideSpots } from '../../utils/spotGuide'
 import { navigateSpot } from '../../utils/amapNav'
+
+/** 用户上传现场照片的张数上限 */
+const MAX_UPLOAD_PHOTOS = 3
 
 function tideLabel(type?: string): string {
   const map: Record<string, string> = {
@@ -27,6 +32,8 @@ Page({
     detail: {} as GuideSpot,
     detailLoading: false,
     photos: [] as string[],
+    /** 现场照片上传中（禁用按钮，避免重复提交） */
+    uploadingPhotos: false,
     tideRows: [] as Array<{ time: string; height: string; label: string }>,
     tideSummary: '正在读取今日潮汐…'
   },
@@ -79,6 +86,7 @@ Page({
       showDetail: true,
       detail,
       photos,
+      uploadingPhotos: false,
       tideRows: [],
       tideSummary: '正在读取今日潮汐…'
     })
@@ -155,5 +163,35 @@ Page({
       current: url || photos[0],
       urls: photos.length ? photos : [url]
     })
+  },
+
+  /** 上传现场照片：选 1~3 张 → 上传 → 提交审核（通过前不展示） */
+  onUploadPhotos() {
+    if (!requireLogin()) return
+    const spotId = (this.data.detail && this.data.detail.id) || ''
+    if (!spotId || this.data.uploadingPhotos) return
+    chooseImages(MAX_UPLOAD_PHOTOS)
+      .then((list) => {
+        this.setData({ uploadingPhotos: true })
+        wx.showLoading({ title: '上传中', mask: true })
+        return Promise.all(list.map((path) => uploadImage('observation', path)))
+          .then((photoIds) => contentApi.uploadSpotPhotos(spotId, photoIds))
+      })
+      .then(() => {
+        wx.hideLoading()
+        // 照片要过审才对外展示，这里只致谢并说明状态，不刷新轮播
+        wx.showModal({
+          title: '感谢上传',
+          content: '照片已提交，正在审核中。审核通过后就会显示在这里。',
+          showCancel: false,
+          confirmText: '我知道了'
+        })
+      })
+      .catch((err: any) => {
+        if (err && err.message === 'cancel') return
+        wx.hideLoading()
+        showError(err, '上传失败')
+      })
+      .finally(() => this.setData({ uploadingPhotos: false }))
   }
 })

@@ -9,12 +9,6 @@
   letter-spacing: 2rpx;
 }
 
-.hero-sub {
-  margin-top: 10rpx;
-  color: #6B7C8A;
-  font-size: 24rpx;
-}
-
 .entry-card {
   display: flex;
   align-items: center;

@@ -41,6 +41,66 @@ page {
   pointer-events: none;
 }
 
+/* ===== 上浮泡泡：呼应吉祥物"泡泡"，首页/成就/我的共用 ===== */
+.bubble-layer {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* 选择器都收在 .bubble-layer 下，避免和其它页同名的 .bN 类互相影响 */
+.bubble-layer .bubble {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.8), rgba(52,184,197,0.3) 55%, rgba(24,136,191,0.18));
+  box-shadow: inset -3rpx -3rpx 10rpx rgba(255,255,255,0.4), 0 0 12rpx rgba(52,184,197,0.25);
+  animation: bubbleRise linear infinite;
+}
+
+/* 14 个气泡：从页面底部开始上浮，大小、位置、速度各异 */
+.bubble-layer .b1  { width: 90rpx;  height: 90rpx;  left: 6%;  top: 1200rpx; animation-duration: 13s; animation-delay: 0s; }
+.bubble-layer .b2  { width: 52rpx;  height: 52rpx;  left: 18%; top: 1300rpx; animation-duration: 10s; animation-delay: 2s; }
+.bubble-layer .b3  { width: 130rpx; height: 130rpx; left: 72%; top: 1150rpx; animation-duration: 17s; animation-delay: 1s; }
+.bubble-layer .b4  { width: 40rpx;  height: 40rpx;  left: 88%; top: 1280rpx; animation-duration: 8s;  animation-delay: 3s; }
+.bubble-layer .b5  { width: 70rpx;  height: 70rpx;  left: 42%; top: 1350rpx; animation-duration: 12s; animation-delay: 0.5s; }
+.bubble-layer .b6  { width: 32rpx;  height: 32rpx;  left: 12%; top: 1400rpx; animation-duration: 9s;  animation-delay: 4s; }
+.bubble-layer .b7  { width: 100rpx; height: 100rpx; left: 58%; top: 1250rpx; animation-duration: 15s; animation-delay: 2.5s; }
+.bubble-layer .b8  { width: 46rpx;  height: 46rpx;  left: 90%; top: 1380rpx; animation-duration: 11s; animation-delay: 1.5s; }
+.bubble-layer .b9  { width: 60rpx;  height: 60rpx;  left: 30%; top: 1450rpx; animation-duration: 14s; animation-delay: 5s; }
+.bubble-layer .b10 { width: 36rpx;  height: 36rpx;  left: 75%; top: 1420rpx; animation-duration: 8.5s; animation-delay: 6s; }
+.bubble-layer .b11 { width: 80rpx;  height: 80rpx;  left: 50%; top: 1480rpx; animation-duration: 16s; animation-delay: 3.5s; }
+.bubble-layer .b12 { width: 28rpx;  height: 28rpx;  left: 5%;  top: 1500rpx; animation-duration: 7.5s; animation-delay: 4.5s; }
+.bubble-layer .b13 { width: 110rpx; height: 110rpx; left: 82%; top: 1520rpx; animation-duration: 18s; animation-delay: 7s; }
+.bubble-layer .b14 { width: 50rpx;  height: 50rpx;  left: 38%; top: 1550rpx; animation-duration: 10.5s; animation-delay: 5.5s; }
+/* 点缀色泡泡：首页用粉色、成就页用金色，各 2 颗 */
+.bubble-layer .b15 { width: 64rpx;  height: 64rpx;  left: 24%; top: 1320rpx; animation-duration: 12.5s; animation-delay: 1.2s; }
+.bubble-layer .b16 { width: 44rpx;  height: 44rpx;  left: 66%; top: 1440rpx; animation-duration: 10s;   animation-delay: 3.2s; }
+
+.bubble-layer .bubble.pink {
+  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.9), rgba(255,150,178,0.38) 55%, rgba(255,120,160,0.2));
+  box-shadow: inset -3rpx -3rpx 10rpx rgba(255,255,255,0.5), 0 0 12rpx rgba(255,138,160,0.35);
+}
+
+.bubble-layer .bubble.gold {
+  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.9), rgba(246,208,129,0.5) 55%, rgba(224,168,58,0.28));
+  box-shadow: inset -3rpx -3rpx 10rpx rgba(255,255,255,0.5), 0 0 12rpx rgba(224,168,58,0.4);
+}
+
+@keyframes bubbleRise {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 0;
+  }
+  8% { opacity: 0.85; }
+  92% { opacity: 0.7; }
+  100% {
+    transform: translateY(-1700rpx) scale(1.15);
+    opacity: 0;
+  }
+}
+
 .page-content {
   position: relative;
   z-index: 2;
@@ -325,10 +385,7 @@ page {
 .mask,
 .ai-mask,
 .unlock-mask,
-.spot-mask,
-.share-panel-mask,
-.remind-mask,
-.medal-modal-mask {
+.spot-mask {
   animation: mask-in 0.22s ease-out both;
 }
 
@@ -336,10 +393,7 @@ page {
 .sheet,
 .ai-modal,
 .mask .panel,
-.spot-mask .panel,
-.share-panel-mask .panel,
-.remind-mask .panel,
-.medal-modal-mask .panel {
+.spot-mask .panel {
   animation: panel-in 0.26s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 

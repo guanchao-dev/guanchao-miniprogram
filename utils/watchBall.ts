@@ -1,6 +1,7 @@
 import { endWatchSession, getWatchSession, isWatching, removeWatchRecord } from './watchLog'
 import { nowISO } from './format'
-import { watchApi } from '../services/api'
+import { isLoggedIn } from './auth'
+import { spotVisitApi, watchApi } from '../services/api'
 
 /**
  * 全局悬浮球状态：模块级单例计时器 + 监听器。
@@ -80,6 +81,14 @@ export function endWatchNow(): any {
   const session = getWatchSession()
   const endedAt = nowISO()
   const record = endWatchSession(endedAt)
+
+  // 结束观潮即点亮所选推荐赶海点（账号维度）。接口幂等，同一点位只点亮一次；
+  // 自选点位没有 spotId，不点亮；未登录不发送。
+  const spotId = session && session.spot && session.spot.spotId
+  if (spotId && isLoggedIn()) {
+    spotVisitApi.light(spotId, { sessionId: (session && session.id) || '', visitedAt: endedAt }).catch(() => {})
+  }
+
   if (session && session.id && record) {
     watchApi.end(session.id, {
       endedAt,

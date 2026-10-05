@@ -87,8 +87,12 @@
 
 .sheet-body {
   max-height: 72vh;
-  padding: 8rpx 28rpx 48rpx;
+  padding: 8rpx 28rpx 0;
   box-sizing: border-box;
+}
+
+.sheet-bottom-gap {
+  height: calc(60rpx + env(safe-area-inset-bottom));
 }
 
 .hint {

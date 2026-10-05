@@ -26,7 +26,10 @@
       <image class="item-icon" src="{{item.icon}}" mode="aspectFit"></image>
       <view class="item-body">
         <view class="item-name">{{item.name}}</view>
-        <view class="item-meta">热度 {{item.heat}} · {{item.distanceText}}</view>
+        <view class="item-meta">
+          <text class="meta-heat">🔥 {{item.heat}}</text>
+          <text class="meta-dist" wx:if="{{item.distanceText}}">{{item.distanceText}}</text>
+        </view>
       </view>
       <text class="item-arrow">›</text>
     </view>
@@ -39,7 +42,16 @@
         <text class="sheet-close" bindtap="closeDetail" hover-class="tap">×</text>
       </view>
       <scroll-view scroll-y class="sheet-body">
-        <swiper wx:if="{{photos.length}}" class="pano" indicator-dots circular>
+        <!-- 多张照片时自动轮播，单张静态展示 -->
+        <swiper
+          wx:if="{{photos.length}}"
+          class="pano"
+          indicator-dots
+          circular
+          autoplay="{{photos.length > 1}}"
+          interval="3500"
+          duration="420"
+        >
           <swiper-item wx:for="{{photos}}" wx:key="*this">
             <image class="pano-img" src="{{item}}" mode="aspectFill" data-url="{{item}}" bindtap="previewPhoto" hover-class="tap"></image>
           </swiper-item>
@@ -47,6 +59,12 @@
         <view class="pano-fallback" wx:else>
           <image src="{{detail.icon}}" mode="aspectFit"></image>
           <text>暂无全景照片</text>
+        </view>
+
+        <!-- 上传现场照片（1~3 张，提交后进入审核） -->
+        <view class="photo-upload-btn {{uploadingPhotos ? 'disabled' : ''}}" bindtap="onUploadPhotos" hover-class="tap">
+          <text class="photo-upload-btn-icon">＋</text>
+          <text>上传现场照片</text>
         </view>
 
         <view class="info-row">
@@ -94,6 +112,8 @@
         <view class="chip-row" wx:if="{{detail.safetyTags.length}}">
           <text class="chip" wx:for="{{detail.safetyTags}}" wx:key="*this">{{item}}</text>
         </view>
+        <!-- scroll-view 的 padding-bottom 不计入滚动高度，用占位块保证底部留白 -->
+        <view class="sheet-bottom-gap"></view>
       </scroll-view>
     </view>
   </view>

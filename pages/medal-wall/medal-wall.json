@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "勋章墙",
+  "usingComponents": {
+    "watch-ball": "/components/watch-ball/watch-ball"
+  }
+}

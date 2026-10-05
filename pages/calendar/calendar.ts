@@ -1,6 +1,5 @@
 import { DEFAULT_SPOT_ID } from '../../config/env'
-import { homeApi, reminderApi } from '../../services/api'
-import { isLoggedIn, requireLogin } from '../../utils/auth'
+import { homeApi } from '../../services/api'
 import { showError, toast, todayDate } from '../../utils/format'
 
 /** 月份偏移，如 ('2026-09', -1) -> '2026-08' */
@@ -25,20 +24,13 @@ Page({
     monthText: '',
     weekLabels: ['日', '一', '二', '三', '四', '五', '六'],
     loading: true,
-    weeks: [] as Array<Array<any>>,
-    // 提醒
-    showRemind: false,
-    reminding: false,
-    selectedDate: '',
-    remindTime: '08:00',
-    reminders: [] as Array<any>
+    weeks: [] as Array<Array<any>>
   },
 
   onLoad() {
     this.syncSpot()
     this.setData({ monthText: this.monthLabel(this.data.month) })
     this.load()
-    this.loadReminders()
   },
 
   monthLabel(month: string): string {
@@ -86,8 +78,6 @@ Page({
     const prev = this.data.spotId
     this.syncSpot()
     if (this.data.spotId !== prev) this.load()
-    // 可能是刚登录回来，刷新提醒列表
-    this.loadReminders()
   },
 
   syncSpot() {
@@ -136,85 +126,6 @@ Page({
   apply(days: any[]) {
     this.setData({ weeks: this.buildGrid(days) })
   },
-
-  // ===== 提醒 =====
-  loadReminders() {
-    if (!isLoggedIn()) {
-      this.setData({ reminders: [] })
-      return
-    }
-    reminderApi.list()
-      .then((data) => {
-        const list = (data && data.list) || []
-        this.setData({
-          reminders: list.map((item: any) => ({
-            id: item.id,
-            dateText: String(item.remindAt || '').slice(0, 16).replace('T', ' '),
-            timeText: String(item.remindAt || '').slice(11, 16),
-            notifyText: String(item.notifyAt || '').slice(5, 16).replace('T', ' ')
-          }))
-        })
-      })
-      .catch(() => this.setData({ reminders: [] }))
-  },
-
-  /** 点某一天 → 打开设提醒面板 */
-  onTapDay(e: any) {
-    const date = e.currentTarget.dataset.date
-    if (!date) return
-    if (!isLoggedIn()) {
-      requireLogin()
-      return
-    }
-    this.setData({ selectedDate: date, remindTime: '08:00', showRemind: true })
-  },
-
-  onRemindTime(e: any) {
-    this.setData({ remindTime: e.detail.value })
-  },
-
-  closeRemind() {
-    if (this.data.reminding) return
-    this.setData({ showRemind: false })
-  },
-
-  confirmRemind() {
-    if (this.data.reminding) return
-    const remindAt = `${this.data.selectedDate}T${this.data.remindTime}`
-    this.setData({ reminding: true })
-    reminderApi.create({
-      spotId: this.data.spotId,
-      remindAt,
-      note: '赶海提醒'
-    })
-      .then(() => {
-        this.setData({ showRemind: false })
-        toast('已设置提醒，提前 1 小时通知')
-        this.loadReminders()
-      })
-      .catch((err) => showError(err, '设置提醒失败'))
-      .finally(() => this.setData({ reminding: false }))
-  },
-
-  onDeleteReminder(e: any) {
-    const id = e.currentTarget.dataset.id
-    if (!id) return
-    wx.showModal({
-      title: '取消提醒',
-      content: '确定取消这条提醒吗？',
-      success: (res) => {
-        if (!res.confirm) return
-        reminderApi.remove(id)
-          .then(() => {
-            toast('已取消')
-            this.loadReminders()
-          })
-          .catch((err) => showError(err, '取消失败'))
-      }
-    })
-  },
-
-  noop() {},
 
   buildGrid(days: any[]) {
     const [year, mon] = this.data.month.split('-').map((n) => Number(n))

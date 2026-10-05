@@ -1,0 +1,330 @@
+.medal-page {
+  padding-top: 12rpx;
+}
+
+/* ============ 徽章登场 ============ */
+.medal-stage {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 400rpx;
+  margin: 20rpx 0 4rpx;
+}
+
+/* 光环脉冲：两圈错峰扩散 */
+.medal-ring {
+  position: absolute;
+  width: 250rpx;
+  height: 250rpx;
+  border-radius: 50%;
+  border: 4rpx solid rgba(224, 168, 58, 0.5);
+  opacity: 0;
+}
+
+.entered .ring-a {
+  animation: ringPulse 2.6s ease-out 0.55s infinite;
+}
+
+.entered .ring-b {
+  animation: ringPulse 2.6s ease-out 1.5s infinite;
+}
+
+@keyframes ringPulse {
+  0%   { opacity: 0.75; transform: scale(0.82); }
+  70%  { opacity: 0;    transform: scale(1.56); }
+  100% { opacity: 0;    transform: scale(1.56); }
+}
+
+.medal-orb {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 250rpx;
+  height: 250rpx;
+  box-sizing: border-box;
+  border: 5rpx solid #E0A83A;
+  border-radius: 50%;
+  background: radial-gradient(circle at 34% 26%, #FFFDF6, #FFF2DA 58%, #FBE4B4);
+  box-shadow: 0 16rpx 34rpx rgba(224, 168, 58, 0.35), inset 0 0 0 9rpx rgba(255, 255, 255, 0.72);
+}
+
+/* 从下方放大浮现，带一点回弹 */
+.entered .medal-orb {
+  animation: orbIn 0.72s cubic-bezier(0.2, 1.3, 0.4, 1) both;
+}
+
+@keyframes orbIn {
+  0%   { opacity: 0; transform: scale(0.4) translateY(80rpx); }
+  62%  { opacity: 1; transform: scale(1.07) translateY(0); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* 徽章背后一圈柔光，登场后缓慢呼吸 */
+.medal-glow {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 340rpx;
+  height: 340rpx;
+  margin: -170rpx 0 0 -170rpx;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(246, 208, 129, 0.55), rgba(246, 208, 129, 0) 68%);
+  opacity: 0;
+}
+
+.entered .medal-glow {
+  animation: glowBreath 2.8s ease-in-out 0.45s infinite;
+}
+
+@keyframes glowBreath {
+  0%   { opacity: 0.3; transform: scale(0.92); }
+  50%  { opacity: 0.82; transform: scale(1.06); }
+  100% { opacity: 0.3; transform: scale(0.92); }
+}
+
+.medal-orb-img {
+  position: relative;
+  z-index: 2;
+  width: 168rpx;
+  height: 168rpx;
+}
+
+/* 金色高光斜扫过徽章一圈 */
+.sweep-clip {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 4;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.sweep-bar {
+  position: absolute;
+  top: -70rpx;
+  left: -180rpx;
+  width: 80rpx;
+  height: 400rpx;
+  transform: rotate(22deg);
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0));
+  opacity: 0;
+}
+
+.entered .sweep-bar {
+  animation: sweepAcross 1.05s ease-out 0.5s both;
+}
+
+@keyframes sweepAcross {
+  0%   { left: -180rpx; opacity: 0; }
+  20%  { opacity: 1; }
+  100% { left: 340rpx; opacity: 0; }
+}
+
+/* 稀有度小徽标，挂在徽章正下方 */
+.medal-badge {
+  position: absolute;
+  z-index: 5;
+  bottom: 40rpx;
+  left: 50%;
+  padding: 6rpx 20rpx;
+  border: 3rpx solid var(--ink);
+  border-radius: 999rpx;
+  font-size: 20rpx;
+  font-weight: 800;
+  transform: translateX(-50%);
+  opacity: 0;
+}
+
+.entered .medal-badge {
+  /* 单独一套 keyframes：基础样式有 translateX(-50%) 居中，不能被 fadeUp 覆盖掉 */
+  animation: badgeIn 0.5s ease-out 0.72s both;
+}
+
+@keyframes badgeIn {
+  from { opacity: 0; transform: translateX(-50%) translateY(28rpx); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+/* 未解锁：灰调，无脉冲、无光扫、无呼吸光 */
+.medal-stage.is-locked .medal-orb {
+  border-color: #C9D2DA;
+  background: linear-gradient(180deg, #F5F7F9, #E6EBF0);
+  box-shadow: 0 12rpx 24rpx rgba(28, 28, 28, 0.1);
+}
+
+.medal-stage.is-locked .medal-orb-img {
+  width: 104rpx;
+  height: 104rpx;
+  opacity: 0.6;
+}
+
+.medal-stage.is-locked .medal-ring,
+.medal-stage.is-locked .medal-glow,
+.medal-stage.is-locked .sweep-clip {
+  display: none;
+}
+
+/* ============ 文案区：依次错峰淡入 ============ */
+.medal-head {
+  margin-top: 44rpx;
+  text-align: center;
+  opacity: 0;
+}
+
+.entered .medal-head {
+  animation: fadeUp 0.5s ease-out 0.5s both;
+}
+
+.medal-title {
+  font-size: 44rpx;
+  font-weight: 850;
+  line-height: 1.25;
+}
+
+.medal-state {
+  margin-top: 8rpx;
+  color: #8A7A6B;
+  font-size: 22rpx;
+}
+
+.medal-desc {
+  margin-top: 18rpx;
+  padding: 0 12rpx;
+  color: #4F6787;
+  font-size: 26rpx;
+  line-height: 1.7;
+  text-align: center;
+  opacity: 0;
+}
+
+.entered .medal-desc {
+  animation: fadeUp 0.5s ease-out 0.58s both;
+}
+
+.medal-section {
+  margin-top: 26rpx;
+  padding: 24rpx 26rpx;
+  opacity: 0;
+}
+
+.entered .sec-1 { animation: fadeUp 0.5s ease-out 0.66s both; }
+.entered .sec-2 { animation: fadeUp 0.5s ease-out 0.78s both; }
+.entered .sec-3 { animation: fadeUp 0.5s ease-out 0.9s both; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(28rpx); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.medal-section-title {
+  display: block;
+  margin-bottom: 18rpx;
+  color: #7890AC;
+  font-size: 24rpx;
+  font-weight: 850;
+}
+
+.medal-none {
+  color: #8A7A6B;
+  font-size: 24rpx;
+}
+
+.requirement {
+  display: flex;
+  align-items: center;
+  gap: 14rpx;
+  margin-top: 14rpx;
+  color: #425A7A;
+  font-size: 25rpx;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.requirement:first-of-type {
+  margin-top: 0;
+}
+
+.requirement-check {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34rpx;
+  height: 34rpx;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  border: 4rpx solid #9CB2CF;
+  border-radius: 50%;
+  color: #FFFFFF;
+  font-size: 24rpx;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.requirement-check.done {
+  border-color: #E0A83A;
+  background: #E0A83A;
+}
+
+.reward-list {
+  display: flex;
+  gap: 48rpx;
+}
+
+.reward-item {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  color: #29456D;
+  font-size: 28rpx;
+  font-weight: 850;
+}
+
+.reward-star {
+  color: #F4A51C;
+  font-size: 42rpx;
+  line-height: 1;
+}
+
+.reward-shell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38rpx;
+  height: 38rpx;
+  border-radius: 50%;
+  background: #1888BF;
+  color: #FFFFFF;
+  font-size: 18rpx;
+}
+
+.medal-actions {
+  display: flex;
+  gap: 18rpx;
+  margin-top: 28rpx;
+  opacity: 0;
+}
+
+.medal-btn {
+  flex: 1;
+  height: 76rpx;
+  margin: 0;
+  padding: 0;
+  line-height: 1;
+  box-sizing: border-box;
+}
+
+.medal-share-btn {
+  background: #1888BF;
+  color: #FFFFFF;
+}
+
+.medal-copy-btn {
+  background: #FFFFFF;
+  color: var(--ink);
+}

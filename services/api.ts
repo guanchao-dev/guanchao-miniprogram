@@ -119,6 +119,17 @@ export const contentApi = {
   deleteSpot(id: string) {
     return http.delete(`/spots/${id}`)
   },
+  /**
+   * 上传赶海点的现场照片（用户贡献，1~3 张，需登录）。
+   *
+   * 后端契约：POST /spots/{spotId}/photos
+   *   body: { photoIds: string[] }   // /uploads 返回的 uploadId，1~3 个
+   *   → { pending: true, pendingCount: number }
+   * 照片先进人工审核，通过前不对外展示；过审后才并入点位 photos，首图作封面。
+   */
+  uploadSpotPhotos(spotId: string, photoIds: string[]) {
+    return http.post(`/spots/${spotId}/photos`, { photoIds })
+  },
   gear() {
     return http.get('/gear', {}, { auth: false }).then((data) => ({
       raw: data,
@@ -310,6 +321,29 @@ export const watchApi = {
   },
   detail(id: string) {
     return http.get(`/watch/records/${id}`, {}, { auth: false })
+  }
+}
+
+/**
+ * 赶海点点亮（「我的赶海点」页）。账号维度，需登录。
+ *
+ * 后端契约：
+ * - GET /spots/visited
+ *   → { total: number, visitedCount: number,
+ *       list: [{ id, name, icon, visited: boolean }] }
+ *   total 为全部赶海点数（当前 42），list 覆盖全部点位并带 visited 标记。
+ * - POST /spots/{spotId}/visit  （幂等）
+ *   body: { sessionId?, visitedAt? }
+ *   → { visited: true }   同一用户同一点位重复调用只点亮一次。
+ */
+export const spotVisitApi = {
+  /** 我的赶海点点亮进度。cacheTtl=0：结束观潮点亮后回到本页要立刻可见 */
+  visited() {
+    return http.get('/spots/visited', {}, { cacheTtl: 0 })
+  },
+  /** 点亮一个赶海点。幂等，只记录一次；身份为登录用户 */
+  light(spotId: string, body?: Record<string, any>) {
+    return http.post(`/spots/${spotId}/visit`, body || {}, { idempotency: true })
   }
 }
 

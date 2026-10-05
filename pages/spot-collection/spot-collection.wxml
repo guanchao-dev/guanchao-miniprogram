@@ -1,0 +1,36 @@
+<view class="page memphis-bg collection-page">
+  <view class="memphis-layer">
+    <view class="geo-circle lg" style="top: 40rpx; right: -40rpx; background:#A7D9C7;"></view>
+  </view>
+
+  <view class="page-content">
+    <view class="col-header card">
+      <view class="col-title">赶海足迹</view>
+      <view class="col-sub">已点亮 {{visitedCount}} / {{total}} 个赶海点</view>
+      <view class="col-track">
+        <view class="col-fill" style="width: {{percent}}%;"></view>
+      </view>
+    </view>
+
+    <view class="page-loading" wx:if="{{loading}}">
+      <view class="spinner"></view>
+      <text>加载中…</text>
+    </view>
+
+    <view class="col-empty card" wx:elif="{{!loggedIn}}">
+      <text class="col-empty-text">登录后查看你去过的赶海点</text>
+      <view class="btn col-login" bindtap="goLogin" hover-class="tap">去登录</view>
+    </view>
+
+    <view class="empty-tip" wx:elif="{{!list.length}}">暂无赶海点数据</view>
+
+    <view class="spot-grid card" wx:else>
+      <view class="spot-cell {{item.visited ? 'lit' : ''}}" wx:for="{{list}}" wx:key="id">
+        <image class="spot-cell-icon" src="{{item.icon}}" mode="aspectFit"></image>
+        <text class="spot-cell-name">{{item.name}}</text>
+      </view>
+    </view>
+  </view>
+
+  <watch-ball />
+</view>

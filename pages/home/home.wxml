@@ -17,6 +17,9 @@
       <view class="bubble b12"></view>
       <view class="bubble b13"></view>
       <view class="bubble b14"></view>
+      <!-- 粉色点缀泡泡 -->
+      <view class="bubble b15 pink"></view>
+      <view class="bubble b16 pink"></view>
     </view>
   </view>
 

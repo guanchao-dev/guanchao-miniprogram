@@ -106,9 +106,11 @@
   display: flex;
   align-items: center;
   gap: 20rpx;
-  padding: 26rpx 24rpx;
+  /* 图标圆底与卡片同色，竖向留白可以压到很小，卡片高度基本等于图标高度 */
+  padding: 8rpx 24rpx;
   overflow: hidden;
-  background: linear-gradient(135deg, #F2FCF9, #D8F4EE);
+  /* 与图标圆底同色（#ACEBD5，取自 icon 的圆底像素），避免图标周围出现色差 */
+  background: #ACEBD5;
 }
 
 .record-banner-deco {
@@ -119,25 +121,25 @@
   height: 150rpx;
   border: 3rpx solid #1C1C1C;
   border-radius: 50%;
-  background: rgba(52, 184, 197, 0.25);
+  background: rgba(255, 255, 255, 0.35);
 }
 
 .record-banner-icon {
   position: relative;
   z-index: 1;
-  width: 108rpx;
-  height: 108rpx;
+  width: 160rpx;
+  height: 160rpx;
   flex-shrink: 0;
-  border: 3rpx solid #1C1C1C;
-  border-radius: 28rpx;
-  background: #FFFFFF;
-  box-shadow: 3rpx 3rpx 0 rgba(28, 28, 28, 0.85);
+  /* 图标 PNG 的圆底外缘有一圈浅色描边，卡片改成同色后就显成「白色圆圈」；
+     用圆形裁切 + 轻微放大把外缘裁掉，卡片与图标圆底同色后便看不出接缝 */
+  border-radius: 50%;
   overflow: hidden;
 }
 
 .record-banner-icon image {
   width: 100%;
   height: 100%;
+  transform: scale(1.1);
 }
 
 .record-banner-copy {
@@ -187,6 +189,17 @@
   border-radius: 24rpx;
   box-shadow: 3rpx 3rpx 0 rgba(28, 28, 28, 0.85);
   overflow: hidden;
+}
+
+/* 宝藏点位：金边突出 */
+.service-item.gold .service-icon {
+  border-color: #E0A83A;
+  box-shadow: 3rpx 3rpx 0 #E0A83A;
+}
+
+.service-item.gold .service-label {
+  color: #B07A18;
+  font-weight: 850;
 }
 
 .service-icon image {

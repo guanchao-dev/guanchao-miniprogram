@@ -2,6 +2,9 @@
   "pages": [
     "pages/home/home",
     "pages/achieve/achieve",
+    "pages/medal-wall/medal-wall",
+    "pages/medal-detail/medal-detail",
+    "pages/spot-collection/spot-collection",
     "pages/leaderboard/leaderboard",
     "pages/profile/profile",
     "pages/profile-edit/profile-edit",

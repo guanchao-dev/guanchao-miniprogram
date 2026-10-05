@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "赶海足迹",
+  "usingComponents": {
+    "watch-ball": "/components/watch-ball/watch-ball"
+  }
+}

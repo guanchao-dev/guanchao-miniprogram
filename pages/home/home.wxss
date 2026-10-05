@@ -3,52 +3,6 @@
   overflow: auto;
 }
 
-/* ===== 气泡背景：呼应吉祥物"泡泡"，缓慢上浮 ===== */
-.bubble-layer {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-  pointer-events: none;
-  z-index: 0;
-}
-
-.bubble {
-  position: absolute;
-  border-radius: 50%;
-  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.8), rgba(52,184,197,0.3) 55%, rgba(24,136,191,0.18));
-  box-shadow: inset -3rpx -3rpx 10rpx rgba(255,255,255,0.4), 0 0 12rpx rgba(52,184,197,0.25);
-  animation: bubbleRise linear infinite;
-}
-
-/* 14 个气泡：从页面底部开始上浮，大小、位置、速度各异 */
-.b1  { width: 90rpx;  height: 90rpx;  left: 6%;  top: 1200rpx; animation-duration: 13s; animation-delay: 0s; }
-.b2  { width: 52rpx;  height: 52rpx;  left: 18%; top: 1300rpx; animation-duration: 10s; animation-delay: 2s; }
-.b3  { width: 130rpx; height: 130rpx; left: 72%; top: 1150rpx; animation-duration: 17s; animation-delay: 1s; }
-.b4  { width: 40rpx;  height: 40rpx;  left: 88%; top: 1280rpx; animation-duration: 8s;  animation-delay: 3s; }
-.b5  { width: 70rpx;  height: 70rpx;  left: 42%; top: 1350rpx; animation-duration: 12s; animation-delay: 0.5s; }
-.b6  { width: 32rpx;  height: 32rpx;  left: 12%; top: 1400rpx; animation-duration: 9s;  animation-delay: 4s; }
-.b7  { width: 100rpx; height: 100rpx; left: 58%; top: 1250rpx; animation-duration: 15s; animation-delay: 2.5s; }
-.b8  { width: 46rpx;  height: 46rpx;  left: 90%; top: 1380rpx; animation-duration: 11s; animation-delay: 1.5s; }
-.b9  { width: 60rpx;  height: 60rpx;  left: 30%; top: 1450rpx; animation-duration: 14s; animation-delay: 5s; }
-.b10 { width: 36rpx;  height: 36rpx;  left: 75%; top: 1420rpx; animation-duration: 8.5s; animation-delay: 6s; }
-.b11 { width: 80rpx;  height: 80rpx;  left: 50%; top: 1480rpx; animation-duration: 16s; animation-delay: 3.5s; }
-.b12 { width: 28rpx;  height: 28rpx;  left: 5%;  top: 1500rpx; animation-duration: 7.5s; animation-delay: 4.5s; }
-.b13 { width: 110rpx; height: 110rpx; left: 82%; top: 1520rpx; animation-duration: 18s; animation-delay: 7s; }
-.b14 { width: 50rpx;  height: 50rpx;  left: 38%; top: 1550rpx; animation-duration: 10.5s; animation-delay: 5.5s; }
-
-@keyframes bubbleRise {
-  0% {
-    transform: translateY(0) scale(1);
-    opacity: 0;
-  }
-  8% { opacity: 0.85; }
-  92% { opacity: 0.7; }
-  100% {
-    transform: translateY(-1700rpx) scale(1.15);
-    opacity: 0;
-  }
-}
-
 /* ===== 卡片浮游动效 ===== */
 .card,
 .ai-card,

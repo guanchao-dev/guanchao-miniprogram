@@ -1,0 +1,167 @@
+.wall-page {
+  padding-top: 12rpx;
+}
+
+/* 顶部进度卡 + 下方勋章展柜，统一"展柜"风格：金边、金投影、内金描环、暖底 */
+.wall-header {
+  padding: 24rpx 26rpx 22rpx;
+  border-color: #E0A83A;
+  box-shadow: 5rpx 5rpx 0 #E0A83A, inset 0 0 0 3rpx rgba(224, 168, 58, 0.2);
+  background: linear-gradient(180deg, #FFF7E6 0%, #FFFDF7 58%, #FFFFFF 100%);
+}
+
+.wall-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
+/* 标题前一抹金色，和展柜金边呼应 */
+.wall-accent {
+  width: 10rpx;
+  height: 34rpx;
+  border-radius: 999rpx;
+  background: linear-gradient(180deg, #F6D081, #E0A83A);
+  box-shadow: 2rpx 2rpx 0 rgba(224, 168, 58, 0.35);
+}
+
+.wall-title {
+  font-size: 36rpx;
+  font-weight: 850;
+}
+
+.wall-sub {
+  margin-top: 8rpx;
+  color: #8A7A6B;
+  font-size: 22rpx;
+}
+
+.wall-track {
+  position: relative;
+  height: 20rpx;
+  margin-top: 16rpx;
+  overflow: hidden;
+  border: 3rpx solid #1C1C1C;
+  border-radius: 999rpx;
+  background: #FFF4E8;
+  box-shadow: inset 0 0 0 2rpx rgba(224, 168, 58, 0.3);
+}
+
+.wall-fill {
+  height: 100%;
+  border-radius: 999rpx;
+  background: linear-gradient(90deg, #184D97, #34B8C5 72%, #6FD3C4);
+  transition: width 0.4s ease-out;
+}
+
+/* 勋章展柜：与成就页勋章墙同一套金色语言 */
+.wall-grid {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 26rpx;
+  padding: 34rpx 12rpx 14rpx;
+  border-color: #E0A83A;
+  box-shadow: 5rpx 5rpx 0 #E0A83A, inset 0 0 0 3rpx rgba(224, 168, 58, 0.2);
+  background: linear-gradient(180deg, #FFF7E6 0%, #FFFDF7 58%, #FFFFFF 100%);
+}
+
+/* 展柜顶部一条金色饰线，中间一颗菱形 */
+.wall-topline {
+  position: absolute;
+  top: 15rpx;
+  left: 28rpx;
+  right: 28rpx;
+  height: 5rpx;
+  border-radius: 999rpx;
+  background: linear-gradient(90deg, rgba(224, 168, 58, 0) 0%, #E0A83A 50%, rgba(224, 168, 58, 0) 100%);
+  opacity: 0.8;
+  pointer-events: none;
+}
+
+.wall-topline-dot {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 15rpx;
+  height: 15rpx;
+  margin: -7.5rpx 0 0 -7.5rpx;
+  border-radius: 3rpx;
+  background: #E0A83A;
+  transform: rotate(45deg);
+}
+
+.wall-cell {
+  position: relative;
+  width: 23%;
+  height: 196rpx;
+  margin-right: 2.666%;
+  margin-bottom: 16rpx;
+  padding: 26rpx 4rpx 10rpx;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  /* 已解锁 = 金边；未解锁在下面降级成灰调 */
+  border: 3rpx solid #E0A83A;
+  border-radius: 18rpx;
+  background: #FFFBF2;
+  box-shadow: 3rpx 3rpx 0 rgba(224, 168, 58, 0.5);
+}
+
+.wall-cell:nth-child(4n) {
+  margin-right: 0;
+}
+
+.wall-tag {
+  position: absolute;
+  top: 6rpx;
+  left: 4rpx;
+  z-index: 2;
+  max-width: 92%;
+  padding: 2rpx 6rpx;
+  border-radius: 999rpx;
+  font-size: 12rpx;
+  font-weight: 750;
+  line-height: 1.3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 勋章图尽量铺满格子，只给名称留一行 */
+.wall-icon {
+  width: 132rpx;
+  height: 132rpx;
+  margin-bottom: 2rpx;
+}
+
+.wall-name {
+  display: block;
+  width: 100%;
+  color: #2F3A4A;
+  font-size: 16rpx;
+  font-weight: 750;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wall-cell.locked {
+  border-color: #DCE2E7;
+  background: #F3F5F7;
+  box-shadow: 3rpx 3rpx 0 rgba(28, 28, 28, 0.08);
+}
+
+.wall-cell.locked .wall-icon {
+  width: 66rpx;
+  height: 66rpx;
+  margin-bottom: 22rpx;
+  opacity: 0.7;
+}
+
+.wall-cell.locked .wall-name {
+  color: #9AA3AF;
+}
