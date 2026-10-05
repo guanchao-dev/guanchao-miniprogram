@@ -117,6 +117,60 @@
 .photo-empty-icon { font-size: 56rpx; }
 .photo-empty-tip { font-size: 24rpx; }
 
+/* 照片九宫格（1~3 张，风格沿用上面的虚线框） */
+.photo-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+}
+.photo-item {
+  position: relative;
+  width: 190rpx;
+  height: 190rpx;
+}
+.photo-thumb {
+  width: 100%;
+  height: 100%;
+  border: 2rpx solid rgba(28, 28, 28, 0.4);
+  border-radius: 18rpx;
+}
+.photo-del {
+  position: absolute;
+  top: -10rpx;
+  right: -10rpx;
+  width: 40rpx;
+  height: 40rpx;
+  box-sizing: border-box;
+  border: 2rpx solid #FFFFFF;
+  border-radius: 50%;
+  background: #E0533D;
+  color: #FFFFFF;
+  font-size: 28rpx;
+  line-height: 34rpx;
+  text-align: center;
+}
+.photo-add {
+  width: 190rpx;
+  height: 190rpx;
+  border: 2rpx dashed rgba(28, 28, 28, 0.4);
+  border-radius: 18rpx;
+  background: #F7FBFD;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.photo-add:active { background: #EDF5F8; }
+.photo-add-icon {
+  color: var(--muted);
+  font-size: 56rpx;
+  line-height: 1;
+}
+.field-tip {
+  margin-top: 14rpx;
+  color: var(--muted);
+  font-size: 22rpx;
+}
+
 /* 提交按钮 */
 .submit-btn {
   margin-top: 12rpx;
