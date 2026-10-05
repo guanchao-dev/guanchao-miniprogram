@@ -61,12 +61,6 @@
           <text>暂无全景照片</text>
         </view>
 
-        <!-- 上传现场照片（1~3 张，提交后进入审核） -->
-        <view class="photo-upload-btn {{uploadingPhotos ? 'disabled' : ''}}" bindtap="onUploadPhotos" hover-class="tap">
-          <text class="photo-upload-btn-icon">＋</text>
-          <text>上传现场照片</text>
-        </view>
-
         <view class="info-row">
           <text class="info-k">距离</text>
           <text class="info-v">{{detail.distanceText}}</text>

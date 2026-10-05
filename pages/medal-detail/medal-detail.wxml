@@ -59,9 +59,18 @@
         </view>
       </view>
 
+      <!-- 未解锁时分享 / 复制文案不可用 -->
       <view class="medal-actions sec-3">
-        <button class="btn medal-btn medal-share-btn" open-type="share">分享给好友</button>
-        <view class="btn medal-btn medal-copy-btn" bindtap="copyShareText" hover-class="tap">复制文案</view>
+        <button
+          class="btn medal-btn medal-share-btn {{medal.locked ? 'is-disabled' : ''}}"
+          open-type="share"
+          disabled="{{medal.locked}}"
+        >分享给微信好友</button>
+        <view
+          class="btn medal-btn medal-copy-btn {{medal.locked ? 'is-disabled' : ''}}"
+          bindtap="copyShareText"
+          hover-class="{{medal.locked ? 'none' : 'tap'}}"
+        >复制文案</view>
       </view>
     </block>
   </view>

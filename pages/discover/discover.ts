@@ -215,7 +215,7 @@ Page({
           wx.setClipboardData({ data: data.copyText })
         }
         if (data && data.title) this.setData({ shareTitle: data.title })
-        toast('文案已复制，可转发给好友')
+        toast('文案已复制，可转发给微信好友')
       })
       .catch((err) => showError(err, '分享失败'))
   },

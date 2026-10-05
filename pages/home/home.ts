@@ -531,12 +531,6 @@ Page({
       return
     }
     const url = String(item.url || '')
-    // 外部网页（如公众号文章）交给 web-view 承载页；小程序不能直接跳外链
-    if (/^https?:\/\//.test(url)) {
-      const q = `url=${encodeURIComponent(url)}&title=${encodeURIComponent(item.title || '')}`
-      wx.navigateTo({ url: `/pages/webview/webview?${q}` })
-      return
-    }
     if (url && /^\/pages\//.test(url)) {
       wx.navigateTo({ url })
       return
@@ -574,22 +568,10 @@ Page({
         .then((data) => {
           this.setData({ advice: this.normalizeAdvice(data), showAdvice: true })
         })
-        .catch(() => {
-          // 接口未就绪时用 mock 兜底，保证前端可演示
-          this.setData({
-            advice: this.normalizeAdvice({
-              suitableNow: true,
-              bestTimeFrom: '17:00',
-              bestTimeTo: '18:10',
-              recommendedSpot: {
-                id: 'spot_qd_hongshiya',
-                name: '红石崖',
-                district: '黄岛区',
-                distanceText: '12km'
-              }
-            }),
-            showAdvice: true
-          })
+        .catch((err) => {
+          // 接口失败时不展示任何建议，避免伪造赶海时机误导用户
+          this.setData({ showAdvice: false })
+          showError(err, '赶海建议加载失败，请稍后重试')
         })
     })
   },

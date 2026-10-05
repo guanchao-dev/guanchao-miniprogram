@@ -15,7 +15,6 @@
     "pages/calendar/calendar",
     "pages/tide/tide",
     "pages/spots/spots",
-    "pages/treasure/treasure",
     "pages/spot-guide/spot-guide",
     "pages/spot-detail/spot-detail",
     "pages/my-spots/my-spots",
@@ -25,14 +24,12 @@
     "pages/wiki-detail/wiki-detail",
     "pages/knowledge/knowledge",
     "pages/gear/gear",
-    "pages/quiz/quiz",
     "pages/checkin/checkin",
     "pages/checkin-form/checkin-form",
     "pages/settings/settings",
     "pages/faq/faq",
     "pages/about/about",
     "pages/compliance/compliance",
-    "pages/webview/webview",
     "pages/legal/legal",
     "pages/legal-detail/legal-detail"
   ],
@@ -76,8 +73,7 @@
   },
   "requiredPrivateInfos": [
     "getLocation",
-    "chooseLocation",
-    "onLocationChange"
+    "chooseLocation"
   ],
   "style": "v2",
   "navigateToMiniProgramAppIdList": [

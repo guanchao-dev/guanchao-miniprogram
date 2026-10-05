@@ -163,35 +163,6 @@
   margin-bottom: 8rpx;
 }
 
-/* 上传现场照片：只留一个轻量按钮 */
-.photo-upload-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8rpx;
-  height: 68rpx;
-  margin-bottom: 16rpx;
-  border: 2rpx dashed rgba(28, 28, 28, 0.4);
-  border-radius: 999rpx;
-  background: #F3FBFA;
-  color: #4F6787;
-  font-size: 26rpx;
-  font-weight: 700;
-}
-
-.photo-upload-btn:active {
-  background: #E3F2F5;
-}
-
-.photo-upload-btn-icon {
-  font-size: 32rpx;
-  line-height: 1;
-}
-
-.photo-upload-btn.disabled {
-  opacity: 0.6;
-}
-
 .info-row {
   display: flex;
   justify-content: space-between;

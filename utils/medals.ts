@@ -42,14 +42,17 @@ export function decorateMedal(item: any, index: number) {
   const row = item || {}
   const style = RARITY_STYLE[row.rarity] || RARITY_STYLE.common
   const locked = !!row.locked
+  // 未解锁时稀有度和图案都得藏住，统一按「锁定」样式渲染，否则标签会提前剧透稀有度
+  const shown = locked ? RARITY_STYLE.hidden : style
   return {
     id: row.id || '',
     title: row.title || '???',
     displayTitle: row.displayTitle || row.title || '???',
-    tag: row.tag || style.tag,
-    tagColor: style.tagColor,
-    tagBg: style.tagBg,
-    icon: row.icon || row.iconUrl || (locked ? LOCK_ICON : MEDAL_ICONS[index % MEDAL_ICONS.length]),
+    tag: locked ? shown.tag : (row.tag || style.tag),
+    tagColor: shown.tagColor,
+    tagBg: shown.tagBg,
+    // 未解锁一律用锁图标：不能因为后端下发了 icon 就把图案漏出来（图案本身会剧透勋章内容）
+    icon: locked ? LOCK_ICON : (row.icon || row.iconUrl || MEDAL_ICONS[index % MEDAL_ICONS.length]),
     locked,
     description: row.description || '',
     requirements: row.requirements || [],

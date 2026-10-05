@@ -2,9 +2,8 @@ import { contentApi } from '../../services/api'
 import { toast, showError } from '../../utils/format'
 import { mediaUrl } from '../../utils/upload'
 import { openSpotMap } from '../../utils/amapNav'
-import { requestLocation } from '../../utils/spotGuide'
 
-/** 「我的上传」条目：带审核状态，可导航 / 删除 */
+/** 「我的点位」条目：仅自己可见，可导航 / 删除 */
 interface MineItem {
   id: string
   name: string
@@ -17,15 +16,6 @@ interface MineItem {
   status: string
   statusText: string
   reviewNote: string
-}
-
-/** 「宝藏点位」条目：别人分享、审核通过的点位，只读 */
-interface TreasureItem {
-  id: string
-  name: string
-  city: string
-  note: string
-  distanceText: string
 }
 
 /** 审核状态 -> 徽章文案。未知/缺失一律当「审核中」 */
@@ -42,20 +32,11 @@ function statusTextOf(status?: string): string {
   return STATUS_TEXT[status || 'pending'] || '审核中'
 }
 
-function distanceText(m: any): string {
-  const n = Number(m)
-  if (!n && n !== 0) return ''
-  return n >= 1000 ? `${(n / 1000).toFixed(1)}km` : `${Math.round(n)}m`
-}
-
 Page({
   data: {
-    // treasure = 宝藏点位（审核通过的公开点位）；mine = 我的上传
-    tab: 'treasure' as 'treasure' | 'mine',
     loading: true,
     showLoading: true,
     empty: true,
-    treasure: [] as TreasureItem[],
     mine: [] as MineItem[]
   },
 
@@ -71,49 +52,14 @@ Page({
   },
 
   onShow() {
-    this.loadTab(this.data.tab)
+    this.loadMine()
   },
 
-  onTab(e: any) {
-    const tab = e.currentTarget.dataset.tab
-    if (tab === this.data.tab) return
-    this.setData({ tab })
-    this.loadTab(tab)
+  goCreate() {
+    wx.navigateTo({ url: '/pages/spot-share/spot-share' })
   },
 
-  loadTab(tab: string) {
-    if (tab === 'treasure') return this.loadTreasure()
-    return this.loadMine()
-  },
-
-  /** 宝藏点位：用户投稿、审核通过的点位 */
-  async loadTreasure() {
-    this.setData({ loading: true, showLoading: !this.data.treasure.length })
-    try {
-      const loc = await requestLocation()
-      const params: Record<string, any> = { page: 1, pageSize: 50 }
-      if (loc) {
-        params.lat = loc.lat
-        params.lng = loc.lng
-      }
-      const res = await contentApi.treasureSpots(params)
-      const treasure: TreasureItem[] = (res.list || []).map((item: any) => ({
-        id: String(item.id || ''),
-        name: item.name || '',
-        city: item.city || '',
-        note: item.observeHint || '',
-        distanceText: distanceText(item.distanceM)
-      })).filter((it: TreasureItem) => it.id)
-      this.setData({ treasure, empty: treasure.length === 0 })
-    } catch (err) {
-      showError(err, '宝藏点位加载失败')
-      this.setData({ empty: this.data.treasure.length === 0 })
-    } finally {
-      this.setData({ loading: false, showLoading: false })
-    }
-  },
-
-  /** 我的上传：自己传过的点位，带审核状态 */
+  /** 我的点位：自己记录过的点位，仅自己可见 */
   async loadMine() {
     this.setData({ loading: true, showLoading: !this.data.mine.length })
     try {
@@ -140,15 +86,6 @@ Page({
     } finally {
       this.setData({ loading: false, showLoading: false })
     }
-  },
-
-  goShare() {
-    wx.navigateTo({ url: '/pages/spot-share/spot-share' })
-  },
-
-  /** 宝藏点位：进点位详情 */
-  openTreasure(e: any) {
-    wx.navigateTo({ url: `/pages/spot-detail/spot-detail?id=${e.currentTarget.dataset.id}` })
   },
 
   onNavigate(e: any) {

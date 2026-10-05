@@ -61,11 +61,12 @@ Page({
   },
 
   copyShareText() {
+    if (this.data.medal && this.data.medal.locked) return
     const copies = this.getShareCopies()
     const text = copies[Math.floor(Math.random() * copies.length)]
     wx.setClipboardData({
       data: text,
-      success: () => toast('文案已复制，去分享给好友吧')
+      success: () => toast('文案已复制，去分享给微信好友吧')
     })
   },
 

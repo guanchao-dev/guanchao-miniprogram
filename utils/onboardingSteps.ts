@@ -64,7 +64,7 @@ export const ONBOARDING_STEPS: OnboardingStep[] = [
     selector: '#onb-spot-entry',
     tab: 'profile',
     title: '宝藏点位',
-    desc: '上传私藏点位一键导航'
+    desc: '仅自己可见的宝藏点位，一键导航'
   },
   {
     selector: null,

@@ -6,8 +6,8 @@
 
   <view class="page-content">
     <view class="hero">
-      <view class="hero-title">宝藏点位</view>
-      <view class="hero-sub">把你发现的好赶海点分享出来，方便自己回头导航</view>
+      <view class="hero-title">记录赶海点</view>
+      <view class="hero-sub">仅自己可见的赶海记录，其他人看不到，下次一键导航</view>
     </view>
 
     <!-- 地图选点 -->
@@ -64,12 +64,12 @@
           <text class="photo-add-icon">+</text>
         </view>
       </view>
-      <view class="field-tip">拍点实地照片，我们会一起审核</view>
+      <view class="field-tip">照片仅自己可见，方便回头辨认</view>
     </view>
 
     <!-- 提交 -->
     <button class="submit-btn {{canSubmit ? '' : 'disabled'}}" bindtap="submit" loading="{{submitting}}" disabled="{{!canSubmit}}">
-      {{submitting ? '提交中…' : '上传点位'}}
+      {{submitting ? '提交中…' : '保存记录'}}
     </button>
   </view>
 </view>

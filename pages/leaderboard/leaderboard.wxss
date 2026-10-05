@@ -1,27 +1,3 @@
-.lb-tabs {
-  display: flex;
-  gap: 16rpx;
-  padding: 20rpx 24rpx 4rpx;
-}
-
-.lb-tab {
-  flex: 1;
-  height: 72rpx;
-  line-height: 66rpx;
-  text-align: center;
-  border: 3rpx solid #1C1C1C;
-  border-radius: 999rpx;
-  background: #FFFFFF;
-  font-size: 26rpx;
-  font-weight: 750;
-  box-sizing: border-box;
-}
-
-.lb-tab.on {
-  background: #1878FF;
-  color: #FFFFFF;
-}
-
 .lb-row {
   display: flex;
   align-items: center;
@@ -84,21 +60,6 @@
   font-size: 30rpx;
   font-weight: 850;
   color: #1878FF;
-}
-
-.lb-follow {
-  margin-left: 16rpx;
-  padding: 8rpx 22rpx;
-  border: 3rpx solid #1878FF;
-  border-radius: 999rpx;
-  color: #1878FF;
-  font-size: 22rpx;
-  font-weight: 750;
-}
-
-.lb-follow.on {
-  border-color: #C9D2DA;
-  color: #A8B3BD;
 }
 
 .lb-more {

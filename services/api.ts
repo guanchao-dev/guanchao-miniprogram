@@ -61,15 +61,6 @@ export const homeApi = {
   tideCalendar(params?: Record<string, any>) {
     return http.get('/tide/calendar', params, { auth: false })
   },
-  quizzes() {
-    return http.get('/quizzes', {}, { auth: false })
-  },
-  quizQuestions(quizId: string) {
-    return http.get(`/quizzes/${quizId}/questions`, {}, { auth: false })
-  },
-  quizSubmit(quizId: string, body: Record<string, any>) {
-    return http.post(`/quizzes/${quizId}/submit`, body, { idempotency: true })
-  },
   search(keyword: string) {
     return http.get('/search', { keyword, page: 1, pageSize: 20 }, { auth: false })
   }
@@ -89,20 +80,17 @@ export const contentApi = {
   resolveCity(lat: number, lng: number) {
     return http.get('/geo/city', { lat, lng }, { auth: false })
   },
-  /** 「宝藏地点」：用户投稿、管理员审核通过后发布出来的点位（不含官方策展点位）。 */
-  treasureSpots(params?: Record<string, any>) {
-    return http.get('/spots/treasure', params, { auth: false }).then((data) => ({
-      raw: data,
-      list: unwrapList(data)
-    }))
-  },
   spot(id: string) {
     return http.get(`/spots/${id}`, {}, { auth: false })
   },
   /**
-   * 用户上传宝藏赶海点位。
-   * 失败时抛错，交给页面提示「提交失败」——不再伪造一个成功结果，
-   * 否则用户以为传上去了，实际服务端没有。
+   * 用户记录自己的赶海点位（仅自己可见，不对外分享）。
+   *
+   * 后端契约：POST /spots
+   *   body: { name, address, lat, lng, note, photoUploadIds }
+   * ⚠️ 后端必须保证这类点位只对创建者可见，不能进入任何公开列表；
+   *    否则「用户只能上传自己的、不能分享」这条约束就破了。
+   * 失败时抛错，交给页面提示「提交失败」——不再伪造一个成功结果。
    */
   createSpot(payload: Record<string, any>) {
     return http.post('/spots', payload)
@@ -161,19 +149,8 @@ export const contentApi = {
   unfavoriteSpecies(id: string) {
     return http.delete(`/encyclopedia/${id}/favorite`)
   },
-  speciesPhotos(speciesId: string) {
-    return http.get(`/encyclopedia/${speciesId}/photos`, {}, { auth: false })
-  },
-  async uploadSpeciesPhoto(speciesId: string, filePath: string) {
-    // 先本地压缩再上传，避免传几 MB 的原图
-    const compressed = await compressForUpload(filePath)
-    return http.upload(`/encyclopedia/${speciesId}/photos`, compressed)
-  },
   favorites() {
     return http.get('/encyclopedia/favorites')
-  },
-  deleteSpeciesPhoto(speciesId: string, photoId: string) {
-    return http.delete(`/encyclopedia/${speciesId}/photos/${photoId}`)
   },
   knowledge() {
     return http.get('/knowledge', {}, { auth: false }).then((data) => unwrapList(data))
@@ -383,28 +360,12 @@ export const achieveApi = {
       clientTime: nowISO()
     }, { idempotency: true, auth: false })
   },
-  friends() {
-    return http.get('/achievements/friends', {}, { auth: false })
-  },
-  /**
-   * 排行榜。
-   * @param scope 'all' 全站榜 / 'friends' 我关注的人
-   */
+  /** 排行榜（全站榜）。 */
   leaderboard(params?: Record<string, any>) {
     return http.get('/achievements/leaderboard', Object.assign(
       { scope: 'all', page: 1, pageSize: 20 },
       params || {}
     ), { auth: false })
-  }
-}
-
-export const userApi = {
-  /** 关注某个用户（用于「好友榜」） */
-  follow(userId: string) {
-    return http.post(`/users/${userId}/follow`, {})
-  },
-  unfollow(userId: string) {
-    return http.delete(`/users/${userId}/follow`)
   }
 }
 

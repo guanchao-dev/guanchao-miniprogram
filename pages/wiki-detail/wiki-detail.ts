@@ -1,7 +1,7 @@
 import { contentApi } from '../../services/api'
-import { isLoggedIn, requireLogin } from '../../utils/auth'
+import { requireLogin } from '../../utils/auth'
 import { showError, toast } from '../../utils/format'
-import { chooseImage, downloadImage, mediaUrl, preloadImage } from '../../utils/upload'
+import { mediaUrl, preloadImage } from '../../utils/upload'
 
 Page({
   data: {
@@ -9,8 +9,7 @@ Page({
     item: {},
     akaText: '',
     coverUrl: '',
-    coverSrc: '',
-    photos: []
+    coverSrc: ''
   },
 
   onLoad(query: any) {
@@ -35,34 +34,12 @@ Page({
         preloadImage(coverUrl).then((src) => {
           if (src) this.setData({ coverSrc: src })
         })
-        this.loadPhotos(id)
         // 打开这个物种的详情才算「看过」—— 图鉴列表不再一渲染就标记
         // （原因见 wiki.ts）。标记只影响闪光与 NEW 角标，失败不影响详情展示。
         contentApi.markSpeciesSeen([id]).catch(() => {})
       })
       .catch((err) => showError(err, '图鉴加载失败'))
       .finally(() => this.setData({ loading: false }))
-  },
-
-  loadPhotos(speciesId: string) {
-    if (!isLoggedIn()) return
-    contentApi.speciesPhotos(speciesId)
-      .then((data) => {
-        const list = (data && data.list) || []
-        this.setData({
-          photos: list.map((p: any) => ({
-            photoId: p.photoId,
-            coverUrl: mediaUrl(p.coverUrl || ''),
-            coverSrc: ''
-          }))
-        })
-        list.forEach((p: any, i: number) => {
-          downloadImage(mediaUrl(p.coverUrl || '')).then((src) => {
-            if (src) this.setData({ [`photos[${i}].coverSrc`]: src })
-          })
-        })
-      })
-      .catch(() => {})
   },
 
   onFavorite() {
@@ -78,50 +55,9 @@ Page({
     }).catch((err) => showError(err, '收藏失败'))
   },
 
-  onUploadPhoto() {
-    if (!requireLogin()) return
-    const item: any = this.data.item
-    if (!item.id) return
-    chooseImage()
-      .then((filePath) => {
-        wx.showLoading({ title: '上传中', mask: true })
-        return contentApi.uploadSpeciesPhoto(item.id, filePath)
-      })
-      .then(() => {
-        wx.hideLoading()
-        toast('上传成功')
-        this.loadPhotos(item.id)
-      })
-      .catch((err) => {
-        wx.hideLoading()
-        if (err && err.message === 'cancel') return
-        showError(err, '上传失败')
-      })
-  },
-
   onPreviewPhoto(e: any) {
     const url = e.currentTarget.dataset.url
     if (!url) return
     wx.previewImage({ current: url, urls: [url] })
-  },
-
-  onDeletePhoto(e: any) {
-    if (!requireLogin()) return
-    const item: any = this.data.item
-    const photoId = e.currentTarget.dataset.id
-    if (!item.id || !photoId) return
-    wx.showModal({
-      title: '删除照片',
-      content: '确定删除这张照片吗？',
-      success: (res: any) => {
-        if (!res.confirm) return
-        contentApi.deleteSpeciesPhoto(item.id, photoId)
-          .then(() => {
-            toast('已删除')
-            this.loadPhotos(item.id)
-          })
-          .catch((err) => showError(err, '删除失败'))
-      }
-    })
   }
 })

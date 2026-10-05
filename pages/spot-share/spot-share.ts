@@ -119,7 +119,7 @@ Page({
         note: this.data.note,
         photoUploadIds: uploadIds
       })
-      toast('点位上传成功')
+      toast('点位已保存')
       setTimeout(() => wx.navigateBack(), 600)
     } catch (err) {
       // showLoading 和 showToast 共用一个原生视图，不先 hide 的话提示会被盖住

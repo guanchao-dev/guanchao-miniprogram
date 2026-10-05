@@ -7,15 +7,6 @@
   <view class="page-content">
     <view class="hero">
       <view class="hero-title">宝藏点位</view>
-      <view class="hero-sub">
-        {{tab === 'treasure' ? '大家发现、我们核对后收录的赶海好去处' : '你上传过的赶海宝藏地，点导航直接出发'}}
-      </view>
-    </view>
-
-    <!-- 两栏：宝藏点位 / 我的上传 -->
-    <view class="tabs">
-      <view class="tab {{tab === 'treasure' ? 'active' : ''}}" data-tab="treasure" bindtap="onTab" hover-class="tap">宝藏点位</view>
-      <view class="tab {{tab === 'mine' ? 'active' : ''}}" data-tab="mine" bindtap="onTab" hover-class="tap">我的上传</view>
     </view>
 
     <view class="page-loading" wx:if="{{showLoading}}">
@@ -23,47 +14,17 @@
       <text>加载中…</text>
     </view>
 
-    <!-- ===== 宝藏点位（审核通过的公开点位）===== -->
-    <block wx:elif="{{tab === 'treasure'}}">
-      <view class="card empty-card" wx:if="{{empty}}">
-        <text class="empty-icon">🧭</text>
-        <view class="empty-title">还没有宝藏点位</view>
-        <view class="empty-sub">上传你发现的赶海点，审核通过后就会出现在这里</view>
-        <view class="empty-cta" bindtap="goShare" hover-class="tap">去上传</view>
-      </view>
-
-      <block wx:else>
-        <view
-          class="card list-card"
-          wx:for="{{treasure}}"
-          wx:key="id"
-          data-id="{{item.id}}"
-          bindtap="openTreasure"
-          hover-class="tap"
-        >
-          <view class="list-row">
-            <text class="list-title">{{item.name}}</text>
-            <text class="badge">用户推荐</text>
-          </view>
-          <view class="list-meta">{{item.city}}{{item.distanceText ? ' · ' + item.distanceText : ''}}</view>
-          <view class="list-note" wx:if="{{item.note}}">{{item.note}}</view>
-        </view>
-        <view class="foot-tip">这些地点由赶海用户分享，我们核对后收录</view>
-      </block>
-    </block>
-
-    <!-- ===== 我的上传 ===== -->
     <block wx:else>
       <view class="header-bar">
-        <text class="header-count">共 {{mine.length}} 个点位</text>
-        <view class="header-btn" bindtap="goShare" hover-class="tap">+ 上传新点位</view>
+        <text class="header-count">共 {{mine.length}} 条记录</text>
+        <view class="header-btn" bindtap="goCreate" hover-class="tap">+ 记录新赶海点</view>
       </view>
 
       <view class="card empty-card" wx:if="{{empty}}">
         <text class="empty-icon">🗺️</text>
-        <view class="empty-title">还没有上传过点位</view>
-        <view class="empty-sub">把你常去的好赶海地点传上来，下次一键导航</view>
-        <view class="empty-cta" bindtap="goShare" hover-class="tap">去上传第一个</view>
+        <view class="empty-title">还没有宝藏点位</view>
+        <view class="empty-sub">把你常去的好赶海地点记下来，下次一键导航</view>
+        <view class="empty-cta" bindtap="goCreate" hover-class="tap">记录第一个</view>
       </view>
 
       <view class="card spot-card" wx:for="{{mine}}" wx:key="id" wx:for-index="idx">

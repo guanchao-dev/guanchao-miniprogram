@@ -328,3 +328,12 @@
   background: #FFFFFF;
   color: var(--ink);
 }
+
+/* 未解锁：分享 / 复制文案置灰且不可点击 */
+.medal-btn.is-disabled {
+  background: #E9EDF0;
+  color: #A6B0B8;
+  border-color: #C9D2D8;
+  box-shadow: none;
+  pointer-events: none;
+}
