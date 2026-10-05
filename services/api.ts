@@ -119,17 +119,6 @@ export const contentApi = {
   deleteSpot(id: string) {
     return http.delete(`/spots/${id}`)
   },
-  /**
-   * 上传赶海点的现场照片（用户贡献，1~3 张，需登录）。
-   *
-   * 后端契约：POST /spots/{spotId}/photos
-   *   body: { photoIds: string[] }   // /uploads 返回的 uploadId，1~3 个
-   *   → { pending: true, pendingCount: number }
-   * 照片先进人工审核，通过前不对外展示；过审后才并入点位 photos，首图作封面。
-   */
-  uploadSpotPhotos(spotId: string, photoIds: string[]) {
-    return http.post(`/spots/${spotId}/photos`, { photoIds })
-  },
   gear() {
     return http.get('/gear', {}, { auth: false }).then((data) => ({
       raw: data,

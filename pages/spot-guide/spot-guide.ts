@@ -165,17 +165,24 @@ Page({
     })
   },
 
-  /** 上传现场照片：选 1~3 张 → 上传 → 提交审核（通过前不展示） */
+  /** 上传现场照片：选 1~3 张 → 上传 → 走宝藏点位上传接口提交（审核通过前不展示） */
   onUploadPhotos() {
     if (!requireLogin()) return
-    const spotId = (this.data.detail && this.data.detail.id) || ''
-    if (!spotId || this.data.uploadingPhotos) return
+    const spot = this.data.detail || ({} as GuideSpot)
+    if (!spot.id || this.data.uploadingPhotos) return
     chooseImages(MAX_UPLOAD_PHOTOS)
       .then((list) => {
         this.setData({ uploadingPhotos: true })
         wx.showLoading({ title: '上传中', mask: true })
-        return Promise.all(list.map((path) => uploadImage('observation', path)))
-          .then((photoIds) => contentApi.uploadSpotPhotos(spotId, photoIds))
+        return Promise.all(list.map((path) => uploadImage('spot', path)))
+          .then((uploadIds) => contentApi.createSpot({
+            name: spot.name,
+            address: [spot.city, spot.district].filter(Boolean).join(' '),
+            lat: spot.latitude,
+            lng: spot.longitude,
+            note: spot.observeHint || '',
+            photoUploadIds: uploadIds
+          }))
       })
       .then(() => {
         wx.hideLoading()
