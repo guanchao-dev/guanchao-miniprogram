@@ -49,5 +49,9 @@ Page({
 
   openDetail(e: any) {
     wx.navigateTo({ url: `/pages/spot-detail/spot-detail?id=${e.currentTarget.dataset.id}` })
+  },
+
+  goTreasure() {
+    wx.navigateTo({ url: '/pages/treasure/treasure' })
   }
 })

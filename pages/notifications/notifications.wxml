@@ -1,0 +1,35 @@
+<view class="page memphis-bg">
+  <view class="memphis-layer">
+    <view class="geo-circle md" style="top: 24rpx; right: -46rpx; background:#34B8C5;"></view>
+    <view class="geo-square sm" style="bottom: 140rpx; left: -24rpx; background:#F6D081;"></view>
+  </view>
+
+  <view class="page-content">
+    <view class="hero">
+      <view class="hero-title">消息</view>
+    </view>
+
+    <view class="page-loading" wx:if="{{loading}}">
+      <view class="spinner"></view>
+      <text>加载中…</text>
+    </view>
+
+    <view class="card empty-card" wx:elif="{{failed}}">
+      <text class="empty-icon">⚠️</text>
+      <view class="empty-title">消息加载失败</view>
+    </view>
+
+    <view class="card empty-card" wx:elif="{{empty}}">
+      <text class="empty-icon">🔔</text>
+      <view class="empty-title">还没有消息</view>
+    </view>
+
+    <block wx:else>
+      <view class="card msg-card" wx:for="{{list}}" wx:key="id">
+        <view class="msg-where">{{item.spotName || '通用反馈'}}</view>
+        <view class="msg-reply">{{item.reply}}</view>
+        <view class="msg-mine" wx:if="{{item.content}}">{{item.content}}</view>
+      </view>
+    </block>
+  </view>
+</view>

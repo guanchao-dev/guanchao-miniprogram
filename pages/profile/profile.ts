@@ -1,4 +1,4 @@
-import { authApi } from '../../services/api'
+import { authApi, contentApi } from '../../services/api'
 import { getUser, isLoggedIn } from '../../utils/auth'
 import { showError } from '../../utils/format'
 import { flushUnlocks } from '../../utils/unlock'
@@ -18,6 +18,8 @@ Page({
   data: {
     loggedIn: false,
     user: DEFAULT_USER,
+    // 未读消息数（铃铛上的红点）
+    unread: 0,
     services: [
       { title: '潮汐表', icon: 'https://www.blueakaiwu.cn/api/v1/static/assets/home/home-calendar.png', tone: 'sky', url: '/pages/tide/tide' },
       { title: '潮汐日历', icon: 'https://www.blueakaiwu.cn/api/v1/static/assets/home/home-quiz1.png', tone: 'mint', url: '/pages/calendar/calendar' },
@@ -49,6 +51,23 @@ Page({
     }
     this.refreshUser()
     flushUnlocks(this)
+    this.loadUnread()
+  },
+
+  /** 铃铛上的未读数。未登录就不显示红点 */
+  loadUnread() {
+    if (!isLoggedIn()) {
+      this.setData({ unread: 0 })
+      return
+    }
+    contentApi
+      .notificationsUnread()
+      .then((res: any) => this.setData({ unread: Number((res && res.count) || 0) }))
+      .catch(() => {})
+  },
+
+  goNotifications() {
+    wx.navigateTo({ url: '/pages/notifications/notifications' })
   },
 
   onOnboardingFinish() {

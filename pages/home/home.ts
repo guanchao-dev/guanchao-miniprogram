@@ -166,7 +166,8 @@ Page({
   _lastWatching: false,
 
   data: {
-    place: '青岛',
+    // 顶部「当前城市」：由 refreshPlace() 按真实定位反查后填入，不再是写死的青岛
+    place: '定位中',
     watchLabel: '开始观潮',
     watchClass: '',
     advice: {},
@@ -201,7 +202,8 @@ Page({
     const app = getApp()
     const self = this as any
     const spotId = (app.globalData && app.globalData.spotId) || this.data.spotId
-    this.setData({ spotId, place: '青岛' })
+    this.setData({ spotId })
+    this.refreshPlace()
     // 新手教程：首次启动 或 跨页续接到 home
     if (isOnboarding()) {
       const idx = getOnboardingIndex()
@@ -423,6 +425,24 @@ Page({
       .catch(() => {})
   },
 
+  /**
+   * 顶部「当前城市」：按真实定位反查，而不是写死青岛。
+   * 拿不到定位或反查失败时显示「未定位」——宁可空着，也不显示一个错的城市。
+   */
+  async refreshPlace() {
+    const loc = await requestLocation()
+    if (!loc) {
+      this.setData({ place: '未定位' })
+      return
+    }
+    try {
+      const geo: any = await contentApi.resolveCity(loc.lat, loc.lng)
+      this.setData({ place: (geo && geo.city) || '未定位' })
+    } catch (e) {
+      this.setData({ place: '未定位' })
+    }
+  },
+
   loadToday() {
     homeApi.today({ spotId: this.data.spotId })
       .then((data) => {
@@ -435,7 +455,6 @@ Page({
           app.globalData.spotId = place.spotId || this.data.spotId
         }
         this.setData({
-          place: '青岛',
           spotId: place.spotId || this.data.spotId,
           tideHeightM: height,
           tideTrend: trend,

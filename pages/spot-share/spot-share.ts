@@ -1,6 +1,5 @@
 import { contentApi } from '../../services/api'
 import { toast, showError } from '../../utils/format'
-import { addSpot } from '../../utils/spotStore'
 
 Page({
   data: {
@@ -74,16 +73,10 @@ Page({
       note: this.data.note
     }
     try {
-      const res: any = await contentApi.createSpot(payload)
-      // mock 兜底：API 不通也写本地缓存，保证列表能看到
-      addSpot({
-        name: payload.name,
-        address: payload.address,
-        lat: payload.lat,
-        lng: payload.lng,
-        note: payload.note
-      })
-      toast(res && res.mock ? '已保存到本地（接口调试中）' : '点位上传成功')
+      // 不再往本地缓存写副本：服务端是唯一数据源。
+      // 写副本会让「我的点位」出现重复卡片，而且那份副本删不掉，变成幽灵点位。
+      await contentApi.createSpot(payload)
+      toast('点位上传成功')
       setTimeout(() => wx.navigateBack(), 600)
     } catch (err) {
       showError(err, '提交失败')

@@ -82,26 +82,38 @@ export const contentApi = {
       list: unwrapList(data)
     }))
   },
+  /**
+   * 按坐标反查城市 / 区，首页顶部「当前城市」显示用。
+   * 走服务端反查（不是小程序直连地图服务），省得再配域名白名单。
+   */
+  resolveCity(lat: number, lng: number) {
+    return http.get('/geo/city', { lat, lng }, { auth: false })
+  },
+  /** 「宝藏地点」：用户投稿、管理员审核通过后发布出来的点位（不含官方策展点位）。 */
+  treasureSpots(params?: Record<string, any>) {
+    return http.get('/spots/treasure', params, { auth: false }).then((data) => ({
+      raw: data,
+      list: unwrapList(data)
+    }))
+  },
   spot(id: string) {
     return http.get(`/spots/${id}`, {}, { auth: false })
   },
   /**
    * 用户上传宝藏赶海点位。
-   * 后端 /spots POST 未就绪时 catch 兜底返回 mock 结构，调用方继续写本地缓存。
-   * 联调时移除 .catch 兜底分支即可。
+   * 失败时抛错，交给页面提示「提交失败」——不再伪造一个成功结果，
+   * 否则用户以为传上去了，实际服务端没有。
    */
   createSpot(payload: Record<string, any>) {
-    return http.post('/spots', payload).catch(() => ({
-      id: 'spot_mock_' + Date.now(),
-      ...payload,
-      mock: true
-    }))
+    return http.post('/spots', payload)
   },
-  /** 当前用户上传过的点位；后端未就绪时返回空列表（由调用方回退本地缓存）。 */
+  /**
+   * 当前用户上传过的点位。
+   * 失败时向上抛错 —— 调用方要能区分「接口挂了」和「确实没有点位」，
+   * 否则接口一失败就会被当成空列表，错误地回退到本地缓存。
+   */
   mySpots() {
-    return http.get('/spots/mine')
-      .then((data) => ({ raw: data, list: unwrapList(data) }))
-      .catch(() => ({ raw: { list: [] }, list: [] }))
+    return http.get('/spots/mine').then((data) => ({ raw: data, list: unwrapList(data) }))
   },
   /** 删除自己上传的点位。后端只允许删自己的，别人的一律返回 404。 */
   deleteSpot(id: string) {
@@ -227,6 +239,22 @@ export const contentApi = {
   },
   feedback(body: Record<string, any>) {
     return http.post('/help/feedback', body)
+  },
+  /**
+   * 我的消息（管理员对我反馈的回复）。需要登录。
+   * cacheTtl=0：不能走 60 秒 GET 缓存 —— 缓存会让「铃铛有红点、点进去却是空的」
+   * 同时出现（红点走的 unread 接口是不缓存的，两个接口对不上）。
+   */
+  notifications(params?: Record<string, any>) {
+    return http.get('/me/notifications', params, { cacheTtl: 0 })
+  },
+  /** 未读消息数（铃铛上的红点）。cacheTtl=0：红点要实时，不能被 60 秒缓存挡住 */
+  notificationsUnread() {
+    return http.get('/me/notifications/unread', {}, { cacheTtl: 0 })
+  },
+  /** 标记消息已读；不传 ids 就全部标记 */
+  markNotificationsRead(ids?: string[]) {
+    return http.post('/me/notifications/read', ids && ids.length ? { ids } : {})
   },
   guardianConsent(agreed: boolean, version: string) {
     return http.post('/privacy/guardian-consent', { agreed, version })

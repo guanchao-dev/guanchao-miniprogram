@@ -1,5 +1,14 @@
 <view class="page">
   <view class="page-content">
+    <!-- 宝藏地点入口：用户分享、审核通过的点位 -->
+    <view class="card treasure-entry" bindtap="goTreasure" hover-class="tap">
+      <view class="treasure-entry-main">
+        <view class="treasure-entry-title">宝藏地点</view>
+        <view class="treasure-entry-sub">看看大家发现的赶海好去处</view>
+      </view>
+      <view class="treasure-entry-arrow">›</view>
+    </view>
+
     <view class="page-loading" wx:if="{{loading}}">
       <view class="spinner"></view>
       <text>加载中…</text>

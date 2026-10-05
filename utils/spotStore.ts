@@ -15,6 +15,10 @@ export interface TreasureSpot {
   note?: string
   photoUrl?: string
   createdAt: string
+  /** 审核状态：pending 审核中 / approved 已通过 / rejected 未通过。本地兜底记录没有，按 pending 处理 */
+  status?: string
+  /** 驳回原因（status 为 rejected 时可能有） */
+  reviewNote?: string
 }
 
 function genId(): string {

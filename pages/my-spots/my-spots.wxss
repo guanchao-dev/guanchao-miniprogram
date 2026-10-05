@@ -123,9 +123,41 @@
   flex-direction: column;
   gap: 6rpx;
 }
+.spot-head {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
 .spot-name {
   font-size: 30rpx;
   font-weight: 850;
+}
+/* 审核状态徽章：审核中（黄）/ 已通过（青）/ 未通过（红描边） */
+.status-badge {
+  flex-shrink: 0;
+  padding: 2rpx 14rpx;
+  font-size: 20rpx;
+  font-weight: 700;
+  border: 2rpx solid var(--ink);
+  border-radius: 16rpx;
+}
+.status-badge.pending {
+  background: var(--yellow);
+  color: var(--ink);
+}
+.status-badge.approved {
+  background: var(--teal);
+  color: #FFFFFF;
+}
+.status-badge.rejected {
+  background: #FFFFFF;
+  color: #E0533D;
+  border-color: #E0533D;
+}
+.spot-review-note {
+  color: #E0533D;
+  font-size: 22rpx;
+  line-height: 1.5;
 }
 .spot-addr {
   color: var(--muted);
@@ -176,4 +208,57 @@
 }
 .action-btn:active {
   transform: translate(1rpx, 1rpx);
+}
+
+/* ===== 两栏切换 ===== */
+.tabs {
+  display: flex;
+  gap: 16rpx;
+  margin-bottom: 24rpx;
+}
+.tab {
+  flex: 1;
+  padding: 18rpx 0;
+  text-align: center;
+  font-size: 28rpx;
+  font-weight: 750;
+  color: var(--muted);
+  background: #FFFFFF;
+  border: 3rpx solid var(--ink);
+  border-radius: 24rpx;
+}
+.tab.active {
+  background: var(--teal);
+  color: #FFFFFF;
+  box-shadow: var(--shadow);
+}
+
+/* ===== 宝藏点位卡片 ===== */
+.list-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16rpx;
+}
+.badge {
+  flex-shrink: 0;
+  padding: 4rpx 14rpx;
+  border: 3rpx solid var(--ink);
+  border-radius: 999rpx;
+  background: var(--blue);
+  color: #FFFFFF;
+  font-size: 20rpx;
+  font-weight: 700;
+}
+.list-note {
+  margin-top: 10rpx;
+  color: var(--ink);
+  font-size: 24rpx;
+  line-height: 1.55;
+}
+.foot-tip {
+  padding: 12rpx 8rpx 40rpx;
+  color: var(--muted);
+  font-size: 22rpx;
+  text-align: center;
 }

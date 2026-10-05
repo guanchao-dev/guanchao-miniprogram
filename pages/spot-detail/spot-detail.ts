@@ -1,6 +1,7 @@
 import { contentApi, homeApi } from '../../services/api'
 import { showError, toast, trendText } from '../../utils/format'
 import { navigateSpot } from '../../utils/amapNav'
+import { requireLogin } from '../../utils/auth'
 import { getCachedLocation, haversineM, formatDistance } from '../../utils/spotGuide'
 
 function tideLabel(type?: string): string {
@@ -18,7 +19,12 @@ Page({
     spot: {} as any,
     photos: [] as string[],
     tideRows: [] as Array<{ time: string; height: string; label: string }>,
-    tideSummary: '正在读取今日潮汐…'
+    tideSummary: '正在读取今日潮汐…',
+    // 反馈弹层
+    fbVisible: false,
+    fbContent: '',
+    fbContact: '',
+    fbSubmitting: false
   },
 
   onLoad(query: any) {
@@ -102,5 +108,48 @@ Page({
       latitude: Number(spot.latitude || spot.lat),
       longitude: Number(spot.longitude || spot.lng)
     })
+  },
+
+  /* ===== 反馈：把问题直接发给管理员，带上当前点位 id ===== */
+  openFeedback() {
+    // 反馈要落库到具体用户，未登录先引导登录
+    if (!requireLogin()) return
+    this.setData({ fbVisible: true, fbContent: '', fbContact: '' })
+  },
+
+  closeFeedback() {
+    this.setData({ fbVisible: false })
+  },
+
+  onFbInput(e: any) {
+    this.setData({ fbContent: e.detail.value })
+  },
+
+  onFbContact(e: any) {
+    this.setData({ fbContact: e.detail.value })
+  },
+
+  submitFeedback() {
+    if (this.data.fbSubmitting) return
+    const content = (this.data.fbContent || '').trim()
+    if (!content) {
+      toast('请先写一下问题')
+      return
+    }
+    this.setData({ fbSubmitting: true })
+    contentApi
+      .feedback({
+        content,
+        contact: (this.data.fbContact || '').trim(),
+        spotId: this.data.spot.id
+      })
+      .then(() => {
+        this.setData({ fbVisible: false, fbContent: '', fbContact: '', fbSubmitting: false })
+        toast('已反馈，谢谢！')
+      })
+      .catch((err) => {
+        this.setData({ fbSubmitting: false })
+        showError(err, '提交失败')
+      })
   }
 })

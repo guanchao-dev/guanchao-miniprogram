@@ -83,6 +83,51 @@
 
       <!-- 来源 -->
       <view class="source" wx:if="{{spot.source}}">来源：{{spot.source}}</view>
+
+      <!-- 反馈入口：把问题直接发给管理员 -->
+      <view class="fb-entry" bindtap="openFeedback" hover-class="tap">
+        <text>点位有问题？点这里反馈给我们</text>
+        <text class="fb-entry-arrow">›</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 反馈弹窗（居中，结构参照 achieve 的 medal-modal）-->
+  <view class="fb-mask" wx:if="{{fbVisible}}" bindtap="closeFeedback" catchtouchmove="noop">
+    <view class="fb-sheet" catchtap="noop">
+      <view class="fb-head">
+        <text class="fb-title">反馈问题</text>
+        <view class="fb-close" bindtap="closeFeedback" hover-class="tap">×</view>
+      </view>
+
+      <!-- 内容区可滚动：小屏 / 键盘弹起时也不会把按钮挤出屏幕 -->
+      <scroll-view scroll-y class="fb-body">
+        <text class="fb-spot" wx:if="{{spot.name}}">关于：{{spot.name}}</text>
+        <textarea
+          class="fb-input"
+          value="{{fbContent}}"
+          placeholder="哪里不对？比如位置不准、已经关闭、有危险…"
+          placeholder-class="fb-ph"
+          maxlength="500"
+          cursor-spacing="24"
+          bindinput="onFbInput"
+        />
+        <input
+          class="fb-contact"
+          value="{{fbContact}}"
+          placeholder="联系方式（选填）"
+          placeholder-class="fb-ph"
+          maxlength="60"
+          cursor-spacing="24"
+          bindinput="onFbContact"
+        />
+      </scroll-view>
+
+      <view class="fb-foot">
+        <view class="fb-submit {{fbSubmitting ? 'disabled' : ''}}" bindtap="submitFeedback" hover-class="tap">
+          <text>{{fbSubmitting ? '提交中…' : '提交反馈'}}</text>
+        </view>
+      </view>
     </view>
   </view>
 </view>

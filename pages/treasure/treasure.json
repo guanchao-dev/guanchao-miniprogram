@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "宝藏地点",
+  "usingComponents": {
+    "watch-ball": "/components/watch-ball/watch-ball"
+  }
+}

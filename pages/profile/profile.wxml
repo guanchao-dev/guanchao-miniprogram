@@ -12,6 +12,11 @@
           <view class="user-name">{{user.name}}</view>
           <view class="level-pill">{{user.level}}</view>
         </view>
+        <!-- 消息：管理员对反馈的回复。catchtap 避免触发整行的 goLogin -->
+        <view class="bell-btn" catchtap="goNotifications" hover-class="tap">
+          <view class="bell-icon"></view>
+          <text class="bell-dot" wx:if="{{unread > 0}}">{{unread > 99 ? '99+' : unread}}</text>
+        </view>
       </view>
     </view>
 
