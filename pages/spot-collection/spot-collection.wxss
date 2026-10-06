@@ -53,51 +53,41 @@
   color: #fff;
 }
 
-/* 一排 4 个点位图标 */
+/* 点亮墙：一排 2 个纯文本点位牌 */
 .spot-grid {
   display: flex;
   flex-wrap: wrap;
   margin-top: 24rpx;
-  padding: 20rpx 12rpx 8rpx;
+  padding: 20rpx 12rpx 12rpx;
 }
 
 .spot-cell {
-  width: 25%;
+  width: 50%;
   box-sizing: border-box;
-  padding: 10rpx 6rpx 22rpx;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  padding: 8rpx;
 }
 
-.spot-cell-icon {
-  width: 96rpx;
-  height: 96rpx;
-  border-radius: 24rpx;
-  background: #EEF2F5;
-  filter: grayscale(1);
-  opacity: 0.5;
-}
-
-/* 去过的点位点亮：恢复颜色 */
-.spot-cell.lit .spot-cell-icon {
-  background: #FFF4E8;
-  filter: none;
-  opacity: 1;
-}
-
+/* 没去过：灰底灰字 */
 .spot-cell-name {
-  margin-top: 10rpx;
-  max-width: 100%;
+  display: block;
+  padding: 18rpx 12rpx;
+  border: 3rpx solid #DCE2E7;
+  border-radius: 14rpx;
+  background: #F3F5F7;
   color: #9AA3AF;
-  font-size: 18rpx;
+  font-size: 22rpx;
+  font-weight: 700;
   text-align: center;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
+/* 去过：和成就页「已点亮」同一套金色语言 */
 .spot-cell.lit .spot-cell-name {
-  color: #1C1C1C;
-  font-weight: 750;
+  border-color: #E0A83A;
+  background: linear-gradient(180deg, #FFF7E6 0%, #FFFDF7 58%, #FFFFFF 100%);
+  box-shadow: 3rpx 3rpx 0 rgba(224, 168, 58, 0.5);
+  color: #8A5A10;
+  font-weight: 800;
 }

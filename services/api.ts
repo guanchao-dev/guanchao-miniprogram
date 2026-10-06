@@ -360,6 +360,13 @@ export const achieveApi = {
       clientTime: nowISO()
     }, { idempotency: true, auth: false })
   },
+  /**
+   * 上报服务端看不见的动作。目前只支持 deepblue_mileage（点进「深蓝百万里」）。
+   * 需登录；重复上报幂等，响应 unlockedMedalIds 非空就弹解锁动画。
+   */
+  report(event: string) {
+    return http.post('/achievements/report', { event }, { auth: false })
+  },
   /** 排行榜（全站榜）。 */
   leaderboard(params?: Record<string, any>) {
     return http.get('/achievements/leaderboard', Object.assign(

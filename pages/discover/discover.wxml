@@ -56,7 +56,7 @@
         <view class="disc">{{card.disclaimer}}</view>
         <view class="action-row">
           <view class="btn action-btn" bindtap="onFavorite" hover-class="tap">{{card.favorited ? '已收藏' : '收藏'}}</view>
-          <view class="btn action-btn share-btn" bindtap="onShare" hover-class="tap">分享</view>
+          <view class="btn action-btn share-btn" bindtap="onShare" hover-class="tap">复制文案</view>
         </view>
       </view>
     </block>

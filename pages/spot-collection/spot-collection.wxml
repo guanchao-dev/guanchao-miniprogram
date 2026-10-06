@@ -24,9 +24,9 @@
 
     <view class="empty-tip" wx:elif="{{!list.length}}">暂无赶海点数据</view>
 
+    <!-- 点亮墙：去过的像成就页一样金边点亮，没去过的置灰；纯文本，不用图标 -->
     <view class="spot-grid card" wx:else>
       <view class="spot-cell {{item.visited ? 'lit' : ''}}" wx:for="{{list}}" wx:key="id">
-        <image class="spot-cell-icon" src="{{item.icon}}" mode="aspectFit"></image>
         <text class="spot-cell-name">{{item.name}}</text>
       </view>
     </view>

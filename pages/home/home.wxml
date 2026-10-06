@@ -25,7 +25,7 @@
 
   <view class="page-content">
     <view class="top-row">
-      <view class="place-chip">
+      <view class="place-chip" bindtap="onTapPlace" hover-class="tap">
         <image class="place-icon" src="https://www.blueakaiwu.cn/api/v1/static/assets/home/home-pin.png" mode="aspectFit"></image>
         <text>{{place}}</text>
       </view>
@@ -133,6 +133,12 @@
 
       <!-- 核心判断：一句话告诉游客现在能不能去 -->
       <view class="adv-verdict {{advice.suitableNow ? 'go' : 'no'}}">{{advice.verdict}}</view>
+
+      <!-- 后端每天预生成的建议文案 -->
+      <view class="adv-copy" wx:if="{{advice.headline || advice.body}}">
+        <text class="adv-copy-headline" wx:if="{{advice.headline}}">{{advice.headline}}</text>
+        <text class="adv-copy-body" wx:if="{{advice.body}}">{{advice.body}}</text>
+      </view>
 
       <!-- 适合赶海时才显示具体时间和推荐地点 -->
       <block wx:if="{{advice.suitableNow}}">

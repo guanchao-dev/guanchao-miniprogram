@@ -8,7 +8,7 @@
     <view class="section-head" wx:if="{{spots.length}}"><text class="section-title">赶海点</text></view>
     <view class="card list-card" wx:for="{{spots}}" wx:key="id" data-id="{{item.id}}" bindtap="openSpot" hover-class="tap">
       <view class="list-title">{{item.name}}</view>
-      <view class="list-meta">{{item.city}} {{item.observeHint}}</view>
+      <view class="list-meta">{{item.district || item.city}} {{item.observeHint}}</view>
     </view>
     <view class="section-head" wx:if="{{species.length}}"><text class="section-title">图鉴</text></view>
     <view class="card list-card" wx:for="{{species}}" wx:key="id" data-id="{{item.id}}" bindtap="openWiki" hover-class="tap">

@@ -455,6 +455,30 @@
   color: #5A6878;
 }
 
+/* 预生成的建议文案 */
+.adv-copy {
+  margin: 4rpx 28rpx 0;
+  padding: 18rpx 22rpx;
+  border-radius: 20rpx;
+  background: #FFFFFF;
+  border: 3rpx solid #E4DDCF;
+}
+
+.adv-copy-headline {
+  display: block;
+  font-size: 30rpx;
+  font-weight: 900;
+  color: #102A3D;
+}
+
+.adv-copy-body {
+  display: block;
+  margin-top: 8rpx;
+  font-size: 27rpx;
+  line-height: 1.55;
+  color: #46566A;
+}
+
 /* 关键数据：两列 */
 .adv-stats {
   display: flex;

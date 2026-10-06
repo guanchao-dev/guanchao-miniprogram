@@ -18,6 +18,7 @@ Page({
       { id: 'fish', name: '鱼类' },
       { id: 'other', name: '其他' }
     ],
+    keyword: '',
     loading: true,
     list: [],
     emptyText: '暂无图鉴',
@@ -33,6 +34,14 @@ Page({
 
   onCat(e: any) {
     this.setData({ category: e.currentTarget.dataset.id || '' })
+    this.load()
+  },
+
+  onInput(e: any) {
+    this.setData({ keyword: e.detail.value || '' })
+  },
+
+  onSearch() {
     this.load()
   },
 
@@ -81,9 +90,15 @@ Page({
       this.loadFavorites()
       return
     }
-    this.setData({ loading: true, list: [], emptyText: '暂无图鉴' })
+    const keyword = (this.data.keyword || '').trim()
+    this.setData({
+      loading: true,
+      list: [],
+      emptyText: keyword ? '没有找到相关内容' : '暂无图鉴'
+    })
     const params: Record<string, any> = { page: 1, pageSize: 50 }
     if (this.data.category) params.category = this.data.category
+    if (keyword) params.keyword = keyword
     contentApi.encyclopedia(params)
       .then((res) => this.paint(res.list || []))
       .catch((err) => {

@@ -1,5 +1,5 @@
 import { DEFAULT_SPOT_ID } from '../../config/env'
-import { aiApi, contentApi, homeApi, watchApi } from '../../services/api'
+import { achieveApi, aiApi, contentApi, homeApi, watchApi } from '../../services/api'
 import { requireLogin } from '../../utils/auth'
 import { nowISO, nowTime, showError, todayDate, toast } from '../../utils/format'
 import { chooseImage, mediaUrl, preloadImage, uploadImage } from '../../utils/upload'
@@ -166,8 +166,9 @@ Page({
   _lastWatching: false,
 
   data: {
-    // 顶部「当前城市」：由 refreshPlace() 按真实定位反查后填入，不再是写死的青岛
-    place: '定位中',
+    // 顶部「当前城市」：按缓存定位反查后填入；未定位时显示「点击定位」，点击后才申请位置权限
+    place: '点击定位',
+    locating: false,
     watchLabel: '开始观潮',
     watchClass: '',
     advice: {},
@@ -426,21 +427,63 @@ Page({
   },
 
   /**
-   * 顶部「当前城市」：按真实定位反查，而不是写死青岛。
-   * 拿不到定位或反查失败时显示「未定位」——宁可空着，也不显示一个错的城市。
+   * 顶部「当前城市」：只用已缓存定位反查城市，不在页面加载时主动拉起定位授权。
+   * 没有缓存时显示「点击定位」，由用户点击芯片后再申请位置权限。
    */
-  async refreshPlace() {
-    const loc = await requestLocation()
+  refreshPlace() {
+    const loc = getCachedLocation()
     if (!loc) {
-      this.setData({ place: '未定位' })
+      this.setData({ place: '点击定位' })
       return
     }
-    try {
-      const geo: any = await contentApi.resolveCity(loc.lat, loc.lng)
-      this.setData({ place: (geo && geo.city) || '未定位' })
-    } catch (e) {
-      this.setData({ place: '未定位' })
-    }
+    this.paintPlace(loc)
+  },
+
+  /** 反查城市名并写入顶部芯片，失败时回到「点击定位」 */
+  paintPlace(loc: { lat: number; lng: number }) {
+    contentApi.resolveCity(loc.lat, loc.lng)
+      .then((geo: any) => this.setData({ place: (geo && geo.city) || '点击定位' }))
+      .catch(() => this.setData({ place: '点击定位' }))
+  },
+
+  /**
+   * 点击顶部「当前城市」：主动申请位置权限。
+   * 首次点击会弹出微信的位置授权弹窗；此前拒绝过则引导去设置页重新开启。
+   */
+  onTapPlace() {
+    if (this.data.locating) return
+    this.setData({ locating: true, place: '定位中' })
+    requestLocation(true)
+      .then((loc) => {
+        if (!loc) {
+          this.setData({ place: '点击定位' })
+          this.guideOpenSetting()
+          return
+        }
+        this.paintPlace(loc)
+      })
+      .catch(() => this.setData({ place: '点击定位' }))
+      .finally(() => this.setData({ locating: false }))
+  },
+
+  /** 用户拒绝过授权后微信不会再弹窗，只能引导去设置页手动开启 */
+  guideOpenSetting() {
+    wx.getSetting({
+      success: (res: any) => {
+        if (res.authSetting['scope.userLocation'] === false) {
+          wx.showModal({
+            title: '需要位置权限',
+            content: '开启后才能推荐你附近的赶海点位，是否前往设置？',
+            confirmText: '去设置',
+            success: (r: any) => {
+              if (r.confirm) wx.openSetting({})
+            }
+          })
+          return
+        }
+        toast('定位失败，请稍后重试')
+      }
+    })
   },
 
   loadToday() {
@@ -477,7 +520,8 @@ Page({
 
   loadRecommended() {
     this.setData({ recLoading: true })
-    loadGuideSpots()
+    // 静默加载：只用已缓存定位，不在这里申请位置权限（否则一进首页就弹授权）
+    loadGuideSpots(true)
       .then((list) => this.setData({ recommended: (list || []).slice(0, 3) }))
       .catch(() => this.setData({ recommended: [] }))
       .finally(() => this.setData({ recLoading: false }))
@@ -516,8 +560,23 @@ Page({
     this.setData({ activityIndex: e.detail.current })
   },
 
+  /**
+   * 「深蓝百万里」是用户点链接的动作，服务端看不见，只能前端上报解锁成就。
+   * 先上报再跳转，但不阻塞跳转；未登录会 401，静默忽略。
+   */
+  reportDeepBlueMileage(title: string) {
+    if (title !== '深蓝百万里') return
+    achieveApi.report('deepblue_mileage')
+      .then((res: any) => {
+        enqueueUnlocks((res && res.unlockedMedalIds) || [], 'report')
+        flushUnlocks(this)
+      })
+      .catch(() => {})
+  },
+
   onActivity(e: any) {
     const item = e.currentTarget.dataset.item || {}
+    this.reportDeepBlueMileage(String(item.title || ''))
     // 跳第三方小程序（如深蓝两万里官方小程序），必须由用户点击触发
     if (item.appId) {
       wx.navigateToMiniProgram({
@@ -560,6 +619,8 @@ Page({
   onRefreshAdvice() {
     // 获取用户当前坐标传给后端，拿推荐时间与推荐地点
     requestLocation().then((loc) => {
+      // 其他入口拿到定位后，顶部芯片同步补上城市名
+      if (loc && this.data.place === '点击定位') this.paintPlace(loc)
       const spotId = this.data.spotId || DEFAULT_SPOT_ID
       const date = todayDate()
       const lat = loc ? loc.lat : undefined
@@ -594,7 +655,10 @@ Page({
       verdict: suitable ? `${from}适合赶海` : '目前不适合赶海',
       bestWindow: from && to ? `${from}-${to}` : '',
       leaveBefore: to || '',
-      recommendedSpots: spots
+      recommendedSpots: spots,
+      // 后端每天 4 点预生成的建议文案（headline 标题 / body 正文），库里没有时为空
+      headline: (raw && raw.headline) || '',
+      body: (raw && raw.body) || ''
     }
   },
 
@@ -669,6 +733,9 @@ Page({
       .then((uploadId) => aiApi.trashGuess({ uploadId, spotId: this.data.spotId, clientTime: nowISO() }))
       .then((res) => {
         wx.hideLoading()
+        // 判定为垃圾时可能解锁「深蓝小卫士」（medal_14）
+        enqueueUnlocks((res && res.unlockedMedalIds) || [], 'trash')
+        flushUnlocks(this)
         this.setData({ showTrash: true, trash: res || {}, trashItems: normalizeTrashItems(res) })
       })
       .catch((err) => {
@@ -714,7 +781,7 @@ Page({
     }
     const session = getWatchSession()
     if (!session) {
-      toast('先点首页的「开始观潮」，识别结果才会记入记录')
+      toast('先点「开始观潮」，识别结果才会记录')
       return
     }
     const entry = {
@@ -733,16 +800,19 @@ Page({
     if (session.id) {
       watchApi.addSpecies(session.id, entry)
         .then((res: any) => {
+          // 集齐「螺」等勋章会随本次记入一起返回
+          enqueueUnlocks((res && res.unlockedMedalIds) || [], 'watch')
           const lit = res && res.newlyLitSpecies
-          if (!lit) return
-          enqueueUnlocks([{
-            medalId: lit.id,   // 解锁队列按 medalId 去重
-            id: lit.id,
-            title: lit.name,
-            description: '已收录进你的观潮图鉴',
-            icon: mediaUrl(lit.coverUrl || ''),
-            source: 'species'
-          }], 'species')
+          if (lit) {
+            enqueueUnlocks([{
+              medalId: lit.id,   // 解锁队列按 medalId 去重
+              id: lit.id,
+              title: lit.name,
+              description: '已收录进你的观潮图鉴',
+              icon: mediaUrl(lit.coverUrl || ''),
+              source: 'species'
+            }], 'species')
+          }
           flushUnlocks(this)
         })
         .catch(() => {})
@@ -761,7 +831,7 @@ Page({
     if (!item || item.confirmed) return
     const session = getWatchSession()
     if (!session) {
-      toast('先点首页的「开始观潮」，识别结果才会记入记录')
+      toast('先点「开始观潮」，识别结果才会记录')
       return
     }
     // 垃圾每天只允许记一次（拍照识别的生物不受限制）。
@@ -795,6 +865,8 @@ Page({
             toast('今天已经记过一次垃圾了，明天再来捡吧')
             return
           }
+          enqueueUnlocks((res && res.unlockedMedalIds) || [], 'watch')
+          flushUnlocks(this)
           addWatchItem(entry)
           done()
         })

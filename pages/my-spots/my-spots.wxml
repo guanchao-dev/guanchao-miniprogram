@@ -17,7 +17,7 @@
     <block wx:else>
       <view class="header-bar">
         <text class="header-count">共 {{mine.length}} 条记录</text>
-        <view class="header-btn" bindtap="goCreate" hover-class="tap">+ 记录新赶海点</view>
+        <view class="header-btn" bindtap="goCreate" hover-class="tap">+ 记录新宝藏点位</view>
       </view>
 
       <view class="card empty-card" wx:if="{{empty}}">

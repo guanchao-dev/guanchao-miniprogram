@@ -66,6 +66,8 @@
 
 .unlock-stage {
   position: relative;
+  /* 自成层，保证星星/光环只盖在勋章图上，不会飞到上方文案里 */
+  z-index: 1;
   width: 380rpx;
   height: 380rpx;
   margin: 28rpx 0 36rpx;
@@ -79,59 +81,43 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 240rpx;
-  height: 240rpx;
-  border: 6rpx solid #1C1C1C;
-  border-radius: 50%;
-  background: radial-gradient(circle at 40% 30%, #FFF8E4, #F6D081 55%, #34B8C5);
-  box-shadow: 6rpx 6rpx 0 rgba(28, 28, 28, 0.85);
+  width: 340rpx;
+  height: 340rpx;
   transform: translate(-50%, -50%);
 }
 
 .unlock-badge image {
-  width: 168rpx;
-  height: 168rpx;
-}
-
-.spark {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: var(--size, 12rpx);
-  height: var(--size, 12rpx);
-  margin: calc(var(--size, 12rpx) / -2) 0 0 calc(var(--size, 12rpx) / -2);
-  border-radius: 50%;
-  opacity: 0;
-  transform: rotate(var(--deg)) translateY(0) scale(0.2);
-}
-
-.spark.go {
-  animation: spark-fly 760ms ease-out forwards;
-  animation-delay: var(--delay);
+  width: 340rpx;
+  height: 340rpx;
 }
 
 .burst-ring {
   position: absolute;
   left: 50%;
   top: 50%;
-  width: 120rpx;
-  height: 120rpx;
-  margin: -60rpx 0 0 -60rpx;
-  border: 6rpx solid #F6D081;
+  z-index: 2;
+  /* 起始直径调大，扩散后能超出放大后的勋章图，形成外圈光环 */
+  width: 240rpx;
+  height: 240rpx;
+  margin: -120rpx 0 0 -120rpx;
+  border: 8rpx solid #F6D081;
   border-radius: 50%;
   opacity: 0;
+  box-shadow: 0 0 24rpx rgba(246, 208, 129, 0.85);
 }
 
 .burst-ring.late {
   border-color: #34B8C5;
+  box-shadow: 0 0 24rpx rgba(52, 184, 197, 0.85);
 }
 
 .burst-ring.go {
-  animation: ring-pop 720ms ease-out forwards;
+  /* 循环播放，两圈错开半周期，形成持续扩散的光环 */
+  animation: ring-pop 1600ms ease-out infinite;
 }
 
 .burst-ring.late.go {
-  animation-delay: 90ms;
+  animation-delay: 800ms;
 }
 
 .unlock-btn {
@@ -151,24 +137,17 @@
   box-shadow: 4rpx 4rpx 0 rgba(28, 28, 28, 0.85);
 }
 
-@keyframes spark-fly {
-  0% {
-    opacity: 1;
-    transform: rotate(var(--deg)) translateY(0) scale(1);
-  }
-  100% {
-    opacity: 0;
-    transform: rotate(var(--deg)) translateY(calc(var(--dist) * -1)) scale(0.2);
-  }
-}
-
 @keyframes ring-pop {
   0% {
-    opacity: 0.9;
-    transform: scale(0.6);
+    opacity: 0.95;
+    transform: scale(0.75);
+  }
+  /* 中段才慢淡，光环扩散更持久 */
+  70% {
+    opacity: 0.45;
   }
   100% {
     opacity: 0;
-    transform: scale(2.4);
+    transform: scale(2.6);
   }
 }

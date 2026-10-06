@@ -27,39 +27,14 @@ export type GuideSpot = {
   navName?: string
 }
 
-const CITY = '青岛'
+export const CITY = '青岛'
 
 /**
- * 内置默认赶海点：后端未收录 / 接口不可用时也一定展示。
- * 后端返回同 id 点位时会覆盖本地条目。
+ * 内置兜底赶海点。后端已收录全部点位，这里不再内置任何条目 ——
+ * 之前内置的红石崖 id 与后端对不上，会作为第二个「红石崖」重复追加，且坐标在海里。
+ * 后端恢复收录时由接口返回，不需要前端兜底。
  */
-const FALLBACK_SPOTS: GuideSpot[] = [
-  {
-    id: 'spot_qd_hongshiya',
-    name: '红石崖',
-    city: '黄岛',
-    district: '黄岛区',
-    heat: 70,
-    // 近似坐标（胶州湾西南岸红石崖街道沿海），导航以地名为准，待后端按实地校正
-    latitude: 36.1085,
-    longitude: 120.2355,
-    coverUrl: '',
-    icon: 'https://www.blueakaiwu.cn/api/v1/static/assets/home/home-nearby.png',
-    photos: [],
-    openTime: '全年开放（退潮时段）',
-    observeHint: '泥滩地，适合赶海老手，新手容易陷在泥坑、迷路，特别是晚上！建议穿连体涉水裤',
-    safetyTags: ['泥滩易陷', '新手夜间勿入', '穿连体涉水裤'],
-    species: [
-      { name: '皮皮虾' },
-      { name: '海螺' },
-      { name: '八爪鱼' },
-      { name: '螃蟹' },
-      { name: '毛蛤' }
-    ],
-    navName: '红石崖赶海停车场',
-    distanceText: ''
-  }
-]
+const FALLBACK_SPOTS: GuideSpot[] = []
 
 
 function toRad(deg: number): number {
@@ -206,8 +181,9 @@ export function getCachedLocation(): { lat: number; lng: number } | null {
   return null
 }
 
-export function requestLocation(): Promise<{ lat: number; lng: number } | null> {
-  const cached = getCachedLocation()
+/** force=true 时忽略缓存，强制调一次 wx.getLocation（用户点击定位时用它拉起授权弹窗） */
+export function requestLocation(force = false): Promise<{ lat: number; lng: number } | null> {
+  const cached = force ? null : getCachedLocation()
   if (cached) return Promise.resolve(cached)
   return new Promise((resolve) => {
     wx.getLocation({
@@ -247,8 +223,13 @@ export function withFallbackSpots(list: GuideSpot[], loc?: { lat: number; lng: n
     .sort((a, b) => b.heat - a.heat)
 }
 
-export function loadGuideSpots(): Promise<GuideSpot[]> {
-  return requestLocation().then((loc) => {
+/**
+ * silent=true 时只用已缓存定位，不主动申请位置权限。
+ * 用于页面加载场景（如首页推荐位），避免一进页面就弹出定位授权。
+ */
+export function loadGuideSpots(silent = false): Promise<GuideSpot[]> {
+  const ready = silent ? Promise.resolve(getCachedLocation()) : requestLocation()
+  return ready.then((loc) => {
     const params: Record<string, any> = { city: CITY, page: 1, pageSize: 50 }
     if (loc) {
       params.lat = loc.lat

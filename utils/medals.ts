@@ -82,7 +82,7 @@ export function buildMedalDetail(medal: any, detail: any, index = 0) {
     requirements: (merged.requirements || []).map((row: any) => (
       typeof row === 'string' ? { text: row, done: !merged.locked } : row
     )),
-    starReward: rewards.star || 0,
-    shellReward: rewards.shell || 1
+    // 后端 rewards 只有 {"score": N}，N 就是经验值
+    exp: rewards.score || 0
   })
 }

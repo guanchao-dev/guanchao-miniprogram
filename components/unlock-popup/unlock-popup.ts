@@ -1,22 +1,5 @@
 import { ackUnlock, flushUnlocks } from '../../utils/unlock'
 
-const COLORS = ['#F6D081', '#34B8C5', '#FFFFFF', '#A7D9C7', '#1888BF']
-
-function buildSparks() {
-  const list: any[] = []
-  for (let i = 0; i < 16; i++) {
-    list.push({
-      i,
-      deg: i * 22.5,
-      delay: (i % 5) * 40,
-      dist: 140 + (i % 4) * 28,
-      size: 10 + (i % 3) * 4,
-      color: COLORS[i % COLORS.length]
-    })
-  }
-  return list
-}
-
 Component({
   data: {
     visible: false,
@@ -24,7 +7,8 @@ Component({
     medal: { title: '', description: '', icon: '', id: '', source: 'pending' },
     // 「图鉴点亮」复用同一个弹窗，只是文案不同
     kicker: '恭喜你成功解锁徽章！',
-    sparks: buildSparks()
+    // 回放模式：只播动画，不 ack、不清队列、不跳转
+    replay: false
   },
 
   methods: {
@@ -32,11 +16,14 @@ Component({
       return this.data.visible
     },
 
-    show(medal: any) {
+    /** opts.ack === false 表示纯回放：只播动画，不向后端上报 */
+    show(medal: any, opts?: { ack?: boolean }) {
       const isSpecies = !!(medal && medal.source === 'species')
+      const ack = !(opts && opts.ack === false)
       this.setData({
         visible: true,
         burst: false,
+        replay: !ack,
         kicker: isSpecies ? '图鉴点亮！' : '恭喜你成功解锁徽章！',
         medal: medal || this.data.medal
       })
@@ -49,18 +36,24 @@ Component({
         try { wx.vibrateShort({ type: 'medium' }) } catch (err) {}
       }, 120)
       setTimeout(() => this.setData({ burst: true }), 40)
-      ackUnlock(medal && medal.id, (medal && medal.source) || 'pending')
+      if (ack) ackUnlock(medal && medal.id, (medal && medal.source) || 'pending')
     },
 
     onClose() {
+      const replay = this.data.replay
       this.setData({ visible: false, burst: false })
+      // 回放模式不动待解锁队列，避免误触发别的解锁弹窗
+      if (replay) return
       const pages = getCurrentPages()
       flushUnlocks(pages[pages.length - 1])
     },
 
     onView() {
       const medal: any = this.data.medal
+      const replay = this.data.replay
       this.setData({ visible: false, burst: false })
+      // 回放：当前就在勋章详情页，直接关闭，不再跳转
+      if (replay) return
       // 图鉴点亮 → 跳到该物种详情；勋章 → 跳勋章详情页
       if (medal && medal.source === 'species') {
         wx.navigateTo({ url: `/pages/wiki-detail/wiki-detail?id=${medal.id || ''}` })

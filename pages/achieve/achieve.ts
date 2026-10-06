@@ -9,7 +9,7 @@ import { ONBOARDING_STEPS } from '../../utils/onboardingSteps'
 Page({
   data: {
     score: 0,
-    total: 320,
+    total: 1320,
     percent: 0,
     unlockedCount: 0,
     medalTotal: 18,
@@ -66,7 +66,7 @@ Page({
       .then((data) => {
         this.setData({
           score: data.score || 0,
-          total: data.total || 320,
+          total: data.total || 1320,
           percent: data.percent || 0,
           unlockedCount: data.unlockedCount || 0,
           medalTotal: data.medalTotal || 18

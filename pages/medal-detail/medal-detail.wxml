@@ -18,7 +18,8 @@
         <view class="medal-ring ring-a"></view>
         <view class="medal-ring ring-b"></view>
 
-        <view class="medal-orb">
+        <!-- 点击徽章圆圈：重播解锁弹窗动画（纯前端回放，不再请求后端） -->
+        <view class="medal-orb" bindtap="replayUnlock" hover-class="tap">
           <view class="medal-glow"></view>
           <image class="medal-orb-img" src="{{medal.icon}}" mode="aspectFit"></image>
           <view class="sweep-clip" wx:if="{{!medal.locked}}">
@@ -47,14 +48,11 @@
 
       <view class="medal-section card sec-2">
         <text class="medal-section-title">解锁奖励</text>
-        <view class="reward-list">
+        <view class="medal-none" wx:if="{{!medal.exp}}">暂无奖励说明</view>
+        <view class="reward-list" wx:else>
           <view class="reward-item">
-            <text class="reward-star">★</text>
-            <text>x{{medal.starReward}}</text>
-          </view>
-          <view class="reward-item">
-            <view class="reward-shell">◆</view>
-            <text>x{{medal.shellReward}}</text>
+            <text class="reward-exp">经验</text>
+            <text>+{{medal.exp}}</text>
           </view>
         </view>
       </view>
@@ -74,4 +72,6 @@
       </view>
     </block>
   </view>
+
+  <unlock-popup id="unlockPopup" />
 </view>

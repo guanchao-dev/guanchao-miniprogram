@@ -7,7 +7,7 @@
   <view class="page-content">
     <view class="hero">
       <view class="hero-title">记录赶海点</view>
-      <view class="hero-sub">仅自己可见的赶海记录，其他人看不到，下次一键导航</view>
+      <view class="hero-sub">仅自己可见的宝藏点位，其他人看不到，下次一键导航</view>
     </view>
 
     <!-- 地图选点 -->

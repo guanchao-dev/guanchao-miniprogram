@@ -1,3 +1,18 @@
+/* ===== 顶部搜索框 ===== */
+.wiki-search {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  padding: 16rpx;
+  margin-bottom: 20rpx;
+}
+
+.wiki-search input {
+  flex: 1;
+  height: 64rpx;
+  padding: 0 16rpx;
+}
+
 .species-grid {
   display: flex;
   flex-wrap: wrap;

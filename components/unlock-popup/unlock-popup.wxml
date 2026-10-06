@@ -11,12 +11,6 @@
   </view>
 
   <view class="unlock-stage">
-    <view
-      class="spark {{burst ? 'go' : ''}}"
-      wx:for="{{sparks}}"
-      wx:key="i"
-      style="--deg: {{item.deg}}deg; --delay: {{item.delay}}ms; --dist: {{item.dist}}rpx; --size: {{item.size}}rpx; background: {{item.color}};"
-    ></view>
     <view class="burst-ring {{burst ? 'go' : ''}}"></view>
     <view class="burst-ring late {{burst ? 'go' : ''}}"></view>
     <view class="unlock-badge">
