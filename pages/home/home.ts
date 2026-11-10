@@ -341,7 +341,10 @@ Page({
       })
       return
     }
-    // 未开始：先选观潮地点（推荐点位 / 地图自选），选定即开始
+    // 未开始：开始新观潮要写服务端记录，后端已要求登录；
+    // 先拦在选点之前，避免用户选完地点/拍完照才 401。
+    // 已有本地会话的“结束观潮”不受影响，仍可先结束。
+    if (!requireLogin()) return
     this.openSpotPicker()
   },
 
@@ -461,6 +464,8 @@ Page({
           return
         }
         this.paintPlace(loc)
+        // 定位拿到后立刻刷新热度榜距离，不用用户再手动刷新
+        this.loadRecommended()
       })
       .catch(() => this.setData({ place: '点击定位' }))
       .finally(() => this.setData({ locating: false }))
@@ -521,10 +526,30 @@ Page({
   loadRecommended() {
     this.setData({ recLoading: true })
     // 静默加载：只用已缓存定位，不在这里申请位置权限（否则一进首页就弹授权）
-    loadGuideSpots(true)
-      .then((list) => this.setData({ recommended: (list || []).slice(0, 3) }))
-      .catch(() => this.setData({ recommended: [] }))
-      .finally(() => this.setData({ recLoading: false }))
+    const apply = () => {
+      loadGuideSpots(true)
+        .then((list) => this.setData({ recommended: (list || []).slice(0, 3) }))
+        .catch(() => this.setData({ recommended: [] }))
+        .finally(() => this.setData({ recLoading: false }))
+    }
+    if (getCachedLocation()) {
+      apply()
+      return
+    }
+    // 不在首页主动弹定位授权。只有用户此前已经授权过，才静默补一次坐标；
+    // 没授权就先用「距离待测」，等用户点顶部定位再说。
+    wx.getSetting({
+      success: (res: any) => {
+        if (res.authSetting && res.authSetting['scope.userLocation'] === true) {
+          requestLocation()
+            .then(() => apply())
+            .catch(() => apply())
+        } else {
+          apply()
+        }
+      },
+      fail: () => apply()
+    })
   },
 
   /** 相关活动：以后端配置为准，接口未上线或返回为空时展示科普 / 研学两个默认主题 */
@@ -621,6 +646,8 @@ Page({
     requestLocation().then((loc) => {
       // 其他入口拿到定位后，顶部芯片同步补上城市名
       if (loc && this.data.place === '点击定位') this.paintPlace(loc)
+      // 这里也可能首次拿到坐标，顺手把首页热度榜距离刷新出来
+      if (loc) this.loadRecommended()
       const spotId = this.data.spotId || DEFAULT_SPOT_ID
       const date = todayDate()
       const lat = loc ? loc.lat : undefined
@@ -675,6 +702,8 @@ Page({
   },
 
   onGuess() {
+    // 上传和 AI 识别都要求登录；先拦截，避免用户拍完照才 401
+    if (!requireLogin()) return
     chooseImage()
       .then((filePath) => {
         this.setData({ guessImage: filePath })
@@ -724,6 +753,7 @@ Page({
 
   /** 垃圾识别：拍照 → 上传 → 识物 + 判定类别（可回收 / 有害 / 厨余 / 其他） */
   onTrashGuess() {
+    if (!requireLogin()) return
     chooseImage()
       .then((filePath) => {
         this.setData({ trashImage: filePath })

@@ -50,9 +50,17 @@ export function haversineM(lat1: number, lng1: number, lat2: number, lng2: numbe
   return 2 * r * Math.asin(Math.min(1, Math.sqrt(a)))
 }
 
-export function formatDistance(m?: number): string {
-  const n = Number(m)
-  if (!n && n !== 0) return '距离待测'
+/** 把后端可能返回的 null / '' / NaN / 负数统一成 undefined，避免被 Number() 变成 0 */
+export function toDistanceM(value: any): number | undefined {
+  if (value === null || value === undefined || value === '') return undefined
+  const n = Number(value)
+  if (!Number.isFinite(n) || n < 0) return undefined
+  return n
+}
+
+export function formatDistance(value?: number | string | null): string {
+  const n = toDistanceM(value)
+  if (n === undefined) return '距离待测'
   if (n >= 1000) return `${(n / 1000).toFixed(1)}km`
   return `${Math.round(n)}m`
 }
@@ -106,6 +114,7 @@ export function mergeGuideSpots(apiList: any[], loc?: { lat: number; lng: number
     }
     const lat = Number(item.latitude || item.lat)
     const lng = Number(item.longitude || item.lng)
+    const parsedDistance = toDistanceM(item.distanceM)
     map[item.id] = Object.assign({}, base, {
       name: cityName(item.name) || base.name,
       city: item.city || base.city,
@@ -119,7 +128,7 @@ export function mergeGuideSpots(apiList: any[], loc?: { lat: number; lng: number
       safetyTags: (item.safetyTags && item.safetyTags.length) ? item.safetyTags : base.safetyTags,
       photos: photosOf(item, base.photos),
       species: speciesOf(item, base.species),
-      distanceM: item.distanceM != null ? Number(item.distanceM) : base.distanceM,
+      distanceM: parsedDistance !== undefined ? parsedDistance : base.distanceM,
       navName: item.navName || item.parkingName || base.navName
     })
   })
@@ -181,6 +190,17 @@ export function getCachedLocation(): { lat: number; lng: number } | null {
   return null
 }
 
+/** 任何页面拿到定位后都写回这里，首页/详情页才能复用并显示距离 */
+export function setCachedLocation(lat: number, lng: number): { lat: number; lng: number } {
+  const loc = { lat, lng }
+  const app = getApp()
+  if (app.globalData) {
+    app.globalData.userLat = loc.lat
+    app.globalData.userLng = loc.lng
+  }
+  return loc
+}
+
 /** force=true 时忽略缓存，强制调一次 wx.getLocation（用户点击定位时用它拉起授权弹窗） */
 export function requestLocation(force = false): Promise<{ lat: number; lng: number } | null> {
   const cached = force ? null : getCachedLocation()
@@ -189,15 +209,7 @@ export function requestLocation(force = false): Promise<{ lat: number; lng: numb
     wx.getLocation({
       type: 'gcj02',
       isHighAccuracy: true,
-      success: (res: any) => {
-        const loc = { lat: res.latitude, lng: res.longitude }
-        const app = getApp()
-        if (app.globalData) {
-          app.globalData.userLat = loc.lat
-          app.globalData.userLng = loc.lng
-        }
-        resolve(loc)
-      },
+      success: (res: any) => resolve(setCachedLocation(res.latitude, res.longitude)),
       fail: () => resolve(null)
     })
   })
@@ -214,8 +226,8 @@ export function withFallbackSpots(list: GuideSpot[], loc?: { lat: number; lng: n
   return list
     .concat(extra)
     .map((spot) => {
-      let distanceM = spot.distanceM
-      if ((distanceM == null || Number.isNaN(distanceM)) && loc && spot.latitude && spot.longitude) {
+      let distanceM = toDistanceM(spot.distanceM)
+      if (distanceM === undefined && loc && spot.latitude && spot.longitude) {
         distanceM = haversineM(loc.lat, loc.lng, spot.latitude, spot.longitude)
       }
       return Object.assign({}, spot, { distanceM, distanceText: formatDistance(distanceM) })

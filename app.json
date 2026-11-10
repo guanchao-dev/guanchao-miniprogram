@@ -11,6 +11,8 @@
     "pages/login/login",
     "pages/discover/discover",
     "pages/cards/cards",
+    "pages/aquarium/aquarium",
+    "pages/aquarium-add/aquarium-add",
     "pages/search/search",
     "pages/calendar/calendar",
     "pages/tide/tide",

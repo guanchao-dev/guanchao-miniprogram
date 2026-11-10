@@ -1,4 +1,5 @@
 import { contentApi } from '../../services/api'
+import { isLoggedIn, requireLogin } from '../../utils/auth'
 import { toast, showError } from '../../utils/format'
 import { mediaUrl } from '../../utils/upload'
 import { openSpotMap } from '../../utils/amapNav'
@@ -40,6 +41,8 @@ Page({
     mine: [] as MineItem[]
   },
 
+  loginPrompted: false,
+
   onLoad() {
     // 一次性清理历史遗留：早期版本会把上传的点位另存一份到本地（接口不通时的 mock 兜底）。
     // 那份副本 id 与后端不同、按 id 删不掉，一旦被当成数据源显示出来，
@@ -52,15 +55,27 @@ Page({
   },
 
   onShow() {
+    if (!isLoggedIn()) {
+      this.setData({ loading: false, showLoading: false, empty: true, mine: [] })
+      // 只自动弹一次登录，避免用户取消后被反复推去登录页
+      if (!this.loginPrompted) {
+        this.loginPrompted = true
+        requireLogin()
+      }
+      return
+    }
+    this.loginPrompted = false
     this.loadMine()
   },
 
   goCreate() {
+    if (!requireLogin()) return
     wx.navigateTo({ url: '/pages/spot-share/spot-share' })
   },
 
   /** 我的点位：自己记录过的点位，仅自己可见 */
   async loadMine() {
+    if (!isLoggedIn()) return
     this.setData({ loading: true, showLoading: !this.data.mine.length })
     try {
       const res = await contentApi.mySpots()

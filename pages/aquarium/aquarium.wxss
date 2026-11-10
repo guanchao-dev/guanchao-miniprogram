@@ -1,0 +1,492 @@
+.aquarium-page {
+  background: #FBF6EA;
+  padding-bottom: 60rpx;
+}
+
+.aquarium-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16rpx;
+  margin-bottom: 22rpx;
+}
+
+.head-copy { min-width: 0; }
+
+.eyebrow {
+  color: var(--blue);
+  font-size: 20rpx;
+  font-weight: 800;
+  letter-spacing: 1rpx;
+}
+
+.title {
+  margin-top: 6rpx;
+  font-size: 46rpx;
+  line-height: 1.05;
+  font-weight: 900;
+  letter-spacing: -1rpx;
+}
+
+.sub {
+  margin-top: 8rpx;
+  color: var(--muted);
+  font-size: 22rpx;
+  font-weight: 600;
+}
+
+.head-side {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10rpx;
+  flex-shrink: 0;
+}
+
+.count {
+  padding: 10rpx 18rpx;
+  border: 3rpx solid var(--ink);
+  border-radius: 999rpx;
+  background: #fff;
+  font-size: 22rpx;
+  font-weight: 800;
+  white-space: nowrap;
+  box-shadow: 3rpx 3rpx 0 var(--ink);
+}
+
+.clear {
+  padding: 4rpx 8rpx;
+  color: var(--muted);
+  font-size: 20rpx;
+  font-weight: 700;
+}
+
+.aquarium-tap { opacity: .78; }
+
+/* ===== 鱼缸 ===== */
+.tank {
+  position: relative;
+  height: 780rpx;
+  overflow: hidden;
+  border: 6rpx solid var(--ink);
+  border-radius: 40rpx;
+  background: linear-gradient(180deg, #8FE3F0 0%, #57C4DF 26%, #2B9BC6 58%, #0B5E86 100%);
+  box-shadow: 12rpx 12rpx 0 var(--ink);
+}
+
+.waterline {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 56rpx;
+  background: radial-gradient(120% 100% at 50% 0%, rgba(255, 255, 255, .55), transparent 70%);
+  z-index: 2;
+  pointer-events: none;
+}
+
+.rays {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.ray {
+  position: absolute;
+  top: -30%;
+  height: 130%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, .34), transparent 75%);
+  filter: blur(10rpx);
+  transform: rotate(14deg);
+  animation: rayPulse 9s ease-in-out infinite alternate;
+}
+
+.ray1 { left: 8%; width: 18%; animation-delay: -1.5s; }
+.ray2 { left: 42%; width: 12%; animation-delay: -4.2s; opacity: .7; }
+.ray3 { left: 72%; width: 16%; animation-delay: -2.4s; opacity: .55; }
+
+@keyframes rayPulse {
+  from { opacity: .35; transform: rotate(12deg) translateX(-8rpx); }
+  to { opacity: .8; transform: rotate(18deg) translateX(18rpx); }
+}
+
+/* ===== 气泡 ===== */
+.bubble-field {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 2;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.bubble {
+  position: absolute;
+  bottom: -40rpx;
+  border-radius: 50%;
+  border: 2rpx solid rgba(255, 255, 255, .55);
+  background: rgba(255, 255, 255, .16);
+  animation: bubbleRise linear infinite;
+}
+
+.b1  { width: 18rpx; height: 18rpx; left: 6%;  animation-duration: 12s; animation-delay: -2s; }
+.b2  { width: 10rpx; height: 10rpx; left: 18%; animation-duration: 9s;  animation-delay: -6s; }
+.b3  { width: 26rpx; height: 26rpx; left: 32%; animation-duration: 15s; animation-delay: -4s; }
+.b4  { width: 14rpx; height: 14rpx; left: 45%; animation-duration: 11s; animation-delay: -9s; }
+.b5  { width: 8rpx;  height: 8rpx;  left: 58%; animation-duration: 8s;  animation-delay: -3s; }
+.b6  { width: 20rpx; height: 20rpx; left: 68%; animation-duration: 13s; animation-delay: -7s; }
+.b7  { width: 12rpx; height: 12rpx; left: 78%; animation-duration: 10s; animation-delay: -1s; }
+.b8  { width: 28rpx; height: 28rpx; left: 88%; animation-duration: 16s; animation-delay: -5s; }
+.b9  { width: 10rpx; height: 10rpx; left: 24%; animation-duration: 9.5s; animation-delay: -8s; }
+.b10 { width: 16rpx; height: 16rpx; left: 52%; animation-duration: 14s; animation-delay: -11s; }
+
+@keyframes bubbleRise {
+  0% { transform: translate3d(0, 0, 0) scale(.8); opacity: 0; }
+  12% { opacity: .9; }
+  55% { transform: translate3d(-14rpx, -420rpx, 0) scale(1); }
+  100% { transform: translate3d(24rpx, -900rpx, 0) scale(1.1); opacity: 0; }
+}
+
+/* ===== 海草 ===== */
+.kelp {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  pointer-events: none;
+}
+
+.back-kelp { z-index: 3; opacity: .82; }
+.front-kelp { z-index: 7; }
+
+.blade {
+  position: absolute;
+  bottom: 0;
+  border-radius: 999rpx 999rpx 40% 40%;
+  background: linear-gradient(180deg, #5FC28E, #1E7D5C);
+  transform-origin: bottom center;
+  animation: sway 4s ease-in-out infinite alternate;
+}
+
+.kb1 { left: 7%;  width: 26rpx; height: 36%; animation-duration: 3.4s; animation-delay: -1.2s; }
+.kb2 { left: 15%; width: 18rpx; height: 50%; animation-duration: 4.2s; animation-delay: -2s; }
+.kb3 { left: 82%; width: 22rpx; height: 44%; animation-duration: 3.8s; animation-delay: -.6s; }
+.kb4 { left: 91%; width: 16rpx; height: 32%; animation-duration: 4.8s; animation-delay: -2.6s; }
+.kf1 { left: 3%;  width: 32rpx; height: 28%; animation-duration: 3.1s; animation-delay: -.4s; background: linear-gradient(180deg, rgba(111, 214, 152, .92), rgba(22, 108, 80, .95)); }
+.kf2 { left: 95%; width: 28rpx; height: 26%; animation-duration: 3.7s; animation-delay: -1.8s; background: linear-gradient(180deg, rgba(111, 214, 152, .92), rgba(22, 108, 80, .95)); }
+
+@keyframes sway {
+  from { transform: rotate(-4deg) scaleX(.94); }
+  to { transform: rotate(5deg) scaleX(1.06); }
+}
+
+/* ===== 沙地 / 礁石 ===== */
+.sand {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 19%;
+  z-index: 4;
+  border-radius: 50% 50% 0 0 / 16% 16% 0 0;
+  background: linear-gradient(180deg, #F6E3B0 0%, #E4C98E 55%, #C9A968 100%);
+  pointer-events: none;
+}
+
+.rocks {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 8%;
+  height: 52rpx;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.rock {
+  position: absolute;
+  bottom: 0;
+  border-radius: 60% 40% 30% 70% / 60% 50% 50% 40%;
+  box-shadow: inset -8rpx -8rpx 0 rgba(0, 0, 0, .12);
+}
+
+.rock1 { left: 6%;  width: 16%; height: 38rpx; background: #2C6E7C; }
+.rock2 { left: 23%; width: 9%;  height: 24rpx; background: #1F5D6B; }
+.rock3 { left: 69%; width: 13%; height: 30rpx; background: #276878; }
+.rock4 { left: 86%; width: 8%;  height: 20rpx; background: #174F5E; }
+
+/* ===== 住客 ===== */
+.residents {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 6;
+}
+
+.resident {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 1;
+  will-change: transform;
+}
+
+.resident-body {
+  width: 100%;
+  transform-origin: 50% 50%;
+}
+
+.resident-img {
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 8rpx 8rpx rgba(3, 34, 50, .3));
+  pointer-events: none;
+}
+
+.nameplate {
+  position: absolute;
+  left: 50%;
+  top: calc(100% + 4rpx);
+  transform: translateX(-50%);
+  padding: 2rpx 10rpx;
+  border: 3rpx solid var(--ink);
+  border-radius: 999rpx;
+  background: rgba(255, 255, 255, .92);
+  color: var(--ink);
+  font-size: 18rpx;
+  font-weight: 800;
+  line-height: 1.35;
+  white-space: nowrap;
+  box-shadow: 2rpx 2rpx 0 var(--ink);
+  pointer-events: none;
+}
+
+.say {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 10rpx);
+  transform: translateX(-50%);
+  padding: 4rpx 12rpx;
+  border: 3rpx solid var(--ink);
+  border-radius: 14rpx;
+  background: #fff;
+  color: var(--ink);
+  font-size: 20rpx;
+  font-weight: 800;
+  white-space: nowrap;
+  box-shadow: 3rpx 3rpx 0 var(--ink);
+  animation: sayPop .85s ease-out forwards;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.say::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  width: 10rpx;
+  height: 10rpx;
+  background: #fff;
+  border-right: 3rpx solid var(--ink);
+  border-bottom: 3rpx solid var(--ink);
+  transform: translate(-50%, -5rpx) rotate(45deg);
+}
+
+@keyframes sayPop {
+  0% { opacity: 0; transform: translate(-50%, 8rpx) scale(.7); }
+  15% { opacity: 1; transform: translate(-50%, 0) scale(1.05); }
+  80% { opacity: 1; transform: translate(-50%, -2rpx) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -12rpx) scale(.98); }
+}
+
+.wake-bubble {
+  position: absolute;
+  z-index: 0;
+  border-radius: 50%;
+  border: 2rpx solid rgba(255, 255, 255, .55);
+  background: rgba(255, 255, 255, .18);
+  pointer-events: none;
+}
+
+.wake-left { animation: wakeLeft 1.4s ease-out forwards; }
+.wake-right { animation: wakeRight 1.4s ease-out forwards; }
+
+@keyframes wakeLeft {
+  0% { transform: translate(0, 0) scale(.65); opacity: .75; }
+  100% { transform: translate(-24rpx, -52rpx) scale(1.15); opacity: 0; }
+}
+@keyframes wakeRight {
+  0% { transform: translate(0, 0) scale(.65); opacity: .75; }
+  100% { transform: translate(24rpx, -52rpx) scale(1.15); opacity: 0; }
+}
+
+/* ===== 水光 / 玻璃 ===== */
+.water-tint {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 8;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(120, 225, 245, .10) 0%, rgba(13, 92, 134, .06) 60%, rgba(4, 50, 78, .22) 100%);
+}
+
+.shimmer {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 8;
+  pointer-events: none;
+  opacity: .38;
+  background: linear-gradient(115deg,
+    transparent 0%,
+    rgba(255, 255, 255, .18) 16%,
+    transparent 34%,
+    rgba(255, 255, 255, .10) 52%,
+    transparent 70%,
+    rgba(255, 255, 255, .16) 86%,
+    transparent 100%);
+  background-size: 220% 220%;
+  animation: shimmerMove 12s linear infinite;
+}
+
+@keyframes shimmerMove {
+  from { background-position: 0% 0%; }
+  to { background-position: 100% 100%; }
+}
+
+.glass {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 9;
+  border-radius: 34rpx;
+  pointer-events: none;
+  box-shadow: inset 0 0 90rpx rgba(0, 27, 45, .4), inset 16rpx 0 40rpx rgba(255, 255, 255, .16);
+}
+
+.glass::after {
+  content: '';
+  position: absolute;
+  left: 6%;
+  top: 5%;
+  width: 42%;
+  height: 16%;
+  border-radius: 50%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, .35), transparent);
+  transform: rotate(-12deg);
+  filter: blur(4rpx);
+}
+
+.tank-tag {
+  position: absolute;
+  left: 24rpx;
+  top: 20rpx;
+  z-index: 10;
+  padding: 4rpx 14rpx;
+  border: 3rpx solid var(--ink);
+  border-radius: 999rpx;
+  background: rgba(255, 255, 255, .9);
+  color: var(--ink);
+  font-size: 18rpx;
+  font-weight: 900;
+  letter-spacing: 1rpx;
+  box-shadow: 2rpx 2rpx 0 rgba(28, 28, 28, .7);
+  pointer-events: none;
+}
+
+/* ===== 空缸 ===== */
+.empty {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.empty-card {
+  padding: 30rpx 40rpx;
+  border: 3rpx dashed rgba(255, 255, 255, .55);
+  border-radius: 26rpx;
+  background: rgba(4, 44, 66, .28);
+  text-align: center;
+  color: #fff;
+  text-shadow: 0 2rpx 10rpx rgba(0, 35, 50, .35);
+}
+
+.empty-orb {
+  font-size: 64rpx;
+  line-height: 1;
+  animation: floatOrb 3s ease-in-out infinite;
+}
+
+.empty-title {
+  margin-top: 8rpx;
+  font-size: 30rpx;
+  font-weight: 900;
+}
+
+.empty-sub {
+  margin-top: 6rpx;
+  font-size: 20rpx;
+  opacity: .9;
+}
+
+@keyframes floatOrb {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10rpx); }
+}
+
+/* ===== 底部 ===== */
+.dock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14rpx;
+  margin-top: 30rpx;
+}
+
+.add-btn {
+  width: 100%;
+  max-width: 560rpx;
+  padding: 24rpx 30rpx;
+  border: 4rpx solid var(--ink);
+  border-radius: 999rpx;
+  background: linear-gradient(135deg, #FFE08A, #FFD166);
+  color: var(--ink);
+  font-size: 30rpx;
+  font-weight: 900;
+  text-align: center;
+  box-shadow: 6rpx 6rpx 0 var(--ink);
+}
+
+.hint {
+  padding: 0 20rpx;
+  color: var(--muted);
+  font-size: 20rpx;
+  font-weight: 600;
+  line-height: 1.5;
+  text-align: center;
+}

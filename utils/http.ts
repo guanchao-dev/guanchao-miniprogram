@@ -213,7 +213,12 @@ const http = {
   delete(url: string, data?: Record<string, any>, extra?: Partial<HttpOptions>) {
     return request(Object.assign({ url, method: 'DELETE' as Method, data, auth: true }, extra))
   },
-  upload(url: string, filePath: string, formData?: Record<string, any>): Promise<any> {
+  upload(
+    url: string,
+    filePath: string,
+    formData?: Record<string, any>,
+    options?: { timeout?: number }
+  ): Promise<any> {
     const header: Record<string, string> = {
       'X-Request-Id': uuid(),
       'X-Client-Id': getClientId()
@@ -227,7 +232,7 @@ const http = {
         name: 'file',
         formData: formData || {},
         header,
-        timeout: 30000,
+        timeout: (options && options.timeout) || 30000,
         success(res: any) {
           const body = parseBody(res.data)
           const code = body && typeof body === 'object' ? Number(body.code) : 0

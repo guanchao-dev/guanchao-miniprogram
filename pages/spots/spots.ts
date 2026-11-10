@@ -1,11 +1,6 @@
 import { contentApi } from '../../services/api'
 import { showError } from '../../utils/format'
-
-function distanceText(m: any): string {
-  const n = Number(m)
-  if (!n && n !== 0) return ''
-  return n >= 1000 ? `${(n / 1000).toFixed(1)}km` : `${Math.round(n)}m`
-}
+import { formatDistance, setCachedLocation } from '../../utils/spotGuide'
 
 Page({
   data: {
@@ -29,7 +24,7 @@ Page({
               city: item.city,
               openTime: item.openTime || '',
               safetyTags: item.safetyTags || [],
-              distanceText: distanceText(item.distanceM)
+              distanceText: formatDistance(item.distanceM)
             }))
           })
         })
@@ -42,7 +37,11 @@ Page({
 
     wx.getLocation({
       type: 'gcj02',
-      success: (res: any) => apply({ lat: res.latitude, lng: res.longitude, page: 1, pageSize: 20 }),
+      success: (res: any) => {
+        // 缓存给首页热度榜/点位详情复用
+        setCachedLocation(res.latitude, res.longitude)
+        apply({ lat: res.latitude, lng: res.longitude, page: 1, pageSize: 20 })
+      },
       fail: () => apply({ city: '青岛', page: 1, pageSize: 20 })
     })
   },

@@ -1,0 +1,98 @@
+<view class="page aquarium-page">
+  <view class="aquarium-head">
+    <view class="head-copy">
+      <view class="eyebrow">追潮记 · 我的潮池</view>
+      <view class="title">潮池住客</view>
+      <view class="sub">拍下来，就是最好的拥有</view>
+    </view>
+    <view class="head-side">
+      <view class="count">{{count}} 位住客</view>
+      <view class="clear" wx:if="{{count > 0}}" bindtap="onClear" hover-class="aquarium-tap">清空</view>
+    </view>
+  </view>
+
+  <view class="tank">
+    <view class="waterline"></view>
+    <view class="rays">
+      <view class="ray ray1"></view>
+      <view class="ray ray2"></view>
+      <view class="ray ray3"></view>
+    </view>
+
+    <view class="bubble-field">
+      <view class="bubble b1"></view>
+      <view class="bubble b2"></view>
+      <view class="bubble b3"></view>
+      <view class="bubble b4"></view>
+      <view class="bubble b5"></view>
+      <view class="bubble b6"></view>
+      <view class="bubble b7"></view>
+      <view class="bubble b8"></view>
+      <view class="bubble b9"></view>
+      <view class="bubble b10"></view>
+    </view>
+
+    <view class="kelp back-kelp">
+      <view class="blade kb1"></view>
+      <view class="blade kb2"></view>
+      <view class="blade kb3"></view>
+      <view class="blade kb4"></view>
+    </view>
+
+    <view class="sand"></view>
+
+    <view class="rocks">
+      <view class="rock rock1"></view>
+      <view class="rock rock2"></view>
+      <view class="rock rock3"></view>
+      <view class="rock rock4"></view>
+    </view>
+
+    <view class="residents" id="residentsLayer">
+      <view
+        class="wake-bubble wake-{{item.dir}}"
+        wx:for="{{wakes}}"
+        wx:key="id"
+        style="left:{{item.left}}px;top:{{item.top}}px;width:{{item.size}}px;height:{{item.size}}px;"
+      ></view>
+
+      <view
+        class="resident"
+        wx:for="{{residents}}"
+        wx:key="id"
+        style="width:{{item.size}}px;transform:{{item.transform}};"
+        data-id="{{item.id}}"
+        bindtap="onTapResident"
+      >
+        <view class="resident-body" style="transform:{{item.imgTransform}};">
+          <image class="resident-img" src="{{item.src}}" mode="widthFix"></image>
+        </view>
+        <view class="nameplate">{{item.name}}</view>
+        <view class="say" wx:if="{{item.say}}">{{item.say}}</view>
+      </view>
+    </view>
+
+    <view class="kelp front-kelp">
+      <view class="blade kf1"></view>
+      <view class="blade kf2"></view>
+    </view>
+
+    <view class="water-tint"></view>
+    <view class="shimmer"></view>
+    <view class="glass"></view>
+    <view class="tank-tag">潮池 · MY</view>
+
+    <view class="empty" wx:if="{{empty}}">
+      <view class="empty-card">
+        <view class="empty-orb">🫧</view>
+        <view class="empty-title">潮池还空着</view>
+        <view class="empty-sub">点下面的按钮，请一位住客进来</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="dock">
+    <view class="add-btn" bindtap="onAdd" hover-class="aquarium-tap">＋ 收留新住客</view>
+    <view class="hint">点一下住客，跟它打个招呼 · 拍下来，就是最好的拥有</view>
+  </view>
+</view>

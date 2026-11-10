@@ -2,7 +2,7 @@ import { contentApi, homeApi } from '../../services/api'
 import { showError, toast, trendText } from '../../utils/format'
 import { navigateSpot } from '../../utils/amapNav'
 import { requireLogin } from '../../utils/auth'
-import { getCachedLocation, haversineM, formatDistance } from '../../utils/spotGuide'
+import { getCachedLocation, haversineM, formatDistance, toDistanceM } from '../../utils/spotGuide'
 
 function tideLabel(type?: string): string {
   const map: Record<string, string> = {
@@ -40,8 +40,8 @@ Page({
         const photos = (spot.photos || spot.panoramaUrls || []).filter(Boolean)
         if (spot.coverUrl && photos.indexOf(spot.coverUrl) < 0) photos.unshift(spot.coverUrl)
         // 计算距离：后端有 distanceM 直接用，否则用缓存位置 + haversine 公式
-        let distanceM = spot.distanceM != null ? Number(spot.distanceM) : null
-        if ((distanceM == null || Number.isNaN(distanceM)) && spot.latitude && spot.longitude) {
+        let distanceM = toDistanceM(spot.distanceM)
+        if (distanceM === undefined && spot.latitude && spot.longitude) {
           const loc = getCachedLocation()
           if (loc) {
             distanceM = haversineM(loc.lat, loc.lng, Number(spot.latitude), Number(spot.longitude))

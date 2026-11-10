@@ -1,4 +1,5 @@
 import { contentApi } from '../../services/api'
+import { requireLogin } from '../../utils/auth'
 import { toast, showError } from '../../utils/format'
 import { chooseImages, uploadImage } from '../../utils/upload'
 
@@ -97,6 +98,8 @@ Page({
   },
 
   async submit() {
+    // 上传图片和提交点位都需要登录，先拦在开始上传之前
+    if (!requireLogin()) return
     if (!this.data.canSubmit || this.data.submitting) return
     this.setData({ submitting: true })
     try {
