@@ -5,7 +5,14 @@ project.private.config.json
 config/env.local.ts
 
 # ===== 含真实个人信息的申报/文档材料，仅本地留存，禁止入库 =====
-docs/*.docx
+docs/
+project-brief.md
+contest/
+prototype/
+submission/
+ocean-handoff/
+深蓝百万里-网站文档/
+小程序二维码.jpg
 
 # ===== 设计稿临时片段 =====
 assets/_medal-snippet.txt
@@ -35,6 +42,5 @@ desktop.ini
 # ===== 日志与临时文件 =====
 *.log
 *.tmp.png
-
-# ===== 内部文档（团队隐私审计要求不入公开仓库，仅本地留存）=====
-docs/*.md
+assets/temp_png/
+.trae-html-share-packages/
