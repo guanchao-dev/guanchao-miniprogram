@@ -210,6 +210,9 @@ const http = {
   post(url: string, data?: Record<string, any>, extra?: Partial<HttpOptions>) {
     return request(Object.assign({ url, method: 'POST' as Method, data, auth: true }, extra))
   },
+  put(url: string, data?: Record<string, any>, extra?: Partial<HttpOptions>) {
+    return request(Object.assign({ url, method: 'PUT' as Method, data, auth: true }, extra))
+  },
   delete(url: string, data?: Record<string, any>, extra?: Partial<HttpOptions>) {
     return request(Object.assign({ url, method: 'DELETE' as Method, data, auth: true }, extra))
   },

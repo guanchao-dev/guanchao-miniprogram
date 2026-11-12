@@ -1220,3 +1220,39 @@
   font-size: 22rpx;
   color: #4F6787;
 }
+
+/* ===== 海洋卡包入口 ===== */
+.pack-entry {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16rpx;
+  margin-top: 18rpx;
+  padding: 22rpx 24rpx;
+  background: linear-gradient(135deg, #EAF7F8, #D8F0F2);
+}
+
+.pack-entry-copy { flex: 1; min-width: 0; }
+
+.pack-entry-title {
+  color: #1C1C1C;
+  font-size: 30rpx;
+  font-weight: 900;
+}
+
+.pack-entry-desc {
+  margin-top: 6rpx;
+  color: #4B6571;
+  font-size: 20rpx;
+  line-height: 1.5;
+}
+
+.pack-entry-btn {
+  flex-shrink: 0;
+  padding: 12rpx 20rpx;
+  border-radius: 999rpx;
+  background: #2F7F86;
+  color: #fff;
+  font-size: 22rpx;
+  font-weight: 800;
+}

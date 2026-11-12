@@ -1,26 +1,9 @@
 <view class="page add-page">
-  <view class="step-body" wx:if="{{step === 'pick'}}">
-    <view class="step-kicker">STEP 1 / 3</view>
-    <view class="step-title">请一位新住客</view>
-    <view class="step-sub">拍一张潮间带生物的照片，沿着它描一圈，就能住进你的潮池。</view>
-
-    <view class="pick-card" bindtap="onPick" hover-class="pick-tap">
-      <view class="pick-icon">📷</view>
-      <view class="pick-title">拍照 / 选照片</view>
-      <view class="pick-desc">建议主体居中、背景干净</view>
-    </view>
-
-    <view class="tip">不采集、不带走真实的它。拍下来，就是最好的拥有。</view>
-  </view>
-
   <view class="step-body" wx:if="{{step === 'edit'}}">
-    <view class="step-kicker">STEP 2 / 3</view>
-    <view class="step-title">把它抠出来</view>
-    <view class="step-sub">{{hint}}</view>
+    <view class="step-title">抠图</view>
 
     <view class="ai-row">
-      <view class="ai-btn {{aiBusy ? 'busy' : ''}}" bindtap="onAiCut" hover-class="pick-tap">{{aiBusy ? 'AI 抠图中…' : '✨ AI 自动抠图'}}</view>
-      <view class="ai-tip">服务器分割模型；不想等也可以直接描边</view>
+      <view class="ai-btn {{aiBusy ? 'busy' : ''}}" bindtap="onAiCut" hover-class="pick-tap">{{aiBusy ? 'AI 抠图中…' : 'AI 自动抠图'}}</view>
     </view>
 
     <view class="canvas-wrap">
@@ -38,52 +21,61 @@
     </view>
 
     <view class="actions">
-      <view class="action ghost" bindtap="onRetake" hover-class="pick-tap">重新选择</view>
-      <view class="action primary" bindtap="onCut" hover-class="pick-tap">生成贴纸（手描）</view>
+      <view class="action ghost" bindtap="onRetake" hover-class="pick-tap">重新选择照片</view>
+      <view class="action primary" bindtap="onCut" hover-class="pick-tap">完成抠图</view>
     </view>
   </view>
 
   <view class="step-body" wx:if="{{step === 'preview'}}">
-    <view class="step-kicker">STEP 3 / 3</view>
-    <view class="step-title">贴纸做好了</view>
-    <view class="step-sub">给它起个名字，再选一种游动方式。</view>
+    <view class="step-title">预览与设置</view>
 
     <view class="sticker-stage">
-      <image class="sticker-img" src="{{cutoutPath}}" mode="aspectFit" style="transform: scaleX({{flipped ? -1 : 1}});"></image>
+      <image class="sticker-img" src="{{cutoutPath}}" mode="aspectFit" style="transform: rotate({{rotate}}deg) scaleX({{flipped ? -1 : 1}});"></image>
     </view>
 
-    <view class="source-wrap">
-      <view class="source-tag">{{fromAi ? 'AI 抠图' : '手动描边'}}</view>
+    <view class="meta-row">
+      <view class="mini-btn {{refineBusy ? 'busy' : ''}}" bindtap="onAiRefine" hover-class="pick-tap">{{refineBusy ? '精修中…' : 'AI 精修'}}</view>
+      <view class="mini-btn {{flipped ? 'active' : ''}}" bindtap="onFlip" hover-class="pick-tap">水平翻转</view>
     </view>
 
-    <view class="pose-line">
-      <view class="pose-toggle {{flipped ? 'active' : ''}}" bindtap="onFlip" hover-class="pick-tap">↔ 水平翻转</view>
-      <view class="pose-tip">鱼头朝左时点一下，游起来才会朝前</view>
-    </view>
-
-    <view class="field-label">名字</view>
+    <view class="field-label">名称</view>
     <input
       class="field-input"
       value="{{name}}"
       bindinput="onName"
       maxlength="12"
-      placeholder="比如：小沙蟹"
+      placeholder="输入名称"
       placeholder-class="field-placeholder"
     />
 
-    <view class="field-label">它在潮池里怎么动</view>
+    <view class="field-label">运动方式</view>
     <view class="chips">
-      <view class="chip {{kind === 'fish' ? 'active' : ''}}" data-kind="fish" bindtap="onKind">🐟 游来游去</view>
-      <view class="chip {{kind === 'crab' ? 'active' : ''}}" data-kind="crab" bindtap="onKind">🦀 横着走</view>
-      <view class="chip {{kind === 'snail' ? 'active' : ''}}" data-kind="snail" bindtap="onKind">🐚 慢慢爬</view>
-      <view class="chip {{kind === 'jelly' ? 'active' : ''}}" data-kind="jelly" bindtap="onKind">🪼 飘呀飘</view>
+      <view class="chip {{kind === 'fish' ? 'active' : ''}}" data-kind="fish" bindtap="onKind">游动</view>
+      <view class="chip {{kind === 'crab' ? 'active' : ''}}" data-kind="crab" bindtap="onKind">横移</view>
+      <view class="chip {{kind === 'snail' ? 'active' : ''}}" data-kind="snail" bindtap="onKind">爬行</view>
+      <view class="chip {{kind === 'jelly' ? 'active' : ''}}" data-kind="jelly" bindtap="onKind">漂浮</view>
+    </view>
+
+    <view class="field-label">旋转角度</view>
+    <view class="size-row">
+      <slider
+        class="size-slider"
+        min="0"
+        max="360"
+        step="5"
+        value="{{rotate}}"
+        activeColor="#2F7F86"
+        backgroundColor="#E6EAE9"
+        block-size="22"
+        bindchanging="onRotateChange"
+        bindchange="onRotateChange"
+      />
+      <text class="size-value">{{rotate}}°</text>
     </view>
 
     <view class="actions">
-      <view class="action ghost" bindtap="onBackEdit" hover-class="pick-tap">重新抠图</view>
-      <view class="action primary {{uploading ? 'disabled' : ''}}" bindtap="onPlace" hover-class="pick-tap">{{uploading ? '放入中…' : '放入潮池'}}</view>
+      <view class="action ghost" bindtap="onBackEdit" hover-class="pick-tap">返回抠图</view>
+      <view class="action primary {{uploading ? 'disabled' : ''}}" bindtap="onPlace" hover-class="pick-tap">{{uploading ? '加入中…' : '加入潮池'}}</view>
     </view>
-
-    <view class="note">抠好的图会存到服务器；住客列表目前存在本机，换手机暂不同步。后续再接账号同步。</view>
   </view>
 </view>

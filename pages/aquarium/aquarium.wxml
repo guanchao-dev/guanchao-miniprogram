@@ -1,17 +1,19 @@
-<view class="page aquarium-page">
+<view class="page aquarium-page {{fullscreen ? 'fullscreen' : ''}}">
   <view class="aquarium-head">
     <view class="head-copy">
-      <view class="eyebrow">追潮记 · 我的潮池</view>
-      <view class="title">潮池住客</view>
-      <view class="sub">拍下来，就是最好的拥有</view>
+      <view class="title">潮池</view>
     </view>
     <view class="head-side">
-      <view class="count">{{count}} 位住客</view>
-      <view class="clear" wx:if="{{count > 0}}" bindtap="onClear" hover-class="aquarium-tap">清空</view>
+      <view class="count">{{count}} 个生物</view>
+      <view class="head-links">
+        <view class="audit-link" bindtap="onAuditLog" hover-class="aquarium-tap">申诉记录</view>
+        <view class="audit-link" wx:if="{{count > 0}}" bindtap="onManage" hover-class="aquarium-tap">管理</view>
+      </view>
     </view>
   </view>
 
-  <view class="tank">
+  <view class="tank {{theme === 'night' ? 'night' : ''}} {{landscape ? 'landscape' : ''}} {{backgroundUrl ? 'has-bg' : ''}}">
+    <image class="tank-bg" wx:if="{{backgroundUrl}}" src="{{backgroundUrl}}" mode="aspectFill"></image>
     <view class="waterline"></view>
     <view class="rays">
       <view class="ray ray1"></view>
@@ -32,16 +34,16 @@
       <view class="bubble b10"></view>
     </view>
 
-    <view class="kelp back-kelp">
+    <view class="kelp back-kelp" wx:if="{{!backgroundUrl}}">
       <view class="blade kb1"></view>
       <view class="blade kb2"></view>
       <view class="blade kb3"></view>
       <view class="blade kb4"></view>
     </view>
 
-    <view class="sand"></view>
+    <view class="sand" wx:if="{{!backgroundUrl}}"></view>
 
-    <view class="rocks">
+    <view class="rocks" wx:if="{{!backgroundUrl}}">
       <view class="rock rock1"></view>
       <view class="rock rock2"></view>
       <view class="rock rock3"></view>
@@ -63,6 +65,7 @@
         style="width:{{item.size}}px;transform:{{item.transform}};"
         data-id="{{item.id}}"
         bindtap="onTapResident"
+        bindlongpress="onResidentLongPress"
       >
         <view class="resident-body" style="transform:{{item.imgTransform}};">
           <image class="resident-img" src="{{item.src}}" mode="widthFix"></image>
@@ -72,7 +75,7 @@
       </view>
     </view>
 
-    <view class="kelp front-kelp">
+    <view class="kelp front-kelp" wx:if="{{!backgroundUrl}}">
       <view class="blade kf1"></view>
       <view class="blade kf2"></view>
     </view>
@@ -80,19 +83,117 @@
     <view class="water-tint"></view>
     <view class="shimmer"></view>
     <view class="glass"></view>
-    <view class="tank-tag">潮池 · MY</view>
+
+    <view class="tank-menu-btn" wx:if="{{!fullscreen}}" bindtap="onToggleMenu" hover-class="aquarium-tap">···</view>
+    <view class="tank-menu-mask" wx:if="{{menuOpen}}" bindtap="onCloseMenu"></view>
+    <view class="tank-menu" wx:if="{{menuOpen}}">
+      <view class="setting-row">
+        <view class="setting-label">视角</view>
+        <view class="segmented">
+          <view class="seg {{!landscape ? 'active' : ''}}" data-value="portrait" bindtap="onSetOrientation" hover-class="aquarium-tap">竖版</view>
+          <view class="seg {{landscape ? 'active' : ''}}" data-value="landscape" bindtap="onSetOrientation" hover-class="aquarium-tap">横版</view>
+        </view>
+      </view>
+
+      <view class="setting-row">
+        <view class="setting-label">时间</view>
+        <view class="segmented">
+          <view class="seg {{theme === 'day' ? 'active' : ''}}" data-value="day" bindtap="onSetTheme" hover-class="aquarium-tap">白天</view>
+          <view class="seg {{theme === 'night' ? 'active' : ''}}" data-value="night" bindtap="onSetTheme" hover-class="aquarium-tap">夜晚</view>
+        </view>
+      </view>
+
+      <view class="setting-row">
+        <view class="setting-label">背景图</view>
+        <view class="setting-actions">
+          <view class="setting-action" bindtap="onChangeBackground" hover-class="aquarium-tap">{{bgBusy ? '审核中…' : (backgroundUrl ? '更换图片' : '上传图片')}}</view>
+          <view class="setting-reset" wx:if="{{backgroundUrl}}" bindtap="onResetBackground" hover-class="aquarium-tap">恢复默认</view>
+        </view>
+      </view>
+    </view>
+
+    <view
+      class="theme-reveal"
+      wx:if="{{themeReveal}}"
+      style="left:{{revealX}}px;top:{{revealY}}px;background:{{revealColor}};"
+    ></view>
 
     <view class="empty" wx:if="{{empty}}">
       <view class="empty-card">
-        <view class="empty-orb">🫧</view>
-        <view class="empty-title">潮池还空着</view>
-        <view class="empty-sub">点下面的按钮，请一位住客进来</view>
+        <view class="empty-title">潮池暂无生物</view>
       </view>
     </view>
+
+    <view class="exit-fs" wx:if="{{fullscreen}}" bindtap="onExitFullscreen" hover-class="aquarium-tap">退出横版</view>
   </view>
 
   <view class="dock">
-    <view class="add-btn" bindtap="onAdd" hover-class="aquarium-tap">＋ 收留新住客</view>
-    <view class="hint">点一下住客，跟它打个招呼 · 拍下来，就是最好的拥有</view>
+    <view class="add-btn" bindtap="onAdd" hover-class="aquarium-tap">添加生物</view>
+  </view>
+
+  <view class="size-mask" wx:if="{{sizeSheetOpen}}" bindtap="onCloseSizeSheet"></view>
+  <view class="size-sheet" wx:if="{{sizeSheetOpen}}">
+    <view class="size-sheet-title">调整显示</view>
+    <view class="size-sheet-name">{{sizeSheetName}}</view>
+    <view class="size-sheet-row">
+      <text class="sheet-label">大小</text>
+      <slider
+        class="sheet-slider"
+        min="60"
+        max="160"
+        step="5"
+        value="{{sizeSheetValue}}"
+        activeColor="#2F7F86"
+        backgroundColor="#E6EAE9"
+        block-size="24"
+        bindchanging="onSizeSheetChanging"
+        bindchange="onSizeSheetChanging"
+      />
+      <text class="size-sheet-value">{{sizeSheetValue}}%</text>
+    </view>
+    <view class="size-sheet-row">
+      <text class="sheet-label">旋转</text>
+      <slider
+        class="sheet-slider"
+        min="0"
+        max="360"
+        step="5"
+        value="{{sizeSheetRotation}}"
+        activeColor="#2F7F86"
+        backgroundColor="#E6EAE9"
+        block-size="24"
+        bindchanging="onSheetRotateChanging"
+        bindchange="onSheetRotateChanging"
+      />
+      <text class="size-sheet-value">{{sizeSheetRotation}}°</text>
+    </view>
+    <view class="size-sheet-delete" bindtap="onDeleteFromSheet" hover-class="aquarium-tap">删除生物</view>
+    <view class="size-sheet-actions">
+      <view class="size-sheet-btn ghost" bindtap="onCloseSizeSheet">取消</view>
+      <view class="size-sheet-btn primary" bindtap="onSaveSize">保存</view>
+    </view>
+  </view>
+
+  <view class="manage-mask" wx:if="{{manageOpen}}" bindtap="onCloseManage"></view>
+  <view class="manage-sheet" wx:if="{{manageOpen}}">
+    <view class="manage-head">
+      <view class="manage-title">管理生物</view>
+      <view class="manage-count">{{manageList.length}} 个</view>
+    </view>
+    <scroll-view class="manage-list" scroll-y wx:if="{{manageList.length}}">
+      <view class="manage-row" wx:for="{{manageList}}" wx:key="id">
+        <image class="manage-thumb" src="{{item.src}}" mode="aspectFit"></image>
+        <view class="manage-info">
+          <view class="manage-name">{{item.name}}</view>
+          <view class="manage-kind">{{item.kindName}}</view>
+        </view>
+        <view class="manage-del" data-id="{{item.id}}" bindtap="onDeleteResident" hover-class="aquarium-tap">删除</view>
+      </view>
+    </scroll-view>
+    <view class="manage-empty" wx:else>潮池暂无生物</view>
+    <view class="manage-actions">
+      <view class="manage-btn ghost" bindtap="onCloseManage">关闭</view>
+      <view class="manage-btn danger" wx:if="{{manageList.length}}" bindtap="onClear">清空潮池</view>
+    </view>
   </view>
 </view>

@@ -2,7 +2,7 @@ import http from '../../utils/http'
 import { chooseImage, compressForUpload, mediaUrl, uploadContentUrl } from '../../utils/upload'
 import { pick, showError, toast } from '../../utils/format'
 import { requireLogin } from '../../utils/auth'
-import { ResidentKind, addResident } from '../../utils/aquariumStore'
+import { ResidentKind, addResident, createResident } from '../../utils/aquariumStore'
 
 type Point = { x: number; y: number }
 
@@ -18,11 +18,12 @@ Page({
     flipped: false,
     uploading: false,
     aiBusy: false,
+    refineBusy: false,
     fromAi: false,
     aiSrc: '',
     aiWidth: 0,
     aiHeight: 0,
-    hint: '可以点上面的「AI 自动抠图」，也可以沿着小生物手动描一圈'
+    rotate: 0,
   },
 
   // ===== 画布状态（不参与渲染）=====
@@ -44,8 +45,46 @@ Page({
   lastDrawAt: 0,
   cutting: false,
   aiToken: 0,
+  /** 选完照片时是否已经通过 AI 审核；通过后后续上传不再重复审 */
+  audited: false,
+  /** 审核阶段识别出的主体框（归一化 x,y,w,h），抠图前先裁到主体 */
+  auditBox: '',
+  /** 从「审核记录」进来的已通过图片：直接用这个 uploadId 抠图，不再重复上传 */
+  fromUploadId: '',
+  /** 当前贴纸在对象存储里的 key / 上传 id，保存住客时交给后端 */
+  objectKey: '',
+  uploadId: '',
+  /** 审核接口识别出的物种名，用于潮池新物种奖励去重 */
+  auditSpeciesName: '',
+
+  /** 入口：潮池页选完图直接带 photo 进来；审核记录带 uploadId/src 进来 */
+  onLoad(query: any) {
+    const photo = query && query.photo
+    if (photo) {
+      this.loadPhoto(decodeURIComponent(String(photo)))
+      return
+    }
+    const uploadId = query && query.uploadId
+    const src = query && query.src
+    if (!uploadId || !src) {
+      wx.navigateBack()
+      return
+    }
+    this.fromUploadId = String(uploadId)
+    this.audited = true
+    const url = decodeURIComponent(String(src))
+    wx.getImageInfo({
+      src: url,
+      success: (info: any) => this.enterEdit(url, info),
+      fail: () => {
+        toast('图片加载失败，请重新选择')
+        setTimeout(() => wx.navigateBack(), 300)
+      }
+    })
+  },
 
   onPick() {
+    this.fromUploadId = ''
     chooseImage()
       .then((path: string) => this.loadPhoto(path))
       .catch((err: any) => {
@@ -60,16 +99,65 @@ Page({
     const token = ++this.aiToken
     this.setData({ aiBusy: true })
     wx.showLoading({ title: 'AI 抠图中', mask: true })
+
+    // showLoading 和 showModal / showToast 共用同一个原生视图：
+    // 必须先 hideLoading，再弹提示，否则后弹的提示会被关掉（看起来“闪一下”）。
+    let loading = true
+    const stopLoading = () => {
+      if (!loading) return
+      loading = false
+      wx.hideLoading()
+    }
+
     try {
-      const compressed = await compressForUpload(this.data.photoPath)
-      const data: any = await http.upload(
-        '/aquarium/cutout',
-        compressed,
-        {},
-        { timeout: 60000 }
-      )
+      let data: any
+      if (this.fromUploadId) {
+        // 已人工通过的图：后端已有原图，直接对它补做抠图
+        data = await http.post(
+          `/aquarium/cutout/${this.fromUploadId}`,
+          {},
+          { timeout: 60000 }
+        )
+      } else {
+        const compressed = await compressForUpload(this.data.photoPath)
+        data = await http.upload(
+          '/aquarium/cutout',
+          compressed,
+          { audited: this.audited ? '1' : '', box: this.auditBox },
+          { timeout: 60000 }
+        )
+      }
       if (token !== this.aiToken) return
+      stopLoading()
+
       const uploadId = pick(data, 'uploadId', 'upload_id', 'id')
+
+      // AI 初审驳回：弹窗说明原因，并给一次申诉机会（弹窗不会自动消失）
+      if (String(pick(data, 'status') || '') === 'rejected') {
+        const reason = String(pick(data, 'rejectReason') || '这张照片没有通过自动审核')
+        const answer: any = await new Promise((resolve) => {
+          wx.showModal({
+            title: '照片未通过审核',
+            content: reason + '。如果确认是海洋生物，可以提交人工复核。',
+            confirmText: '申诉',
+            cancelText: '取消',
+            confirmColor: '#14A08A',
+            success: resolve,
+            fail: () => resolve({ confirm: false })
+          })
+        })
+        if (answer && answer.confirm && uploadId) {
+          try {
+            await http.post(`/uploads/${uploadId}/appeal`, {})
+            wx.showToast({ title: '已提交人工复核', icon: 'none' })
+          } catch (e) {
+            wx.showToast({ title: '申诉失败，请稍后再试', icon: 'none' })
+          }
+        }
+        // 不 throw：throw 会落到 catch 再弹一次黑色 toast，重复提示
+        return
+      }
+
       const rawUrl = pick(data, 'url', 'contentUrl') || (uploadId ? uploadContentUrl(String(uploadId)) : '')
       if (!rawUrl) throw new Error('AI 没有返回图片')
       const src = mediaUrl(String(rawUrl))
@@ -91,6 +179,8 @@ Page({
 
       this.outW = width
       this.outH = height
+      this.objectKey = String(pick(data, 'objectKey') || '')
+      this.uploadId = String(uploadId || '')
       this.setData({
         step: 'preview',
         cutoutPath: src,
@@ -98,29 +188,176 @@ Page({
         aiSrc: src,
         aiWidth: width,
         aiHeight: height,
-        name: this.data.name || '小生物'
+        name: this.data.name || '海洋生物'
       })
     } catch (err: any) {
+      stopLoading()
       if (token !== this.aiToken) return
       if (Number(err && err.code) === 40101) {
         requireLogin()
         return
       }
-      const message = (err && err.message) || 'AI 抠图失败'
-      toast(String(message).slice(0, 18))
-      this.setData({ hint: 'AI 没成功，可以沿着小生物手动描一圈' })
+      const message = String((err && err.message) || 'AI 抠图失败')
+      // 这里用长一点的 toast，避免“只闪一下”
+      wx.showToast({ title: message.slice(0, 18), icon: 'none' })
     } finally {
-      if (token === this.aiToken) {
-        wx.hideLoading()
-        this.setData({ aiBusy: false })
+      stopLoading()
+      if (token === this.aiToken) this.setData({ aiBusy: false })
+    }
+  },
+
+  /** 选完照片：先做 AI 审核，通过后再进编辑 */
+  /** AI 精修：本地 u2net 抠不干净（翻拍屏、反光、复杂背景）时，用千问图像编辑重抠。
+   *  按张计费，后端限每天 20 次；保留当前贴纸，失败就不动。 */
+  async onAiRefine() {
+    if (this.data.aiBusy || this.data.refineBusy || !this.data.photoPath) return
+    const token = ++this.aiToken
+    this.setData({ refineBusy: true })
+    wx.showLoading({ title: 'AI 精修中', mask: true })
+    let loading = true
+    const stopLoading = () => {
+      if (!loading) return
+      loading = false
+      wx.hideLoading()
+    }
+    try {
+      let data: any
+      if (this.fromUploadId) {
+        // 原图已经在服务器上，不用再上传一遍
+        data = await http.post(
+          `/aquarium/cutout/${this.fromUploadId}?engine=ai`,
+          {},
+          { timeout: 120000 }
+        )
+      } else {
+        const compressed = await compressForUpload(this.data.photoPath)
+        data = await http.upload(
+          '/aquarium/cutout',
+          compressed,
+          { engine: 'ai', audited: this.audited ? '1' : '0', box: this.auditBox },
+          { timeout: 120000 }
+        )
       }
+      if (token !== this.aiToken) return
+      stopLoading()
+      if (String(pick(data, 'status') || '') === 'rejected') {
+        return
+      }
+      const uploadId = pick(data, 'uploadId', 'upload_id', 'id')
+      const rawUrl = pick(data, 'url', 'contentUrl') || (uploadId ? uploadContentUrl(String(uploadId)) : '')
+      if (!rawUrl) throw new Error('AI 没有返回图片')
+      const src = mediaUrl(String(rawUrl))
+      let width = Number(pick(data, 'width')) || 0
+      let height = Number(pick(data, 'height')) || 0
+
+      try {
+        const info: any = await new Promise((resolve, reject) => {
+          wx.getImageInfo({ src, success: resolve, fail: reject })
+        })
+        if (info && Number(info.width) > 0) {
+          width = Number(info.width)
+          height = Number(info.height)
+        }
+      } catch (e) {
+        throw new Error('AI 图片地址无法读取，请检查图片域名白名单')
+      }
+
+      this.outW = width
+      this.outH = height
+      this.objectKey = String(pick(data, 'objectKey') || '')
+      this.uploadId = String(uploadId || '')
+      this.setData({
+        cutoutPath: src,
+        fromAi: true,
+        aiSrc: src,
+        aiWidth: width,
+        aiHeight: height
+      })
+      wx.showToast({ title: '精修完成', icon: 'none' })
+    } catch (err: any) {
+      stopLoading()
+      if (token !== this.aiToken) return
+      if (Number(err && err.code) === 40101) {
+        requireLogin()
+        return
+      }
+      const message = (err && err.message) || 'AI 精修失败'
+      wx.showToast({ title: String(message).slice(0, 18), icon: 'none' })
+    } finally {
+      stopLoading()
+      if (token === this.aiToken) this.setData({ refineBusy: false })
     }
   },
 
   loadPhoto(path: string) {
     wx.getImageInfo({
       src: path,
-      success: (info: any) => {
+      success: (info: any) => this.auditThenEdit(path, info),
+      fail: () => toast('图片读取失败，换一张试试')
+    })
+  },
+
+  /** 选图后立即审核：不是真实海洋生物就弹窗说明并停在选择页 */
+  async auditThenEdit(path: string, info: any) {
+    wx.showLoading({ title: '正在审核照片', mask: true })
+    this.auditSpeciesName = ''
+    let approved = false
+    try {
+      const compressed = await compressForUpload(path)
+      const data: any = await http.upload(
+        '/aquarium/audit',
+        compressed,
+        {},
+        { timeout: 30000 }
+      )
+      wx.hideLoading()
+      if (data && data.ok === false) {
+        const reason = String(pick(data, 'rejectReason') || '这张照片没有通过审核')
+        const uploadId = String(pick(data, 'uploadId') || '')
+        const answer: any = await new Promise((resolve) => {
+          wx.showModal({
+            title: '照片未通过审核',
+            content: reason + '。请换一张真实拍摄的海洋生物照片；如果确认没问题，可以提交人工复核。',
+            confirmText: '申诉',
+            cancelText: '知道了',
+            confirmColor: '#14A08A',
+            success: resolve,
+            fail: () => resolve({ confirm: false })
+          })
+        })
+        if (answer && answer.confirm && uploadId) {
+          try {
+            await http.post(`/uploads/${uploadId}/appeal`, {})
+            wx.showToast({ title: '已提交人工复核', icon: 'none' })
+          } catch (e) {
+            wx.showToast({ title: '申诉失败，请稍后再试', icon: 'none' })
+          }
+        }
+        setTimeout(() => wx.navigateBack(), 300)
+        return
+      }
+      approved = true
+      this.auditSpeciesName = String(pick(data, 'name') || '').slice(0, 64)
+      const boxRaw = pick(data, 'box')
+      if (Array.isArray(boxRaw) && boxRaw.length === 4) {
+        this.auditBox = boxRaw.map((v: any) => Number(v)).join(',')
+      } else {
+        this.auditBox = ''
+      }
+    } catch (e) {
+      // 审核接口异常：放行，后续上传时服务端还会再判一次
+      wx.hideLoading()
+      approved = false
+      this.auditBox = ''
+    }
+    this.audited = approved
+    this.enterEdit(path, info)
+  },
+
+  enterEdit(path: string, info: any) {
+    this.objectKey = ''
+    this.uploadId = ''
+    {
         const sys = wx.getSystemInfoSync()
         const maxW = Math.max(220, Number(sys.windowWidth) - 64)
         const maxH = Math.min(Number(sys.windowHeight) * 0.46, 420)
@@ -146,16 +383,14 @@ Page({
           canvasW: this.cw,
           canvasH: this.ch,
           flipped: false,
+          rotate: 0,
           fromAi: false,
           aiSrc: '',
           aiWidth: 0,
-          aiHeight: 0,
-          hint: '可以点上面的「AI 自动抠图」，也可以沿着小生物手动描一圈'
+          aiHeight: 0
         })
         wx.nextTick(() => this.setupCanvas(path))
-      },
-      fail: () => toast('图片读取失败，换一张试试')
-    })
+    }
   },
 
   setupCanvas(path: string, retry = 0) {
@@ -274,44 +509,21 @@ Page({
     this.drawing = false
     if (this.points.length < 3) this.points = []
     this.draw()
-    if (this.points.length >= 3) {
-      this.setData({ hint: '描好了，点「生成贴纸」把它请出来' })
-    }
   },
 
   onRetake() {
-    this.aiToken++
-    this.points = []
-    this.photo = null
-    this.canvas = null
-    this.ctx = null
-    this.cutting = false
-    this.outW = 0
-    this.outH = 0
-    this.setData({
-      step: 'pick',
-      photoPath: '',
-      cutoutPath: '',
-      canvasW: 0,
-      canvasH: 0,
-      flipped: false,
-      aiBusy: false,
-      fromAi: false,
-      aiSrc: '',
-      aiWidth: 0,
-      aiHeight: 0
-    })
+    this.onPick()
   },
 
   onBackEdit() {
     if (!this.data.photoPath) {
-      this.setData({ step: 'pick' })
+      wx.navigateBack()
       return
     }
     this.aiToken++
     this.points = []
     this.cutting = false
-    this.setData({ step: 'edit', cutoutPath: '', aiBusy: false, fromAi: false, aiSrc: '' })
+    this.setData({ step: 'edit', cutoutPath: '', aiBusy: false, refineBusy: false, fromAi: false, aiSrc: '' })
     wx.nextTick(() => {
       this.cw = this.data.canvasW
       this.ch = this.data.canvasH
@@ -336,8 +548,8 @@ Page({
           wx.nextTick(() => this.setupCanvas(this.data.photoPath))
         },
         fail: () => {
-          toast('图片读取失败，重新选择')
-          this.setData({ step: 'pick' })
+          toast('图片读取失败')
+          setTimeout(() => wx.navigateBack(), 300)
         }
       })
     })
@@ -347,7 +559,7 @@ Page({
     if (this.cutting) return
     if (!this.ctx || !this.photo) return
     if (this.points.length < 3) {
-      toast('先沿着小生物描一圈')
+      toast('先描出轮廓')
       return
     }
     this.cutting = true
@@ -438,6 +650,8 @@ Page({
       quality: 1,
       success: (res: any) => {
         this.cutting = false
+        this.objectKey = ''
+        this.uploadId = ''
         this.setData({
           step: 'preview',
           cutoutPath: res.tempFilePath,
@@ -445,18 +659,23 @@ Page({
           aiSrc: '',
           aiWidth: this.outW,
           aiHeight: this.outH,
-          name: this.data.name || '小生物'
+          name: this.data.name || '海洋生物'
         })
       },
       fail: () => {
         this.cutting = false
-        toast('生成贴纸失败，请重试')
+        toast('生成失败，请重试')
       }
     })
   },
 
   onName(e: any) {
     this.setData({ name: (e.detail && e.detail.value) || '' })
+  },
+
+  onRotateChange(e: any) {
+    const value = Number(e.detail && e.detail.value)
+    this.setData({ rotate: Number.isFinite(value) ? value : 0 })
   },
 
   onKind(e: any) {
@@ -471,34 +690,57 @@ Page({
   onPlace() {
     if (this.data.uploading) return
     if (!this.data.cutoutPath) {
-      toast('还没有生成贴纸')
+      toast('还没有生成抠图')
       return
     }
-
-    // AI 结果已经存在服务器上，直接用它的 URL，不再重复上传
-    if (this.data.fromAi && this.data.aiSrc) {
-      this.setData({ uploading: true })
-      const aspect = this.data.aiWidth > 0 ? this.data.aiHeight / this.data.aiWidth : 1
-      addResident({
-        id: 'r_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
-        name: (this.data.name || '').trim() || '小生物',
-        kind: this.data.kind,
-        src: this.data.aiSrc,
-        aspect,
-        baseFlip: !!this.data.flipped,
-        createdAt: Date.now()
-      })
-      wx.showToast({ title: '住进潮池啦', icon: 'none' })
-      setTimeout(() => wx.navigateBack(), 500)
-      return
-    }
-
     this.setData({ uploading: true })
 
-    http.upload('/uploads', this.data.cutoutPath, { scene: 'observation' })
+    // AI 结果已经存在服务器上，直接保存住客记录，不再重复上传
+    if (this.data.fromAi && this.data.aiSrc) {
+      const aspect = this.data.aiWidth > 0 ? this.data.aiHeight / this.data.aiWidth : 1
+      this.saveResident({
+        objectKey: this.objectKey || undefined,
+        uploadId: this.objectKey ? undefined : this.uploadId || undefined,
+        aspect
+      })
+      return
+    }
+
+    // scene=aquarium：后端在上传这一步就做「是不是海洋生物」的 AI 审核
+    http.upload('/uploads', this.data.cutoutPath, {
+      scene: 'aquarium',
+      audited: this.audited ? '1' : ''
+    })
       .then(async (data: any) => {
         const uploadId = pick(data, 'uploadId', 'upload_id', 'id')
         if (!uploadId) throw new Error('上传成功但未返回 uploadId')
+
+        // 上传时被 AI 驳回：弹窗说明原因，并提供一次申诉机会
+        if (String(pick(data, 'status') || '') === 'rejected') {
+          const reason = String(pick(data, 'rejectReason') || '这张照片没有通过自动审核')
+          const answer: any = await new Promise((resolve) => {
+            wx.showModal({
+              title: '照片未通过审核',
+              content: reason + '。如果确认是海洋生物，可以提交人工复核。',
+              confirmText: '申诉',
+              cancelText: '取消',
+              confirmColor: '#14A08A',
+              success: resolve,
+              fail: () => resolve({ confirm: false })
+            })
+          })
+          if (answer && answer.confirm) {
+            try {
+              await http.post(`/uploads/${uploadId}/appeal`, {})
+              wx.showToast({ title: '已提交人工复核', icon: 'none' })
+            } catch (e) {
+              wx.showToast({ title: '申诉失败，请稍后再试', icon: 'none' })
+            }
+          }
+          // 不 throw：避免再弹一次黑色 toast
+          this.setData({ uploading: false })
+          return
+        }
         if (pick(data, 'status') === 'processing') {
           try {
             await http.post(`/uploads/${uploadId}/complete`, {})
@@ -520,25 +762,52 @@ Page({
           throw new Error('图片上传成功，但地址无法读取；请检查图片域名白名单')
         }
 
-        addResident({
-          id: 'r_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
-          name: (this.data.name || '').trim() || '小生物',
-          kind: this.data.kind,
-          src,
-          aspect,
-          baseFlip: !!this.data.flipped,
-          createdAt: Date.now()
+        const objectKey = String(pick(data, 'objectKey') || '')
+        await this.saveResident({
+          objectKey: objectKey || undefined,
+          uploadId: objectKey ? undefined : String(uploadId),
+          aspect
         })
-        wx.showToast({ title: '住进潮池啦', icon: 'none' })
-        setTimeout(() => wx.navigateBack(), 500)
       })
       .catch((err: any) => {
         if (Number(err && err.code) === 40101) {
           requireLogin()
           return
         }
-        showError(err, '放入潮池失败')
+        showError(err, '加入潮池失败')
+        this.setData({ uploading: false })
       })
-      .finally(() => this.setData({ uploading: false }))
+  },
+
+  /** 保存到账号（图片已在桶里，这里只建住客记录），成功后写本机缓存 */
+  async saveResident(input: { objectKey?: string; uploadId?: string; aspect: number }) {
+    try {
+      const resident = await createResident({
+        name: (this.data.name || '').trim() || '海洋生物',
+        kind: this.data.kind,
+        objectKey: input.objectKey,
+        uploadId: input.uploadId,
+        sourceUploadId: this.fromUploadId || undefined,
+        speciesName: this.auditSpeciesName || (this.data.name || '').trim(),
+        aspect: input.aspect,
+        rotation: this.data.rotate > 180 ? this.data.rotate - 360 : this.data.rotate,
+        baseFlip: !!this.data.flipped
+      })
+      addResident(resident)
+      const award = Number(resident.coinsAwarded) || 0
+      wx.showToast({
+        title: award > 0 ? '已加入潮池 +' + award + ' 代币' : '已加入潮池',
+        icon: 'none'
+      })
+      setTimeout(() => wx.navigateBack(), 500)
+    } catch (err: any) {
+      if (Number(err && err.code) === 40101) {
+        requireLogin()
+        return
+      }
+      showError(err, '保存到潮池失败')
+    } finally {
+      this.setData({ uploading: false })
+    }
   }
 })

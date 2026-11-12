@@ -7,6 +7,7 @@ Page({
   data: {
     loading: true,
     item: {},
+    isScience: false,
     akaText: '',
     coverUrl: '',
     coverSrc: ''
@@ -28,6 +29,7 @@ Page({
         const coverUrl = mediaUrl(item.coverUrl || '')
         this.setData({
           item: Object.assign({ favorited: false }, item),
+          isScience: item.category === 'physical' || item.category === 'tech',
           akaText: (item.aka || []).join('、'),
           coverUrl
         })

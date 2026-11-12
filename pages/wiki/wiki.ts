@@ -5,13 +5,32 @@ import { mediaUrl, preloadImage } from '../../utils/upload'
 
 // 特殊分类：查看我收藏的图鉴
 const FAV = '__fav'
+const CATEGORY_NAMES: Record<string, string> = {
+  shell: '赶海生物',
+  crab: '赶海生物',
+  algae: '赶海生物',
+  fish: '赶海生物',
+  other: '赶海生物',
+  physical: '物理海洋',
+  tech: '海洋科技',
+  other_marine: '其他海洋生物'
+}
 
 Page({
   data: {
+    group: 'forage',
     category: '',
+    currentGroupName: '赶海生物',
+    currentSubName: '',
     cats: [
+      { id: 'forage', name: '赶海生物' },
+      { id: 'physical', name: '物理海洋' },
+      { id: 'tech', name: '海洋科技' },
+      { id: 'other_marine', name: '其他海洋生物' },
+      { id: FAV, name: '我的收藏' }
+    ],
+    subCats: [
       { id: '', name: '全部' },
-      { id: FAV, name: '我的收藏' },
       { id: 'shell', name: '贝类' },
       { id: 'crab', name: '蟹类' },
       { id: 'algae', name: '海藻' },
@@ -33,9 +52,27 @@ Page({
   },
 
   onCat(e: any) {
-    this.setData({ category: e.currentTarget.dataset.id || '' })
+    const id = e.currentTarget.dataset.id || 'forage'
+    const cat = (this.data.cats as any[]).find((x) => x.id === id)
+    this.setData({
+      group: id,
+      category: '',
+      currentGroupName: (cat && cat.name) || '赶海生物',
+      currentSubName: ''
+    })
     this.load()
   },
+
+  onSubCat(e: any) {
+    const id = e.currentTarget.dataset.id || ''
+    const cat = (this.data.subCats as any[]).find((x) => x.id === id)
+    this.setData({
+      category: id,
+      currentSubName: id ? ((cat && cat.name) || '') : ''
+    })
+    this.load()
+  },
+
 
   onInput(e: any) {
     this.setData({ keyword: e.detail.value || '' })
@@ -86,7 +123,7 @@ Page({
 
   load() {
     this.refreshUnlocked()
-    if (this.data.category === FAV) {
+    if (this.data.group === FAV) {
       this.loadFavorites()
       return
     }
@@ -97,7 +134,12 @@ Page({
       emptyText: keyword ? '没有找到相关内容' : '暂无图鉴'
     })
     const params: Record<string, any> = { page: 1, pageSize: 50 }
-    if (this.data.category) params.category = this.data.category
+    const group = this.data.group
+    if (group === 'forage') {
+      params.category = this.data.category || 'forage'
+    } else {
+      params.category = group
+    }
     if (keyword) params.keyword = keyword
     contentApi.encyclopedia(params)
       .then((res) => this.paint(res.list || []))
@@ -130,6 +172,8 @@ Page({
       list: raw.map((it: any) => ({
         id: it.id,
         name: it.name,
+        category: it.category || '',
+        categoryName: CATEGORY_NAMES[it.category] || '海洋图鉴',
         coverSrc: '',
         lit: litIds.indexOf(it.id) >= 0,
         isNew: newIds.indexOf(it.id) >= 0

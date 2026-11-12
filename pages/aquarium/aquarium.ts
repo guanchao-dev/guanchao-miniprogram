@@ -1,11 +1,25 @@
 import {
   AquariumResident,
+  AquariumSettings,
   ResidentKind,
   clearResidents,
-  ensureDemoResident
+  clearResidentsRemote,
+  ensureDemoResident,
+  fetchSettings,
+  getLocalSettings,
+  getResidents,
+  removeResidentLocal,
+  removeResidentRemote,
+  saveLocalSettings,
+  setResidentAdjustmentsLocal,
+  syncResidents,
+  updateResidentAdjustmentsRemote,
+  updateSettings,
+  uploadBackground
 } from '../../utils/aquariumStore'
-import { requireLogin } from '../../utils/auth'
-import { toast } from '../../utils/format'
+import { isLoggedIn, requireLogin } from '../../utils/auth'
+import { showError, toast } from '../../utils/format'
+import { chooseImage, compressForUpload } from '../../utils/upload'
 
 type Runtime = {
   id: string
@@ -13,6 +27,8 @@ type Runtime = {
   kind: ResidentKind
   src: string
   aspect: number
+  scale: number
+  rotation: number
   size: number
   w: number
   h: number
@@ -43,7 +59,14 @@ type Wake = {
   until: number
 }
 
-const SAY_WORDS = ['咕噜～', '你好呀', '吐个泡泡', '今天也要开心', '别抓我！']
+const SAY_WORDS = ['游动中', '正在移动', '观察记录', '保持距离观察']
+
+const KIND_NAMES: Record<string, string> = {
+  fish: '游动',
+  crab: '横移',
+  snail: '爬行',
+  jelly: '漂浮'
+}
 
 Page({
   data: {
@@ -51,7 +74,24 @@ Page({
     wakes: [] as any[],
     count: 0,
     empty: false,
-    loading: true
+    loading: true,
+    theme: 'day',
+    landscape: false,
+    backgroundUrl: '',
+    bgBusy: false,
+    menuOpen: false,
+    fullscreen: false,
+    sizeSheetOpen: false,
+    sizeSheetId: '',
+    manageOpen: false,
+    manageList: [] as any[],
+    sizeSheetName: '',
+    sizeSheetValue: 100,
+    sizeSheetRotation: 0,
+    themeReveal: false,
+    revealX: 0,
+    revealY: 0,
+    revealColor: ''
   },
 
   // ===== 页面实例字段（不参与渲染）=====
@@ -62,9 +102,192 @@ Page({
   lastTick: 0,
   wakeList: [] as Wake[],
   wakeSeq: 0,
+  _onResize: null as any,
+  _revealTimers: [] as any[],
+  _themeSwitching: false,
+  _sizeOriginalScale: 1,
+  _sizeOriginalRotation: 0,
+
+  onLoad() {
+    // 横版是全屏展示：手机转过来后重新测量鱼缸、重排住客
+    this._onResize = () => {
+      if (this.data.fullscreen) {
+        setTimeout(() => this.relayout(), 120)
+      }
+    }
+    wx.onWindowResize(this._onResize)
+  },
 
   onShow() {
-    const list = ensureDemoResident()
+    // 先应用本机外观，避免等网络时闪烁；登录用户随后以账号设置为准。
+    const local = getLocalSettings()
+    // 打开永远是竖版；横版只作为本次展示模式，不跟随上次状态
+    this.setData({
+      theme: local.theme,
+      landscape: false,
+      backgroundUrl: local.backgroundUrl,
+      fullscreen: false,
+      themeReveal: false
+    })
+    this._themeSwitching = false
+
+    // 先渲染本机缓存，避免等网络时缸是空的；登录用户随后用账号数据覆盖。
+    const cached = isLoggedIn() ? getResidents() : ensureDemoResident()
+    this.applyList(cached)
+    if (isLoggedIn()) {
+      syncResidents()
+        .then((list: AquariumResident[]) => this.applyList(list))
+        .catch(() => {
+          // 网络失败继续用本机缓存
+        })
+      fetchSettings()
+        .then((s: AquariumSettings) => this.applySettings(s))
+        .catch(() => {
+          // 网络失败继续用本机外观
+        })
+    }
+  },
+
+  applySettings(s: AquariumSettings) {
+    // 只同步主题和背景；横版是单次展示动作，不跟随账号设置
+    this.setData({ theme: s.theme, backgroundUrl: s.backgroundUrl })
+    saveLocalSettings({ theme: s.theme })
+  },
+
+  /** 横竖版切换后，缸的尺寸变了，所有住客要重新排一次 */
+  relayout() {
+    this.runtime.forEach((r: Runtime) => { r.initialized = false })
+    this.measureTank()
+  },
+
+  onToggleMenu() {
+    this.setData({ menuOpen: !this.data.menuOpen })
+  },
+
+  onCloseMenu() {
+    this.setData({ menuOpen: false })
+  },
+
+  onSetOrientation(e: any) {
+    const landscape = e.currentTarget.dataset.value === 'landscape'
+    if (landscape === this.data.landscape && landscape === this.data.fullscreen) {
+      this.setData({ menuOpen: false })
+      return
+    }
+    this.setData({ landscape, fullscreen: landscape, menuOpen: false })
+    if (landscape) toast('把手机横过来看')
+    setTimeout(() => this.relayout(), 120)
+  },
+
+  onExitFullscreen() {
+    this.setData({ landscape: false, fullscreen: false, menuOpen: false })
+    setTimeout(() => this.relayout(), 120)
+  },
+
+  onSetTheme(e: any) {
+    const theme = e.currentTarget.dataset.value === 'night' ? 'night' : 'day'
+    this.setData({ menuOpen: false })
+    if (theme === this.data.theme || this._themeSwitching) return
+
+    // 从点击位置扩散：先拿鱼缸位置，再启动圆形覆盖层
+    this.createSelectorQuery()
+      .select('.tank')
+      .boundingClientRect((rect: any) => {
+        if (!rect) {
+          this.applyTheme(theme)
+          return
+        }
+        const detail = e.detail || {}
+        const pageX = Number(detail.x)
+        const pageY = Number(detail.y)
+        const x = Number.isFinite(pageX) ? pageX - rect.left : rect.width / 2
+        const y = Number.isFinite(pageY) ? pageY - rect.top : rect.height / 2
+        this.startThemeReveal(theme, Math.max(0, x), Math.max(0, y))
+      })
+      .exec()
+  },
+
+  applyTheme(theme: 'day' | 'night') {
+    this.setData({ theme })
+    saveLocalSettings({ theme })
+    if (isLoggedIn()) {
+      updateSettings({ theme }).catch(() => toast('设置同步失败'))
+    }
+  },
+
+  startThemeReveal(theme: 'day' | 'night', x: number, y: number) {
+    this._themeSwitching = true
+    this.setData({
+      themeReveal: true,
+      revealX: x,
+      revealY: y,
+      revealColor:
+        theme === 'night'
+          ? 'linear-gradient(180deg, #243B57 0%, #0A1424 100%)'
+          : 'linear-gradient(180deg, #B7DDE2 0%, #7FB4BC 100%)'
+    })
+
+    // 60% 时在覆盖层下面切换主题，最后淡出移除
+    const swap = setTimeout(() => this.applyTheme(theme), 250)
+    const done = setTimeout(() => {
+      this.setData({ themeReveal: false })
+      this._themeSwitching = false
+    }, 460)
+    this._revealTimers.push(swap, done)
+  },
+
+  onChangeBackground() {
+    if (this.data.bgBusy) return
+    this.setData({ menuOpen: false })
+    if (!requireLogin()) return
+    chooseImage()
+      .then(async (path: string) => {
+        this.setData({ bgBusy: true })
+        wx.showLoading({ title: '审核中', mask: true })
+        try {
+          const compressed = await compressForUpload(path)
+          const data: any = await uploadBackground(compressed)
+          wx.hideLoading()
+          if (data && data.ok === false) {
+            wx.showModal({
+              title: '背景未通过审核',
+              content: String(data.rejectReason || '图片未通过合规审核'),
+              showCancel: false
+            })
+            return
+          }
+          this.setData({ backgroundUrl: String(data.backgroundUrl || '') })
+          saveLocalSettings({
+            backgroundKey: String(data.backgroundKey || ''),
+            backgroundUrl: String(data.backgroundUrl || '')
+          })
+        } catch (err: any) {
+          wx.hideLoading()
+          if (Number(err && err.code) === 40101) {
+            requireLogin()
+            return
+          }
+          showError(err, '背景上传失败')
+        } finally {
+          this.setData({ bgBusy: false })
+        }
+      })
+      .catch((err: any) => {
+        if (err && err.message === 'cancel') return
+        toast('选择图片失败')
+      })
+  },
+
+  onResetBackground() {
+    if (!this.data.backgroundUrl) return
+    this.setData({ backgroundUrl: '', menuOpen: false })
+    saveLocalSettings({ backgroundKey: '', backgroundUrl: '' })
+    if (isLoggedIn()) {
+      updateSettings({ backgroundKey: '' }).catch(() => toast('设置同步失败'))
+    }
+  },
+
+  applyList(list: AquariumResident[]) {
     this.syncRuntime(list)
     this.setData({
       loading: false,
@@ -87,10 +310,28 @@ Page({
   },
 
   onUnload() {
+    if (this._onResize) wx.offWindowResize(this._onResize)
+    this._revealTimers.forEach((t: any) => clearTimeout(t))
+    this._revealTimers = []
     this.stopLoop()
   },
 
   measureTank() {
+    // 横版是全屏旋转 90°：内部坐标宽高与屏幕互换，不能再用旋转后的 boundingRect
+    if (this.data.fullscreen) {
+      const sys = wx.getSystemInfoSync()
+      this.tankW = Number(sys.windowHeight) || 667
+      this.tankH = Number(sys.windowWidth) || 375
+      this.runtime.forEach((r: Runtime) => {
+        if (!r.initialized) this.layout(r)
+      })
+      if (this.runtime.length) {
+        this.renderStatic()
+        this.startLoop()
+      }
+      return
+    }
+
     const query = this.createSelectorQuery()
     query.select('#residentsLayer').boundingClientRect((rect: any) => {
       if (rect && rect.width && rect.height) {
@@ -125,6 +366,8 @@ Page({
         old.kind = item.kind
         old.src = item.src
         old.aspect = item.aspect
+        old.scale = item.scale || 1
+        old.rotation = item.rotation || 0
         old.baseFlip = item.baseFlip
         next.push(old)
       } else {
@@ -144,6 +387,8 @@ Page({
       kind,
       src: item.src,
       aspect: item.aspect || 1,
+      scale: item.scale || 1,
+      rotation: item.rotation || 0,
       size: 0,
       w: 0,
       h: 0,
@@ -180,7 +425,7 @@ Page({
 
     const scale = Math.max(0.8, Math.min(1.12, W / 820))
     const baseSize = r.kind === 'fish' ? 136 : r.kind === 'crab' ? 124 : r.kind === 'snail' ? 100 : 116
-    r.size = Math.round(baseSize * scale)
+    r.size = Math.round(baseSize * scale * (r.scale || 1))
     r.w = r.size
     r.h = Math.max(20, Math.round(r.size * (r.aspect || 1)))
 
@@ -324,7 +569,7 @@ Page({
       if (reacting) rot = Math.sin(now * 0.03) * 7
       if (r.kind === 'jelly') {
         const pulse = 1 + Math.sin(now * 0.002 + r.phase) * 0.035
-        r.imgTransform = `scale(${pulse.toFixed(3)}) rotate(${rot.toFixed(1)}deg)`
+        r.imgTransform = `scale(${pulse.toFixed(3)}) rotate(${(rot + r.rotation).toFixed(1)}deg)`
       } else {
         const flip = (r.vx >= 0 ? 1 : -1) * (r.baseFlip ? -1 : 1)
         if (r.kind === 'fish') {
@@ -332,9 +577,9 @@ Page({
           const sx = flip * (1 + beat * 0.025)
           const sy = 1 - beat * 0.018
           const tilt = Math.cos(now * 0.0014 + r.phase) * 6
-          r.imgTransform = `scaleX(${sx.toFixed(3)}) scaleY(${sy.toFixed(3)}) rotate(${(tilt + rot).toFixed(1)}deg)`
+          r.imgTransform = `scaleX(${sx.toFixed(3)}) scaleY(${sy.toFixed(3)}) rotate(${(tilt + rot + r.rotation).toFixed(1)}deg)`
         } else {
-          r.imgTransform = `scaleX(${flip}) rotate(${rot.toFixed(1)}deg)`
+          r.imgTransform = `scaleX(${flip}) rotate(${(rot + r.rotation).toFixed(1)}deg)`
         }
       }
 
@@ -370,26 +615,210 @@ Page({
     r.sayUntil = Date.now() + 900
   },
 
+  onManage() {
+    if (this.data.fullscreen) {
+      toast('退出横版后再管理')
+      return
+    }
+    this.setData({
+      sizeSheetOpen: false,
+      manageOpen: true,
+      manageList: this.buildManageList()
+    })
+  },
+
+  onCloseManage() {
+    this.setData({ manageOpen: false })
+  },
+
+  buildManageList(): any[] {
+    return getResidents().map((r) => ({
+      id: r.id,
+      name: r.name,
+      src: r.src,
+      kindName: KIND_NAMES[r.kind] || ''
+    }))
+  },
+
+  onDeleteResident(e: any) {
+    const id = String((e.currentTarget && e.currentTarget.dataset && e.currentTarget.dataset.id) || '')
+    if (!id) return
+    wx.showModal({
+      title: '删除生物',
+      content: '确定从潮池中删除这个生物吗？',
+      confirmText: '删除',
+      confirmColor: '#C0392B',
+      success: (res: any) => {
+        if (!res.confirm) return
+        this.deleteResidentById(id)
+      }
+    })
+  },
+
+  onDeleteFromSheet() {
+    const id = this.data.sizeSheetId
+    if (!id) return
+    wx.showModal({
+      title: '删除生物',
+      content: '确定从潮池中删除这个生物吗？',
+      confirmText: '删除',
+      confirmColor: '#C0392B',
+      success: (res: any) => {
+        if (!res.confirm) return
+        this.deleteResidentById(id)
+      }
+    })
+  },
+
+  async deleteResidentById(id: string) {
+    if (isLoggedIn()) {
+      try {
+        await removeResidentRemote(id)
+      } catch (err) {
+        showError(err, '删除失败')
+        return
+      }
+    }
+    removeResidentLocal(id)
+    const list = getResidents()
+    this.setData({
+      sizeSheetOpen: false,
+      sizeSheetId: '',
+      manageList: this.buildManageList(),
+      manageOpen: this.data.manageOpen && list.length > 0
+    })
+    this.applyList(list)
+    toast('已删除')
+  },
+
+  /** 长按住客：弹出大小调节 */
+  onResidentLongPress(e: any) {
+    if (this.data.fullscreen) {
+      toast('退出横版后再调整大小')
+      return
+    }
+    const id = String((e.currentTarget && e.currentTarget.dataset && e.currentTarget.dataset.id) || '')
+    const r = this.runtime.find((item: Runtime) => item.id === id)
+    if (!r) return
+    this._sizeOriginalScale = r.scale || 1
+    this._sizeOriginalRotation = r.rotation || 0
+    this.setData({
+      manageOpen: false,
+      sizeSheetOpen: true,
+      sizeSheetId: id,
+      sizeSheetName: r.name,
+      sizeSheetValue: Math.round((r.scale || 1) * 100),
+      sizeSheetRotation: ((r.rotation || 0) + 360) % 360
+    })
+  },
+
+  onSizeSheetChanging(e: any) {
+    const value = Number(e.detail && e.detail.value)
+    if (!Number.isFinite(value)) return
+    this.applySheetScale(value)
+  },
+
+  applySheetScale(value: number) {
+    const id = this.data.sizeSheetId
+    const r = this.runtime.find((item: Runtime) => item.id === id)
+    if (!r) return
+    r.scale = value / 100
+    this.resizeRuntime(r)
+    const idx = this.data.residents.findIndex((item: any) => item.id === id)
+    const patch: Record<string, any> = { sizeSheetValue: value }
+    if (idx >= 0) patch[`residents[${idx}].size`] = r.size
+    this.setData(patch)
+  },
+
+  onSheetRotateChanging(e: any) {
+    const value = Number(e.detail && e.detail.value)
+    if (!Number.isFinite(value)) return
+    const r = this.runtime.find((item: Runtime) => item.id === this.data.sizeSheetId)
+    if (!r) return
+    r.rotation = value > 180 ? value - 360 : value
+    this.setData({ sizeSheetRotation: value })
+  },
+
+  resizeRuntime(r: Runtime) {
+    const scale = Math.max(0.8, Math.min(1.12, this.tankW / 820))
+    const baseSize = r.kind === 'fish' ? 136 : r.kind === 'crab' ? 124 : r.kind === 'snail' ? 100 : 116
+    r.size = Math.round(baseSize * scale * (r.scale || 1))
+    r.w = r.size
+    r.h = Math.max(20, Math.round(r.size * (r.aspect || 1)))
+  },
+
+  onCloseSizeSheet() {
+    if (this.data.sizeSheetOpen) {
+      this.applySheetScale(Math.round((this._sizeOriginalScale || 1) * 100))
+      const r = this.runtime.find((item: Runtime) => item.id === this.data.sizeSheetId)
+      if (r) r.rotation = this._sizeOriginalRotation
+    }
+    this.setData({ sizeSheetOpen: false, sizeSheetId: '' })
+  },
+
+  onSaveSize() {
+    const id = this.data.sizeSheetId
+    const scale = (this.data.sizeSheetValue || 100) / 100
+    const rotation = this.data.sizeSheetRotation > 180
+      ? this.data.sizeSheetRotation - 360
+      : this.data.sizeSheetRotation
+    setResidentAdjustmentsLocal(id, scale, rotation)
+    if (isLoggedIn()) {
+      updateResidentAdjustmentsRemote(id, scale, rotation).catch(() => toast('调整同步失败'))
+    }
+    this.setData({ sizeSheetOpen: false, sizeSheetId: '' })
+    toast('已保存调整')
+  },
+
+  onAuditLog() {
+    wx.navigateTo({ url: '/pages/aquarium-audit/aquarium-audit' })
+  },
+
   onAdd() {
-    // 上传抠图需要登录；未登录先去登录页
+    // 直接拉起拍照/相册，选完再进抠图页，少一层空白选择页
     if (!requireLogin()) return
-    wx.navigateTo({ url: '/pages/aquarium-add/aquarium-add' })
+    chooseImage()
+      .then((path: string) => {
+        wx.navigateTo({
+          url: '/pages/aquarium-add/aquarium-add?photo=' + encodeURIComponent(path)
+        })
+      })
+      .catch((err: any) => {
+        if (err && err.message === 'cancel') return
+        toast('选择图片失败')
+      })
   },
 
   onClear() {
-    if (!this.runtime.length) return
+    if (!this.runtime.length && !(this.data.manageList || []).length) return
     wx.showModal({
       title: '清空潮池',
-      content: '确定要送走所有住客吗？',
+      content: '确定要清空潮池中的所有生物吗？',
       confirmText: '清空',
-      success: (res: any) => {
+      success: async (res: any) => {
         if (!res.confirm) return
+        if (isLoggedIn()) {
+          try {
+            await clearResidentsRemote()
+          } catch (e) {
+            toast('清空失败，请稍后再试')
+            return
+          }
+        }
         clearResidents()
         this.stopLoop()
         this.runtime = []
         this.wakeList = []
-        this.setData({ residents: [], wakes: [], count: 0, empty: true })
-        toast('潮池清空了')
+        this.setData({
+          residents: [],
+          wakes: [],
+          count: 0,
+          empty: true,
+          manageOpen: false,
+          manageList: [],
+          sizeSheetOpen: false
+        })
+        toast('已清空潮池')
       }
     })
   },

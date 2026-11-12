@@ -84,6 +84,14 @@
       </view>
     </view>
 
+    <view class="pack-entry card" bindtap="goCardPack" hover-class="tap">
+      <view class="pack-entry-copy">
+        <view class="pack-entry-title">海洋卡包</view>
+        <view class="pack-entry-desc">用代币抽取物理海洋、海洋科技与其他海洋生物图鉴卡</view>
+      </view>
+      <view class="pack-entry-btn">去抽卡</view>
+    </view>
+
     <swiper
       id="onb-activity"
       class="activity-swiper"

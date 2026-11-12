@@ -626,6 +626,10 @@ Page({
     wx.navigateTo({ url: '/pages/search/search' })
   },
 
+  goCardPack() {
+    wx.navigateTo({ url: '/pages/card-pack/card-pack' })
+  },
+
   goRecommend() {
     wx.navigateTo({ url: '/pages/spot-guide/spot-guide' })
   },

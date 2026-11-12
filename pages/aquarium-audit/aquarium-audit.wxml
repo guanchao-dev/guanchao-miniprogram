@@ -1,0 +1,26 @@
+<view class="page audit-page">
+  <view class="audit-head">
+    <view class="title">申诉记录</view>
+  </view>
+
+  <view class="state" wx:if="{{loading}}">加载中…</view>
+  <view class="state" wx:elif="{{!list.length}}">还没有申诉记录</view>
+
+  <view class="card" wx:for="{{list}}" wx:key="uploadId">
+    <image class="thumb" src="{{item.previewUrl}}" mode="aspectFill" lazy-load="{{true}}"></image>
+    <view class="info">
+      <view class="pill {{item.status}}">{{item.statusText}}</view>
+      <view class="reason" wx:if="{{item.rejectReason}}">{{item.rejectReason}}</view>
+      <view class="time">{{item.timeText}}</view>
+    </view>
+    <view class="actions">
+      <view
+        class="btn primary"
+        wx:if="{{item.status === 'approved' && !item.used}}"
+        data-id="{{item.uploadId}}"
+        bindtap="onPlace"
+        hover-class="audit-tap"
+      >加入潮池</view>
+    </view>
+  </view>
+</view>

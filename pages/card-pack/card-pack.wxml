@@ -1,0 +1,71 @@
+<view class="page pack-page">
+  <view class="pack-head">
+    <view>
+      <view class="pack-kicker">OCEAN CARD PACK</view>
+      <view class="pack-title">海洋卡包</view>
+    </view>
+    <view class="coin-pill">代币 {{coins}}</view>
+  </view>
+
+  <view class="pack-card">
+    <view class="pack-stack">
+      <view class="pack-back b3"></view>
+      <view class="pack-back b2"></view>
+      <view class="pack-front">
+        <view class="pack-front-cat">物理海洋 · 海洋科技 · 其他海洋生物</view>
+        <view class="pack-front-title">海洋图鉴</view>
+        <view class="pack-front-sub">随机 3 张，抽到即点亮</view>
+      </view>
+    </view>
+    <view class="pack-note">卡包只包含物理海洋、海洋科技和其他海洋生物；赶海生物仍靠识别点亮。</view>
+    <view class="pack-actions">
+      <view class="btn pack-open {{drawing || !canDraw ? 'disabled' : ''}}" bindtap="onDraw" hover-class="tap">
+        {{drawing ? '抽取中…' : '开启卡包 · ' + cost + ' 代币'}}
+      </view>
+      <view class="btn pack-back-btn" bindtap="onGoWiki" hover-class="tap">前往图鉴</view>
+    </view>
+  </view>
+
+  <view class="open-overlay" wx:if="{{opening}}">
+    <view class="open-glow"></view>
+    <view class="open-pack">
+      <view class="open-pack-cat">海洋图鉴</view>
+      <view class="open-pack-title">卡包开启中</view>
+      <view class="open-pack-rule"></view>
+      <view class="open-pack-sub">正在抽取 3 张卡片</view>
+    </view>
+    <view class="open-tip">请稍候</view>
+  </view>
+
+  <view class="result-head" wx:if="{{drew}}">
+    <view class="result-title">本次获得</view>
+    <view class="result-sub" wx:if="{{remaining !== null}}">卡池还剩 {{remaining}} 张未点亮</view>
+  </view>
+
+  <view class="result-list" wx:if="{{drew}}">
+    <view
+      class="result-card {{index < revealedCount ? 'revealed' : ''}}"
+      wx:for="{{cards}}"
+      wx:key="id"
+      data-id="{{item.id}}"
+      data-index="{{index}}"
+      bindtap="onOpenCard"
+      hover-class="tap"
+    >
+      <view class="result-art cat-{{item.category}}">
+        <image wx:if="{{item.coverUrl}}" class="result-cover" src="{{item.coverUrl}}" mode="aspectFill"></image>
+        <view wx:else class="result-art-label">{{item.categoryName}}</view>
+      </view>
+      <view class="result-body">
+        <view class="result-meta">{{item.categoryName}}</view>
+        <view class="result-name">{{item.name}}</view>
+        <view class="result-summary">{{item.summary}}</view>
+      </view>
+      <view class="card-cover">
+        <view class="card-cover-title">海洋图鉴</view>
+        <view class="card-cover-rule"></view>
+        <view class="card-cover-sub">OCEAN CARD</view>
+      </view>
+    </view>
+  </view>
+</view>
