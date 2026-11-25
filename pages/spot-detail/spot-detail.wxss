@@ -22,13 +22,14 @@
   margin-bottom: 20rpx;
   border: 4rpx solid #1C1C1C;
   border-radius: 24rpx;
-  background: #D8F3F6;
+  background: #F3FBFA;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   color: #6B7C8A;
-  font-size: 24rpx;
+  font-size: 22rpx;
+  font-weight: 650;
 }
 
 .pano-fallback image {
@@ -39,16 +40,17 @@
 
 /* 标题区 */
 .spot-title {
-  font-size: 40rpx;
+  font-size: 34rpx;
   font-weight: 900;
   color: #1C1C1C;
   line-height: 1.3;
 }
 
 .spot-meta {
-  margin-top: 6rpx;
+  margin-top: 8rpx;
   color: #6B7C8A;
-  font-size: 26rpx;
+  font-size: 22rpx;
+  font-weight: 650;
 }
 
 /* 基础信息行 */
@@ -56,8 +58,10 @@
   display: flex;
   justify-content: space-between;
   gap: 16rpx;
-  margin-top: 12rpx;
-  font-size: 26rpx;
+  margin-top: 10rpx;
+  font-size: 24rpx;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
 }
 
 .info-k {
@@ -66,6 +70,7 @@
 }
 
 .info-v {
+  color: #1C1C1C;
   font-weight: 700;
   text-align: right;
 }
@@ -75,11 +80,16 @@
   display: flex;
   align-items: center;
   margin-top: 22rpx;
-  padding: 22rpx 24rpx;
+  padding: 20rpx 22rpx;
   border: 3rpx solid #1C1C1C;
   border-radius: 20rpx;
   background: #FFFFFF;
-  box-shadow: 4rpx 4rpx 0 rgba(28, 28, 28, 0.85);
+  box-shadow: 3rpx 3rpx 0 rgba(28, 28, 28, 0.85);
+}
+
+.nav-row:active {
+  transform: translate(2rpx, 2rpx);
+  box-shadow: 1rpx 1rpx 0 rgba(28, 28, 28, 0.85);
 }
 
 .nav-row-main {
@@ -89,8 +99,8 @@
 
 .nav-row-title {
   display: block;
-  font-size: 30rpx;
-  font-weight: 850;
+  font-size: 27rpx;
+  font-weight: 800;
   color: #1C1C1C;
   overflow: hidden;
   white-space: nowrap;
@@ -99,9 +109,9 @@
 
 .nav-row-sub {
   display: block;
-  margin-top: 8rpx;
-  font-size: 22rpx;
-  color: #8A99A6;
+  margin-top: 6rpx;
+  font-size: 21rpx;
+  color: #6B7C8A;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -111,25 +121,28 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-left: 20rpx;
+  margin-left: 18rpx;
   flex-shrink: 0;
 }
 
 .nav-plane {
-  width: 68rpx;
-  height: 68rpx;
-  line-height: 68rpx;
+  width: 64rpx;
+  height: 64rpx;
+  box-sizing: border-box;
+  line-height: 58rpx;
   text-align: center;
+  border: 3rpx solid #1C1C1C;
   border-radius: 50%;
-  background: #F2F4F7;
-  font-size: 32rpx;
-  color: #4F6787;
+  background: #F6D081;
+  font-size: 30rpx;
+  color: #1C1C1C;
 }
 
 .nav-row-label {
   margin-top: 4rpx;
-  font-size: 20rpx;
-  color: #8A99A6;
+  font-size: 19rpx;
+  font-weight: 700;
+  color: #6B7C8A;
 }
 
 /* 区块标题 */
@@ -143,9 +156,10 @@
 /* 潮汐 */
 .tide-summary {
   display: block;
-  color: #184D97;
-  font-size: 26rpx;
-  font-weight: 700;
+  color: #4F6787;
+  font-size: 25rpx;
+  font-weight: 650;
+  line-height: 1.5;
 }
 
 .tide-table {
@@ -160,9 +174,10 @@
   display: flex;
   justify-content: space-between;
   padding: 14rpx 18rpx;
-  border-top: 2rpx solid rgba(28, 28, 28, 0.1);
-  font-size: 26rpx;
+  border-top: 2rpx solid rgba(28, 28, 28, 0.08);
+  font-size: 24rpx;
   font-weight: 650;
+  font-variant-numeric: tabular-nums;
 }
 
 .tide-row:first-child {
@@ -178,40 +193,43 @@
 }
 
 .chip {
-  padding: 8rpx 22rpx;
-  border: 2rpx solid #1C1C1C;
+  padding: 7rpx 18rpx;
+  border: 3rpx solid #1C1C1C;
   border-radius: 999rpx;
   background: #F3FBFA;
   color: #1888BF;
-  font-size: 24rpx;
+  font-size: 22rpx;
   font-weight: 700;
 }
 
 .chip.active {
   background: #34B8C5;
   color: #FFFFFF;
+  font-weight: 750;
 }
 
 .chip.safety {
   background: #FFF2F2;
-  color: #E0533D;
-  border-color: #E0533D;
+  color: #D9463F;
+  border-color: #D9463F;
 }
 
 .hint {
   display: block;
   margin-top: 12rpx;
   color: #4F6787;
-  font-size: 26rpx;
+  font-size: 24rpx;
+  font-weight: 650;
   line-height: 1.6;
 }
 
 .source {
   margin-top: 24rpx;
-  padding-top: 20rpx;
-  border-top: 2rpx solid rgba(28, 28, 28, 0.1);
-  color: #9AA8B2;
-  font-size: 22rpx;
+  padding-top: 18rpx;
+  border-top: 2rpx solid rgba(28, 28, 28, 0.08);
+  color: #6B7C8A;
+  font-size: 21rpx;
+  font-weight: 650;
 }
 
 /* ===== 反馈入口 ===== */
@@ -220,14 +238,16 @@
   align-items: center;
   justify-content: space-between;
   margin-top: 28rpx;
-  padding: 20rpx 24rpx;
-  border: 3rpx dashed rgba(28, 28, 28, 0.25);
+  padding: 18rpx 22rpx;
+  border: 3rpx dashed rgba(28, 28, 28, 0.22);
   border-radius: 20rpx;
-  color: var(--muted);
-  font-size: 24rpx;
+  color: #6B7C8A;
+  font-size: 22rpx;
+  font-weight: 650;
 }
 .fb-entry-arrow {
-  font-size: 34rpx;
+  color: #8A99A6;
+  font-size: 32rpx;
   line-height: 1;
 }
 
@@ -252,21 +272,21 @@
   max-height: 82vh;
   overflow: hidden;
   box-sizing: border-box;
-  border: 4rpx solid var(--ink);
-  border-radius: 36rpx;
-  background: var(--card);
-  box-shadow: var(--shadow);
+  border: 4rpx solid #1C1C1C;
+  border-radius: 32rpx;
+  background: #FFFFFF;
+  box-shadow: 3rpx 3rpx 0 rgba(28, 28, 28, 0.85);
 }
 .fb-head {
   flex: none;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 28rpx 28rpx 16rpx;
+  padding: 24rpx 28rpx 14rpx;
 }
 .fb-title {
   font-size: 34rpx;
-  font-weight: 850;
+  font-weight: 900;
   line-height: 1.4;
 }
 .fb-close {
@@ -276,8 +296,13 @@
   justify-content: center;
   width: 56rpx;
   height: 56rpx;
-  color: var(--muted);
-  font-size: 44rpx;
+  box-sizing: border-box;
+  border: 3rpx solid #1C1C1C;
+  border-radius: 50%;
+  background: #FFFFFF;
+  color: #1C1C1C;
+  font-size: 36rpx;
+  font-weight: 800;
   line-height: 1;
 }
 /* 内容区可滚动：小屏 / 键盘弹起也不会把底部按钮挤出屏幕 */
@@ -291,19 +316,20 @@
 .fb-spot {
   display: block;
   margin-bottom: 16rpx;
-  color: var(--muted);
-  font-size: 24rpx;
+  color: #6B7C8A;
+  font-size: 22rpx;
+  font-weight: 650;
   line-height: 1.6;
 }
 .fb-input {
   width: 100%;
   box-sizing: border-box;
   height: 220rpx;
-  padding: 20rpx;
-  border: 3rpx solid var(--ink);
-  border-radius: 20rpx;
+  padding: 18rpx;
+  border: 3rpx solid #1C1C1C;
+  border-radius: 18rpx;
   background: #FFFFFF;
-  font-size: 26rpx;
+  font-size: 24rpx;
   line-height: 1.6;
 }
 .fb-contact {
@@ -311,18 +337,18 @@
   box-sizing: border-box;
   height: 84rpx;
   margin: 16rpx 0 8rpx;
-  padding: 0 20rpx;
-  border: 3rpx solid var(--ink);
-  border-radius: 20rpx;
+  padding: 0 18rpx;
+  border: 3rpx solid #1C1C1C;
+  border-radius: 18rpx;
   background: #FFFFFF;
-  font-size: 26rpx;
+  font-size: 24rpx;
 }
 .fb-ph {
-  color: #A8ADB5;
+  color: #9AA8B2;
 }
 .fb-foot {
   flex: none;
-  padding: 20rpx 28rpx 28rpx;
+  padding: 18rpx 28rpx 26rpx;
   box-sizing: border-box;
 }
 /* 不复用全局 .btn：它没设 box-sizing，width:100% 加 padding 会溢出 */
@@ -333,18 +359,18 @@
   width: 100%;
   height: 88rpx;
   box-sizing: border-box;
-  border: 3rpx solid var(--ink);
+  border: 4rpx solid #1C1C1C;
   border-radius: 999rpx;
-  background: var(--yellow);
-  color: var(--ink);
-  font-size: 30rpx;
-  font-weight: 800;
-  box-shadow: 3rpx 3rpx 0 rgba(28, 28, 28, 0.85);
+  background: #F6D081;
+  color: #1C1C1C;
+  font-size: 28rpx;
+  font-weight: 850;
+  box-shadow: 4rpx 4rpx 0 rgba(28, 28, 28, 0.85);
 }
 .fb-submit.disabled {
-  opacity: 0.6;
+  opacity: 0.5;
 }
 .fb-submit:active {
   transform: translate(2rpx, 2rpx);
-  box-shadow: 1rpx 1rpx 0 rgba(28, 28, 28, 0.85);
+  box-shadow: 2rpx 2rpx 0 rgba(28, 28, 28, 0.85);
 }

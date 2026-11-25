@@ -1,5 +1,5 @@
 import { aiApi, homeApi, watchApi } from '../../services/api'
-import { nowISO, nowTime, todayDate, toast, trendText } from '../../utils/format'
+import { nowISO, todayDate, toast, trendText } from '../../utils/format'
 import { requireLogin } from '../../utils/auth'
 import { saveSpotId } from '../../utils/region'
 import { loadGuideSpots, nearestGuideSpot } from '../../utils/spotGuide'
@@ -140,8 +140,10 @@ Page({
     spotName: '赶海点',
     date: todayDate(),
     dates: buildDates(todayDate()),
-    now: nowTime(),
     heightText: '--',
+    // 曲线画到 canvas 后导出成图片，再销毁画布：原生 canvas 不会盖住悬浮球
+    chartImage: '',
+    chartCanvas: true,
     trendText: '潮汐变化中',
     weather: {},
     table: [],
@@ -152,7 +154,6 @@ Page({
     advice: {} as any,
     adviceLoaded: false,
     adviceLoading: false,
-    showTutorialTip: false,
     // 开始 / 结束赶海：从首页移到潮汐表，直接以当前点位开始计时
     watchLabel: '开始赶海',
     watchClass: ''
@@ -181,11 +182,10 @@ Page({
     }
   },
 
-  /** 页面停留时每分钟更新「现在」时间线和横线位置 */
+  /** 页面停留时每分钟重画曲线，让「现在」横线跟着走 */
   startClock() {
     this.stopClock()
     this.clockTimer = setInterval(() => {
-      this.setData({ now: nowTime() })
       this.renderChart()
     }, 60000)
   },
@@ -211,10 +211,6 @@ Page({
     }
     // 从赶海地图点标记进来：直接定位到该点位
     this.pendingSpotId = String((options && options.spotId) || '')
-    // 第一次进入潮汐表：提示教学视频在哪里，可跳转或跳过
-    if (!wx.getStorageSync('tide_tutorial_shown')) {
-      this.setData({ showTutorialTip: true })
-    }
     this.setData({
       loading: true,
       dates: buildDates(this.data.date)
@@ -243,19 +239,10 @@ Page({
     return { title: '追潮记 · 今日潮汐', path: '/pages/tide/tide' }
   },
 
-  /** 教学入口：记录已提示，进入使用教学页 */
+  /** 教学入口：进入使用教学页 */
   goTutorial() {
-    wx.setStorageSync('tide_tutorial_shown', 1)
-    this.setData({ showTutorialTip: false })
     wx.navigateTo({ url: '/pages/tutorial/tutorial' })
   },
-
-  skipTutorial() {
-    wx.setStorageSync('tide_tutorial_shown', 1)
-    this.setData({ showTutorialTip: false })
-  },
-
-  noop() {},
 
   onSwipeStart(e: any) {
     const t = (e.touches && e.touches[0]) || (e.changedTouches && e.changedTouches[0])
@@ -283,18 +270,6 @@ Page({
   onStripTouchEnd() {
     // 等页面级 touchend 执行完再复位，保证本次手势不会被判定为左滑
     setTimeout(() => { this.stripTouching = false }, 80)
-  },
-
-  /** 潮汐表右下角浮标：生物识别与生态净滩合并成一个入口 */
-  openAiMenu() {
-    wx.showActionSheet({
-      itemList: ['生物识别：拍生物认物种', '生态净滩：拍垃圾做清理'],
-      success: (res) => {
-        if (res.tapIndex === 0) wx.setStorageSync('home_open_guess', 1)
-        else wx.setStorageSync('home_open_trash', 1)
-        wx.switchTab({ url: '/pages/home/home' })
-      }
-    })
   },
 
   syncWatchBtn() {
@@ -399,21 +374,6 @@ Page({
     this.loadTide()
   },
 
-  onPrevDay() {
-    this.changeDay(-1)
-  },
-
-  onNextDay() {
-    this.changeDay(1)
-  },
-
-  changeDay(offset: number) {
-    const date = shiftDate(this.data.date, offset)
-    this.setData({ date, dates: buildDates(date) })
-    this.resetAdvice()
-    this.loadTide()
-  },
-
   loadTide() {
     if (!this.data.spotId) return
     const key = `${this.data.spotId}|${this.data.date}`
@@ -460,7 +420,6 @@ Page({
           : undefined
 
         const view = {
-          now: nowTime(),
           heightText: tide.currentHeightM != null ? `${tide.currentHeightM}m` : '--',
           trendText: trendText(tide.trend),
           weather,
@@ -522,6 +481,18 @@ Page({
 
   renderChart() {
     if (!this.chartReady || !this.tidePoints.length) return
+    // 画布导出后会被销毁；重画时先挂回画布，等节点渲染完再绘制
+    if (!this.data.chartCanvas) {
+      this.setData({ chartCanvas: true, chartImage: '' }, () => {
+        wx.nextTick(() => this.drawChartNow())
+      })
+      return
+    }
+    this.drawChartNow()
+  },
+
+  drawChartNow() {
+    if (!this.chartReady || !this.tidePoints.length) return
     const isToday = this.data.date === todayDate()
     const points = this.tidePoints
     const parts = String(this.data.bestWindow || '').split('-')
@@ -554,7 +525,8 @@ Page({
       isToday ? this.currentHeightM : undefined,
       {
         nowRatio: isToday ? this.nowRatio() : undefined,
-        bestRange
+        bestRange,
+        exportImage: true
       }
     )
   },

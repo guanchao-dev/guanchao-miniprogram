@@ -7,29 +7,32 @@
 }
 
 .col-title {
+  color: #1C1C1C;
   font-size: 34rpx;
-  font-weight: 850;
+  font-weight: 900;
 }
 
 .col-sub {
   margin-top: 8rpx;
   color: #6B7C8A;
-  font-size: 22rpx;
+  font-size: 21rpx;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
 }
 
 .col-track {
-  height: 22rpx;
+  height: 20rpx;
   margin-top: 20rpx;
   overflow: hidden;
   border: 3rpx solid #1C1C1C;
   border-radius: 999rpx;
-  background: #FFF4E8;
+  background: #F0F2F5;
 }
 
 .col-fill {
   height: 100%;
   border-radius: 999rpx;
-  background: linear-gradient(90deg, #184D97, #34B8C5);
+  background: #34B8C5;
 }
 
 .col-empty {
@@ -43,52 +46,62 @@
 .col-empty-text {
   color: #6B7C8A;
   font-size: 24rpx;
+  font-weight: 650;
 }
 
 .col-login {
   margin-top: 24rpx;
-  padding: 0 48rpx;
-  height: 76rpx;
+  padding: 0 44rpx;
+  height: 80rpx;
+  border-width: 4rpx;
+  box-shadow: 4rpx 4rpx 0 rgba(28, 28, 28, 0.85);
   background: #1888BF;
-  color: #fff;
+  color: #FFFFFF;
+  font-size: 26rpx;
+  font-weight: 850;
 }
 
-/* 城市 / 区两级筛选 */
+.col-login:active {
+  transform: translate(2rpx, 2rpx);
+  box-shadow: 2rpx 2rpx 0 rgba(28, 28, 28, 0.85);
+}
+
+/* 城市 / 区两级筛选：同一套 chip 造型，选中统一青底白字 */
 .filter-tabs {
   white-space: nowrap;
-  margin: 0 6rpx 14rpx;
+  margin: 10rpx 6rpx 20rpx;
+  padding: 2rpx 4rpx 6rpx;
+  box-sizing: border-box;
 }
 
 .filter-chip {
   display: inline-block;
-  margin-right: 14rpx;
+  margin-right: 16rpx;
   padding: 12rpx 26rpx;
   border: 3rpx solid #1C1C1C;
   border-radius: 999rpx;
-  background: #FFF;
-  box-shadow: 3rpx 3rpx 0 rgba(28, 28, 28, 0.85);
+  background: #FFFFFF;
+  box-shadow: 2rpx 2rpx 0 rgba(28, 28, 28, 0.85);
   color: #1C1C1C;
-  font-size: 24rpx;
-  font-weight: 850;
+  font-size: 23rpx;
+  font-weight: 750;
+  line-height: 1.3;
+}
+
+.filter-chip:last-child {
+  margin-right: 4rpx;
 }
 
 .filter-chip.on {
-  background: #F6D081;
-}
-
-.filter-chip.sub {
-  font-weight: 700;
-}
-
-.filter-chip.sub.on {
   background: #34B8C5;
-  color: #FFF;
+  color: #FFFFFF;
+  font-weight: 850;
 }
 
 .empty-tip {
   margin: 40rpx 6rpx;
-  color: #8A94A0;
-  font-size: 26rpx;
+  color: #6B7C8A;
+  font-size: 24rpx;
   text-align: center;
 }
 
@@ -96,23 +109,23 @@
 .spot-grid {
   display: flex;
   flex-wrap: wrap;
-  padding: 20rpx 12rpx 12rpx;
+  padding: 24rpx 10rpx 16rpx;
 }
 
 .spot-cell {
   width: 50%;
   box-sizing: border-box;
-  padding: 8rpx;
+  padding: 10rpx;
 }
 
 /* 没去过：灰底灰字 */
 .spot-cell-name {
   display: block;
-  padding: 18rpx 12rpx;
-  border: 3rpx solid #DCE2E7;
-  border-radius: 14rpx;
+  padding: 24rpx 14rpx;
+  border: 3rpx solid rgba(28, 28, 28, 0.16);
+  border-radius: 16rpx;
   background: #F3F5F7;
-  color: #9AA3AF;
+  color: #9AA8B2;
   font-size: 22rpx;
   font-weight: 700;
   text-align: center;
@@ -124,7 +137,7 @@
 /* 去过：和成就页「已点亮」同一套金色语言 */
 .spot-cell.lit .spot-cell-name {
   border-color: #E0A83A;
-  background: linear-gradient(180deg, #FFF7E6 0%, #FFFDF7 58%, #FFFFFF 100%);
+  background: #FFF6E0;
   box-shadow: 3rpx 3rpx 0 rgba(224, 168, 58, 0.5);
   color: #8A5A10;
   font-weight: 800;

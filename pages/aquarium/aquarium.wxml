@@ -169,8 +169,8 @@
     </view>
     <view class="size-sheet-delete" bindtap="onDeleteFromSheet" hover-class="aquarium-tap">删除生物</view>
     <view class="size-sheet-actions">
-      <view class="size-sheet-btn ghost" bindtap="onCloseSizeSheet">取消</view>
-      <view class="size-sheet-btn primary" bindtap="onSaveSize">保存</view>
+      <view class="size-sheet-btn ghost" bindtap="onCloseSizeSheet" hover-class="aquarium-tap">取消</view>
+      <view class="size-sheet-btn primary" bindtap="onSaveSize" hover-class="aquarium-tap">保存</view>
     </view>
   </view>
 
@@ -192,8 +192,8 @@
     </scroll-view>
     <view class="manage-empty" wx:else>潮池暂无生物</view>
     <view class="manage-actions">
-      <view class="manage-btn ghost" bindtap="onCloseManage">关闭</view>
-      <view class="manage-btn danger" wx:if="{{manageList.length}}" bindtap="onClear">清空潮池</view>
+      <view class="manage-btn ghost" bindtap="onCloseManage" hover-class="aquarium-tap">关闭</view>
+      <view class="manage-btn danger" wx:if="{{manageList.length}}" bindtap="onClear" hover-class="aquarium-tap">清空潮池</view>
     </view>
   </view>
 </view>

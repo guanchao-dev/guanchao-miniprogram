@@ -42,6 +42,20 @@
       </view>
     </view>
 
+    <!-- 更多服务 -->
+    <view class="settings-group tone-teal">
+      <view class="group-title"><text class="group-dot"></text>更多服务</view>
+      <view class="card settings-card">
+        <block wx:for="{{moreServices}}" wx:key="label">
+          <view class="row-divider" wx:if="{{index > 0}}"></view>
+          <view class="settings-row" data-url="{{item.url}}" bindtap="onMoreService" hover-class="tap">
+            <text class="row-label">{{item.label}}</text>
+            <text class="row-arrow">›</text>
+          </view>
+        </block>
+      </view>
+    </view>
+
     <!-- 关于 -->
     <view class="settings-group tone-coral">
       <view class="group-title"><text class="group-dot"></text>关于</view>

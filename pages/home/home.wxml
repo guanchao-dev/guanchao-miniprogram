@@ -30,8 +30,7 @@
         <text>{{place}}</text>
         <text class="place-caret">▾</text>
       </view>
-      <view class="search-chip" bindtap="onSearch" hover-class="tap">
-        <text>搜索赶海点 / 图鉴</text>
+      <view class="search-btn" bindtap="onSearch" hover-class="tap">
         <image class="search-icon" src="https://www.blueakaiwu.cn/api/v1/static/assets/home/home-search.png" mode="aspectFit"></image>
       </view>
     </view>
@@ -41,41 +40,52 @@
       <view class="hero-copy">
         <view class="hero-title">跟泡泡一起</view>
         <view class="hero-title">出发赶海</view>
-        <view id="onb-watch" class="btn watch-btn tide-btn" bindtap="goTide" hover-class="tap">查看潮汐表</view>
+        <view id="onb-watch" class="btn watch-btn" bindtap="goTide" hover-class="tap">查看潮汐表</view>
       </view>
       <view class="hero-visual">
         <image class="hero-mascot" src="https://www.blueakaiwu.cn/api/v1/static/assets/to-upload/paopao-q-2x.png" mode="aspectFit"></image>
       </view>
     </view>
 
-    <view id="onb-spots" class="hot-box card">
-      <view class="hot-head">
-        <text class="section-title">赶海地点热度排名</text>
-        <text class="section-more" bindtap="goRecommend" hover-class="tap">全部 ›</text>
+    <view id="onb-spots" class="hot-line card" bindtap="goRecommend" hover-class="tap">
+      <view class="hot-line-main" wx:if="{{recommended.length}}">
+        <text class="hot-line-badge">TOP1</text>
+        <text class="hot-line-name">{{recommended[0].name}}</text>
+        <text class="hot-line-heat">🔥 {{recommended[0].heat}}</text>
+        <text class="hot-line-dist" wx:if="{{recommended[0].distanceText}}">{{recommended[0].distanceText}}</text>
       </view>
-      <view class="page-loading" wx:if="{{recLoading}}">
-        <view class="spinner"></view>
-        <text>加载中…</text>
-      </view>
-      <view class="empty-tip" wx:elif="{{!recommended.length}}">暂无推荐点位</view>
-      <view class="hot-row" wx:for="{{recommended}}" wx:key="id" bindtap="goRecommend" hover-class="tap">
-        <text class="hot-rank rank-{{index + 1}}">{{index + 1}}</text>
-        <text class="hot-name">{{item.name}}</text>
-        <text class="hot-heat">🔥 {{item.heat}}</text>
-        <text class="hot-dist">{{item.distanceText}}</text>
-      </view>
+      <text class="hot-line-empty" wx:elif="{{recLoading}}">正在加载热门点位…</text>
+      <text class="hot-line-empty" wx:else>暂无推荐点位</text>
+      <text class="hot-line-more">全部 ›</text>
     </view>
 
-    <view class="ai-row">
-      <view id="onb-photo" class="ai-card photo" bindtap="onGuess" hover-class="tap">
-        <view class="ai-orb"></view>
-        <image class="ai-icon" src="https://www.blueakaiwu.cn/api/v1/static/assets/home/home-camera.png" mode="aspectFit"></image>
-        <text class="ai-name">生物识别</text>
+    <view class="tool-bar card">
+      <view id="onb-photo" class="tool-item" bindtap="onGuess" hover-class="tap">
+        <view class="tool-icon tone-teal">
+          <image src="https://www.blueakaiwu.cn/api/v1/static/assets/home/home-camera.png" mode="aspectFit"></image>
+        </view>
+        <text class="tool-name">生物识别</text>
       </view>
-      <view id="onb-trash" class="ai-card trash" bindtap="onTrashGuess" hover-class="tap">
-        <view class="ai-orb"></view>
-        <image class="ai-icon" src="https://www.blueakaiwu.cn/api/v1/static/assets/home/home-gear.png" mode="aspectFit"></image>
-        <text class="ai-name">生态净滩</text>
+      <view class="tool-divider"></view>
+      <view id="onb-trash" class="tool-item" bindtap="onTrashGuess" hover-class="tap">
+        <view class="tool-icon tone-green">
+          <image src="https://www.blueakaiwu.cn/api/v1/static/assets/home/home-gear.png" mode="aspectFit"></image>
+        </view>
+        <text class="tool-name">生态净滩</text>
+      </view>
+      <view class="tool-divider"></view>
+      <view class="tool-item" bindtap="goWiki" hover-class="tap">
+        <view class="tool-icon tone-blue">
+          <image src="https://www.blueakaiwu.cn/api/v1/static/assets/home/home-fish.png" mode="aspectFit"></image>
+        </view>
+        <text class="tool-name">海洋图鉴</text>
+      </view>
+      <view class="tool-divider"></view>
+      <view class="tool-item" bindtap="goSpotMap" hover-class="tap">
+        <view class="tool-icon tone-yellow">
+          <image src="https://www.blueakaiwu.cn/api/v1/static/assets/home/home-pin.png" mode="aspectFit"></image>
+        </view>
+        <text class="tool-name">赶海地图</text>
       </view>
     </view>
 
@@ -237,6 +247,7 @@
 
 <view class="spot-mask" wx:if="{{spotPickerVisible}}" bindtap="closeSpotPicker" catchtouchmove="noop">
   <view class="spot-sheet" catchtap="noop">
+    <view class="spot-sheet-handle"></view>
     <view class="spot-sheet-head">
       <text class="spot-sheet-title">选择潮汐点位</text>
       <text class="spot-sheet-close" bindtap="closeSpotPicker" hover-class="tap">×</text>

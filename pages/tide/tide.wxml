@@ -14,30 +14,12 @@
         <view class="spot-pick">{{spotName}} ▾</view>
       </picker>
       <view class="status">
-        <text class="status-item">时间 {{now}}</text>
         <text class="status-item status-trend">{{trendText}}</text>
         <text class="status-item status-height">潮高 {{heightText}}</text>
       </view>
     </view>
 
-    <view class="tide-meta" wx:if="{{tideType}}">
-      <text class="meta-chip type">{{tideType}}</text>
-      <text class="meta-chip season {{tideSeason === '活汛' ? 'live' : ''}}">{{tideSeason}}</text>
-      <text class="meta-chip best" wx:if="{{bestWindow}}">最佳赶海 {{bestWindow}}</text>
-    </view>
-
     <view class="tide-watch-btn {{watchClass}}" bindtap="onWatchToggle" hover-class="tap">{{watchLabel}}</view>
-
-    <view class="tutorial-entry" bindtap="goTutorial" hover-class="tap">不会看潮汐表？查看 1 分钟教学 ›</view>
-
-    <view class="card chart-card">
-      <canvas type="2d" id="tideCanvas" class="tide-canvas"></canvas>
-      <view class="legend">
-        <text class="leg teal">潮汐曲线</text>
-        <text class="leg best" wx:if="{{bestWindow}}">适宜赶海</text>
-        <text class="leg gold">现在</text>
-      </view>
-    </view>
 
     <view class="card block advice-block">
       <view class="block-title">出门建议</view>
@@ -80,11 +62,59 @@
       </block>
     </view>
 
+    <view class="card chart-card">
+      <view class="chart-stage">
+        <image
+          wx:if="{{chartImage}}"
+          class="tide-canvas chart-shot"
+          src="{{chartImage}}"
+          mode="scaleToFill"
+        ></image>
+        <!-- 画布只负责绘制，导出成图片后立即销毁：原生 canvas 会盖住悬浮球 -->
+        <canvas
+          wx:if="{{chartCanvas}}"
+          type="2d"
+          id="tideCanvas"
+          class="tide-canvas"
+        ></canvas>
+      </view>
+      <view class="legend">
+        <text class="leg teal">潮汐曲线</text>
+        <text class="leg best" wx:if="{{bestWindow}}">适宜赶海</text>
+        <text class="leg gold">现在</text>
+      </view>
+    </view>
+
+    <!-- 潮汐类型 / 最佳窗口 / 教学入口：一行收在天气上方 -->
+    <view class="tide-subline">
+      <view class="subline-tags" wx:if="{{tideType}}">
+        <text class="meta-chip type">{{tideType}}</text>
+        <text class="meta-chip season {{tideSeason === '活汛' ? 'live' : ''}}">{{tideSeason}}</text>
+        <text class="meta-chip best" wx:if="{{adviceLoaded && advice.bestWindow}}">最佳 {{advice.bestWindow}}</text>
+      </view>
+      <view class="tutorial-entry" bindtap="goTutorial" hover-class="tap">不会看？1 分钟教学 ›</view>
+    </view>
+
     <view class="card weather" wx:if="{{weather.text}}">
-      <text>天气 {{weather.text}}</text>
-      <text wx:if="{{weather.tempC != null}}">气温 {{weather.tempC}}℃</text>
-      <text wx:if="{{weather.windDir}}">{{weather.windDir}}风 {{weather.windScale}} 级</text>
-      <text wx:if="{{weather.waveHint}}">浪 {{weather.waveHint}}</text>
+      <view class="weather-cell">
+        <text class="weather-v">{{weather.text}}</text>
+        <text class="weather-k">天气</text>
+      </view>
+      <view class="weather-divider" wx:if="{{weather.tempC != null}}"></view>
+      <view class="weather-cell" wx:if="{{weather.tempC != null}}">
+        <text class="weather-v">{{weather.tempC}}℃</text>
+        <text class="weather-k">气温</text>
+      </view>
+      <view class="weather-divider" wx:if="{{weather.windDir}}"></view>
+      <view class="weather-cell" wx:if="{{weather.windDir}}">
+        <text class="weather-v">{{weather.windScale}} 级</text>
+        <text class="weather-k">{{weather.windDir}}风</text>
+      </view>
+      <view class="weather-divider" wx:if="{{weather.waveHint}}"></view>
+      <view class="weather-cell" wx:if="{{weather.waveHint}}">
+        <text class="weather-v">{{weather.waveHint}}</text>
+        <text class="weather-k">浪</text>
+      </view>
     </view>
 
     <scroll-view
@@ -108,11 +138,7 @@
       </view>
     </scroll-view>
 
-    <view class="nav-row">
-      <view class="nav-btn" bindtap="onPrevDay" hover-class="tap">前一天</view>
-      <view class="nav-mid">{{date}}</view>
-      <view class="nav-btn" bindtap="onNextDay" hover-class="tap">后一天</view>
-    </view>
+    <view class="nav-date">{{date}}</view>
 
     <view class="swipe-hint">左滑查看潮汐日历 ›</view>
 
@@ -142,21 +168,7 @@
   </view>
 </view>
 
-<view class="tutorial-mask" wx:if="{{showTutorialTip}}" catchtouchmove="noop">
-  <view class="tutorial-dialog">
-    <view class="tutorial-badge">?</view>
-    <view class="tutorial-dialog-title">第一次看潮汐表？</view>
-    <view class="tutorial-dialog-body">先看一段 1 分钟教学视频，学会看潮高曲线、涨落时间和适宜赶海的时段。视频在「我的服务 → 使用教学」。</view>
-    <view class="tutorial-actions">
-      <view class="tutorial-skip" bindtap="skipTutorial" hover-class="tap">跳过</view>
-      <view class="tutorial-go" bindtap="goTutorial" hover-class="tap">去看教学</view>
-    </view>
-  </view>
+<!-- 固定层包一层：组件内部 fixed 会被页面卡片压住，这里把整层抬到最上面 -->
+<view class="watch-ball-layer">
+  <watch-ball />
 </view>
-
-<view class="ai-fab" bindtap="openAiMenu" hover-class="tap">
-  <image class="ai-fab-icon" src="https://www.blueakaiwu.cn/api/v1/static/assets/home/home-camera.png" mode="aspectFit"></image>
-  <text class="ai-fab-label">识别</text>
-</view>
-
-<watch-ball />

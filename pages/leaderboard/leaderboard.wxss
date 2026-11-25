@@ -1,35 +1,63 @@
 .lb-row {
   display: flex;
   align-items: center;
-  margin: 16rpx 24rpx;
-  padding: 18rpx 20rpx;
-  border: 3rpx solid #1C1C1C;
-  border-radius: 24rpx;
+  min-height: 104rpx;
+  margin: 0 0 14rpx;
+  padding: 14rpx 20rpx;
+  box-sizing: border-box;
+  border: 3rpx solid var(--ink);
+  border-radius: 20rpx;
   background: #FFFFFF;
   box-shadow: 3rpx 3rpx 0 rgba(28, 28, 28, 0.85);
 }
 
 .lb-row.me {
-  background: #EAF4FF;
+  background: #EAF8FA;
 }
 
+/* 名次：前三名是金 / 银 / 铜圆徽章，其余只留数字 */
 .lb-rank {
-  width: 56rpx;
+  flex-shrink: 0;
+  width: 48rpx;
+  height: 48rpx;
+  line-height: 48rpx;
+  box-sizing: border-box;
   text-align: center;
-  font-size: 28rpx;
-  font-weight: 850;
-  color: #8A97A3;
+  border-radius: 50%;
+  color: #8A99A6;
+  font-size: 26rpx;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
 }
 
-.lb-rank.rank-1 { color: #E6A700; }
-.lb-rank.rank-2 { color: #8A97A3; }
-.lb-rank.rank-3 { color: #C57B3A; }
+.lb-rank.rank-1,
+.lb-rank.rank-2,
+.lb-rank.rank-3 {
+  border: 3rpx solid var(--ink);
+  line-height: 42rpx;
+  box-shadow: 2rpx 2rpx 0 rgba(28, 28, 28, 0.85);
+}
+
+.lb-rank.rank-1 {
+  background: #F6D081;
+  color: var(--ink);
+}
+
+.lb-rank.rank-2 {
+  background: #DCE3E8;
+  color: #33414D;
+}
+
+.lb-rank.rank-3 {
+  background: #EAC3A5;
+  color: #4A2E1C;
+}
 
 .lb-avatar {
   width: 72rpx;
   height: 72rpx;
   margin: 0 16rpx;
-  border: 3rpx solid #1C1C1C;
+  border: 3rpx solid var(--ink);
   border-radius: 50%;
   background: #E8F4F8;
 }
@@ -41,30 +69,39 @@
 
 .lb-name {
   display: block;
-  font-size: 28rpx;
+  color: var(--ink);
+  font-size: 27rpx;
   font-weight: 800;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
 }
 
+.lb-row.me .lb-name {
+  color: #0E6E9F;
+}
+
 .lb-level {
   display: block;
   margin-top: 4rpx;
-  color: #6B7C8A;
-  font-size: 22rpx;
+  color: var(--muted);
+  font-size: 21rpx;
+  font-weight: 650;
 }
 
 .lb-score {
+  flex-shrink: 0;
   margin-left: 12rpx;
+  color: #1888BF;
   font-size: 30rpx;
-  font-weight: 850;
-  color: #1878FF;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
 }
 
 .lb-more {
-  padding: 28rpx 0 60rpx;
+  padding: 24rpx 0 56rpx;
+  color: #9AA8B2;
+  font-size: 21rpx;
+  font-weight: 650;
   text-align: center;
-  color: #9AA6B4;
-  font-size: 22rpx;
 }

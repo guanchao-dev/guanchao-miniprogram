@@ -42,8 +42,8 @@
           <view class="sess-key {{item.status === 'active' ? '' : 'muted'}}">{{item.status === 'active' ? item.key : '----'}}</view>
           <view class="sess-meta">已签到 <text class="sess-num">{{item.checkinCount}}</text> 人{{item.status === 'active' ? ' · 点开看二维码 ›' : ' · 密钥已作废'}}</view>
           <view class="sess-actions">
-            <view class="mini-btn" data-id="{{item.sessionId}}" catchtap="openRecords">查看名单</view>
-            <view class="mini-btn danger" wx:if="{{item.status === 'active'}}" data-id="{{item.sessionId}}" catchtap="closeSession">结束签到</view>
+            <view class="mini-btn" data-id="{{item.sessionId}}" catchtap="openRecords" hover-class="tap">查看名单</view>
+            <view class="mini-btn danger" wx:if="{{item.status === 'active'}}" data-id="{{item.sessionId}}" catchtap="closeSession" hover-class="tap">结束签到</view>
           </view>
         </view>
       </block>

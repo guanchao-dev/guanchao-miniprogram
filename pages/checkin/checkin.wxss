@@ -1,0 +1,49 @@
+/* 打卡记录：沿用 .card / .list-card 的基础描边与硬阴影，只收字阶与间距 */
+.list-card {
+  margin-bottom: 20rpx;
+  padding: 22rpx 24rpx;
+}
+
+.list-card .list-title {
+  color: var(--ink);
+  font-size: 30rpx;
+  font-weight: 850;
+  line-height: 1.35;
+}
+
+.list-card .list-meta {
+  margin-top: 8rpx;
+  color: var(--muted);
+  font-size: 22rpx;
+  font-weight: 650;
+  line-height: 1.55;
+  font-variant-numeric: tabular-nums;
+}
+
+/* 备注与被弱化的日期行留出一点呼吸，避免两行粘在一起 */
+.list-card .list-meta + .list-meta {
+  margin-top: 10rpx;
+}
+
+/* 卡片内主操作：与首页主按钮同色（金底墨字） */
+.list-card .full-btn {
+  height: 84rpx;
+  margin-top: 22rpx;
+  border-width: 4rpx;
+  background: #F6D081;
+  color: var(--ink);
+  font-size: 26rpx;
+  font-weight: 850;
+  box-shadow: 4rpx 4rpx 0 rgba(28, 28, 28, 0.85);
+}
+
+.list-card .full-btn:active {
+  transform: translate(2rpx, 2rpx);
+  box-shadow: 2rpx 2rpx 0 rgba(28, 28, 28, 0.85);
+}
+
+.page .empty-tip {
+  padding: 64rpx 20rpx;
+  font-size: 24rpx;
+  font-weight: 650;
+}

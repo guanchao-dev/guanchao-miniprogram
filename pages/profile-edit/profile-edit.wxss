@@ -1,7 +1,8 @@
 .edit-card {
   position: relative;
   z-index: 2;
-  margin-bottom: 24rpx;
+  padding: 24rpx;
+  margin-bottom: 20rpx;
 }
 
 /* 头像卡片 */
@@ -9,7 +10,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 36rpx 24rpx 30rpx;
+  padding: 32rpx 24rpx 28rpx;
 }
 
 .avatar-btn {
@@ -31,94 +32,112 @@
   display: block;
   width: 160rpx;
   height: 160rpx;
-  border: 4rpx solid #1C1C1C;
-  border-radius: 36rpx;
+  box-sizing: border-box;
+  border: 4rpx solid var(--ink);
+  border-radius: 32rpx;
   background: #FFFFFF;
   box-shadow: 3rpx 3rpx 0 rgba(28, 28, 28, 0.85);
-  box-sizing: border-box;
 }
 
 .edit-avatar-tip {
+  width: auto;
   margin-top: 14rpx;
-  padding: 4rpx 16rpx;
-  border: 3rpx solid #1C1C1C;
+  padding: 5rpx 16rpx;
+  border: 3rpx solid var(--ink);
   border-radius: 999rpx;
   background: #F6D081;
-  color: #1C1C1C;
-  font-size: 22rpx;
+  color: var(--ink);
+  font-size: 21rpx;
   font-weight: 800;
-  width: auto;
+  line-height: 1.4;
 }
 
 .edit-level {
-  margin-top: 16rpx;
-  padding: 6rpx 20rpx;
-  border: 3rpx solid #1C1C1C;
+  margin-top: 14rpx;
+  padding: 6rpx 18rpx;
+  border: 3rpx solid var(--ink);
   border-radius: 999rpx;
   background: #34B8C5;
   color: #FFFFFF;
-  font-size: 22rpx;
-  font-weight: 850;
+  font-size: 21rpx;
+  font-weight: 800;
+  line-height: 1.4;
 }
 
-/* 昵称卡片：去掉外层框，内层框与上方对齐 */
+/* 昵称卡片：外层不带框，输入框自带描边并与上下卡片对齐 */
 .nickname-card {
-  padding: 0 24rpx;
+  padding: 24rpx;
 }
 
 .nickname-row {
   display: flex;
   align-items: center;
-  border: 3rpx solid #1C1C1C;
+  height: 88rpx;
+  box-sizing: border-box;
+  border: 3rpx solid var(--ink);
   border-radius: 16rpx;
-  background: #F7FCFF;
-  box-shadow: inset 2rpx 2rpx 0 rgba(28, 28, 28, 0.06);
+  background: #FFFFFF;
   overflow: hidden;
 }
 
 .nickname-label {
   flex-shrink: 0;
-  padding: 0 16rpx 0 20rpx;
-  font-size: 28rpx;
-  font-weight: 850;
-  color: #1C1C1C;
+  padding-left: 20rpx;
+  color: var(--ink);
+  font-size: 27rpx;
+  font-weight: 800;
 }
 
 .edit-input {
   flex: 1;
   min-width: 0;
-  padding: 18rpx 20rpx 18rpx 0;
+  height: 80rpx;
+  padding: 0 20rpx 0 8rpx;
   border: none;
   background: transparent;
-  font-size: 28rpx;
+  color: var(--ink);
+  font-size: 27rpx;
   font-weight: 700;
-  text-align: center;
+  text-align: left;
 }
 
 .edit-placeholder {
-  color: #9AA6B4;
+  color: #9AA8B2;
   font-weight: 500;
 }
 
 .edit-hint {
-  margin-top: 14rpx;
-  color: #6B7C8A;
+  margin-top: 12rpx;
+  color: var(--muted);
   font-size: 22rpx;
+  font-weight: 650;
   line-height: 1.6;
+}
+
+/* 未登录卡片里的「去登录」：与首页主操作同色 */
+.edit-card .full-btn {
+  height: 84rpx;
+  margin-top: 20rpx;
+  border-width: 4rpx;
+  background: #F6D081;
+  color: var(--ink);
+  font-weight: 850;
+  box-shadow: 4rpx 4rpx 0 rgba(28, 28, 28, 0.85);
 }
 
 /* 保存按钮 */
 .edit-save {
+  height: 88rpx;
   margin-top: 12rpx;
-  padding: 22rpx 0;
-  border: 3rpx solid #1C1C1C;
+  padding: 0 24rpx;
+  box-sizing: border-box;
+  border: 4rpx solid var(--ink);
   border-radius: 999rpx;
   background: #34B8C5;
   box-shadow: 4rpx 4rpx 0 rgba(28, 28, 28, 0.85);
+  color: #FFFFFF;
   font-size: 30rpx;
   font-weight: 900;
-  color: #FFFFFF;
-  text-align: center;
 }
 
 .edit-save:active {

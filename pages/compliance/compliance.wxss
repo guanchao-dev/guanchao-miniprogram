@@ -1,5 +1,5 @@
 .doc-intro {
-  margin-top: 10rpx;
+  margin-top: 12rpx;
   color: #4F6787;
   line-height: 1.7;
 }
@@ -10,6 +10,12 @@
   margin-top: 12rpx;
   font-size: 24rpx;
   line-height: 1.6;
+}
+
+.doc-line + .doc-line {
+  margin-top: 0;
+  padding-top: 12rpx;
+  border-top: 2rpx solid rgba(28, 28, 28, 0.08);
 }
 
 .doc-label {

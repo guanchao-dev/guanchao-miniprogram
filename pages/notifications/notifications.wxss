@@ -1,52 +1,68 @@
 .hero {
-  padding: 24rpx 8rpx 20rpx;
-}
-.hero-title {
-  font-size: 52rpx;
-  font-weight: 850;
-  letter-spacing: 2rpx;
+  padding: 20rpx 8rpx 16rpx;
 }
 
-/* 一条消息：点位名 + 管理员回复 +（我原来说的）*/
-.msg-card {
-  margin-bottom: 22rpx;
-  padding: 26rpx 24rpx;
+.hero-title {
+  color: var(--ink);
+  font-size: 46rpx;
+  font-weight: 900;
+  line-height: 1.2;
+  letter-spacing: 1rpx;
 }
+
+/* 一条消息：点位名 + 管理员回复 +（我原来说的） */
+.msg-card {
+  margin-bottom: 20rpx;
+  padding: 22rpx 24rpx;
+}
+
 .msg-where {
-  font-size: 28rpx;
+  padding-bottom: 12rpx;
+  border-bottom: 2rpx solid var(--line);
+  color: var(--ink);
+  font-size: 27rpx;
   font-weight: 800;
   line-height: 1.4;
 }
+
 .msg-reply {
-  margin-top: 12rpx;
-  font-size: 28rpx;
-  line-height: 1.65;
+  margin-top: 14rpx;
+  color: var(--ink);
+  font-size: 25rpx;
+  font-weight: 650;
+  line-height: 1.55;
   word-break: break-word;
   white-space: pre-wrap;
 }
+
 .msg-mine {
-  margin-top: 18rpx;
-  padding-top: 16rpx;
-  border-top: 2rpx dashed rgba(28, 28, 28, 0.14);
+  margin-top: 16rpx;
+  padding-top: 14rpx;
+  border-top: 2rpx solid var(--line);
   color: var(--muted);
-  font-size: 26rpx;
-  line-height: 1.6;
+  font-size: 23rpx;
+  font-weight: 650;
+  line-height: 1.55;
   word-break: break-word;
   white-space: pre-wrap;
 }
 
 /* 空状态 */
 .empty-card {
-  padding: 80rpx 32rpx;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 18rpx;
+  gap: 16rpx;
+  padding: 64rpx 32rpx;
 }
+
 .empty-icon {
-  font-size: 96rpx;
+  font-size: 88rpx;
+  line-height: 1.1;
 }
+
 .empty-title {
-  font-size: 34rpx;
+  color: var(--ink);
+  font-size: 30rpx;
   font-weight: 850;
 }

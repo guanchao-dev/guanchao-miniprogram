@@ -6,6 +6,7 @@
   background: #EAF6F7;
 }
 
+/* 原生地图组件：只保留满屏铺底，不加描边圆角，避免影响 markers / 定位 */
 .spot-map {
   width: 100%;
   height: 100%;
@@ -27,10 +28,10 @@
   display: flex;
   flex-direction: column;
   padding: 16rpx 22rpx;
-  border: 3rpx solid #1C1C1C;
-  border-radius: 20rpx;
+  border: 4rpx solid #1C1C1C;
+  border-radius: 22rpx;
   background: rgba(255, 255, 255, 0.94);
-  box-shadow: 4rpx 4rpx 0 rgba(28, 28, 28, 0.85);
+  box-shadow: 3rpx 3rpx 0 rgba(28, 28, 28, 0.85);
 }
 
 .map-title-main {
@@ -45,6 +46,7 @@
   color: #6B7C8A;
   font-size: 21rpx;
   font-weight: 650;
+  font-variant-numeric: tabular-nums;
 }
 
 .map-loading {
@@ -52,8 +54,9 @@
   border: 3rpx solid #1C1C1C;
   border-radius: 999rpx;
   background: #FFFFFF;
+  box-shadow: 2rpx 2rpx 0 rgba(28, 28, 28, 0.85);
   color: #1888BF;
-  font-size: 22rpx;
+  font-size: 21rpx;
   font-weight: 700;
 }
 
@@ -78,27 +81,24 @@
   background: #FFFFFF;
   box-shadow: 4rpx 4rpx 0 rgba(28, 28, 28, 0.85);
   color: #1C1C1C;
-  font-size: 23rpx;
+  font-size: 22rpx;
   font-weight: 800;
 }
 
+/* 定位未激活时用金色区分，和「选点」白底分开 */
+.map-fab.locate {
+  background: #F6D081;
+}
+
+/* 所有打开态统一青底白字（放在 .locate 之后，保证优先级） */
 .map-fab.on {
   background: #34B8C5;
   color: #FFFFFF;
 }
 
-.map-fab.locate {
-  background: #F6D081;
-}
-
-.map-fab.locate.on {
-  background: #F4A51C;
-  color: #FFFFFF;
-}
-
-.map-fab.pick.on {
-  background: #F6D081;
-  color: #1C1C1C;
+.map-fab:active {
+  transform: translate(2rpx, 2rpx);
+  box-shadow: 2rpx 2rpx 0 rgba(28, 28, 28, 0.85);
 }
 
 .pick-cross {
@@ -152,10 +152,10 @@
   align-items: center;
   gap: 16rpx;
   padding: 18rpx 22rpx;
-  border: 3rpx solid #1C1C1C;
-  border-radius: 22rpx;
+  border: 4rpx solid #1C1C1C;
+  border-radius: 24rpx;
   background: rgba(255, 255, 255, 0.96);
-  box-shadow: 4rpx 4rpx 0 rgba(28, 28, 28, 0.85);
+  box-shadow: 3rpx 3rpx 0 rgba(28, 28, 28, 0.85);
 }
 
 .pick-copy {
@@ -168,7 +168,8 @@
 .pick-name {
   color: #1C1C1C;
   font-size: 27rpx;
-  font-weight: 900;
+  font-weight: 800;
+  line-height: 1.3;
 }
 
 .pick-sub {
@@ -176,18 +177,27 @@
   color: #6B7C8A;
   font-size: 21rpx;
   font-weight: 650;
+  line-height: 1.45;
 }
 
 .pick-go {
   flex-shrink: 0;
-  padding: 14rpx 24rpx;
+  height: 64rpx;
+  line-height: 58rpx;
+  padding: 0 24rpx;
+  box-sizing: border-box;
   border: 3rpx solid #1C1C1C;
   border-radius: 999rpx;
   background: #34B8C5;
   box-shadow: 3rpx 3rpx 0 rgba(28, 28, 28, 0.85);
   color: #FFFFFF;
-  font-size: 23rpx;
+  font-size: 22rpx;
   font-weight: 800;
+}
+
+.pick-go:active {
+  transform: translate(2rpx, 2rpx);
+  box-shadow: 1rpx 1rpx 0 rgba(28, 28, 28, 0.85);
 }
 
 .map-tip {
@@ -196,13 +206,13 @@
   bottom: 48rpx;
   z-index: 10;
   transform: translateX(-50%);
-  padding: 16rpx 28rpx;
+  padding: 14rpx 26rpx;
   border: 3rpx solid #1C1C1C;
   border-radius: 999rpx;
   background: rgba(255, 255, 255, 0.95);
-  box-shadow: 4rpx 4rpx 0 rgba(28, 28, 28, 0.85);
-  color: #3D4A54;
-  font-size: 22rpx;
+  box-shadow: 3rpx 3rpx 0 rgba(28, 28, 28, 0.85);
+  color: #4F6787;
+  font-size: 21rpx;
   font-weight: 650;
   white-space: nowrap;
 }

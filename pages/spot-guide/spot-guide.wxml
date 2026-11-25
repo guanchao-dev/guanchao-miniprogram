@@ -29,6 +29,7 @@
         <view class="item-meta">
           <text class="meta-heat">🔥 {{item.heat}}</text>
           <text class="meta-dist" wx:if="{{item.distanceText}}">{{item.distanceText}}</text>
+          <text class="meta-district" wx:if="{{item.district}}">{{item.district}}</text>
         </view>
       </view>
       <text class="item-arrow">›</text>
@@ -41,39 +42,17 @@
         <text>{{detail.name}}</text>
         <text class="sheet-close" bindtap="closeDetail" hover-class="tap">×</text>
       </view>
-      <scroll-view scroll-y class="sheet-body">
-        <!-- 多张照片时自动轮播，单张静态展示 -->
-        <swiper
-          wx:if="{{photos.length}}"
-          class="pano"
-          indicator-dots
-          circular
-          autoplay="{{photos.length > 1}}"
-          interval="3500"
-          duration="420"
-        >
-          <swiper-item wx:for="{{photos}}" wx:key="*this">
-            <image class="pano-img" src="{{item}}" mode="aspectFill" data-url="{{item}}" bindtap="previewPhoto" hover-class="tap"></image>
-          </swiper-item>
-        </swiper>
-        <view class="pano-fallback" wx:else>
-          <image src="{{detail.icon}}" mode="aspectFit"></image>
-          <text>暂无全景照片</text>
+      <view class="sheet-body">
+        <view class="detail-meta">
+          <text class="detail-chip heat" wx:if="{{detail.heat}}">🔥 {{detail.heat}}</text>
+          <text class="detail-chip dist" wx:if="{{detail.distanceText}}">{{detail.distanceText}}</text>
         </view>
-
-        <view class="info-row">
-          <text class="info-k">距离</text>
-          <text class="info-v">{{detail.distanceText}}</text>
-        </view>
-        <view class="info-row">
-          <text class="info-k">开放</text>
-          <text class="info-v">{{detail.openTime}}</text>
-        </view>
+        <text class="tide-summary">{{tideSummary}}</text>
 
         <view class="nav-row" bindtap="onNavigate" hover-class="tap">
           <view class="nav-row-main">
             <text class="nav-row-title">导航到{{detail.navName || detail.name}}</text>
-            <text class="nav-row-sub">{{detail.distanceText}} · 高德 / 百度等地图一键导航</text>
+            <text class="nav-row-sub">高德 / 百度等地图一键导航</text>
           </view>
           <view class="nav-row-action">
             <view class="nav-plane">✈</view>
@@ -81,34 +60,8 @@
           </view>
         </view>
 
-        <view class="block-title">今日潮汐</view>
-        <text class="tide-summary">{{tideSummary}}</text>
-        <view class="tide-table" wx:if="{{tideRows.length}}">
-          <view class="tide-row" wx:for="{{tideRows}}" wx:key="time">
-            <text>{{item.time}}</text>
-            <text>{{item.label}}</text>
-            <text>{{item.height}}</text>
-          </view>
-        </view>
-
-        <view class="block-title">可能遇到</view>
-        <view class="chip-row">
-          <text
-            class="chip {{item.id ? 'active' : ''}}"
-            wx:for="{{detail.species}}"
-            wx:key="name"
-            data-id="{{item.id}}"
-            bindtap="openSpecies"
-           hover-class="tap">{{item.name}}</text>
-        </view>
-        <text class="hint">{{detail.observeHint}}</text>
-
-        <view class="chip-row" wx:if="{{detail.safetyTags.length}}">
-          <text class="chip" wx:for="{{detail.safetyTags}}" wx:key="*this">{{item}}</text>
-        </view>
-        <!-- scroll-view 的 padding-bottom 不计入滚动高度，用占位块保证底部留白 -->
-        <view class="sheet-bottom-gap"></view>
-      </scroll-view>
+        <view class="detail-link" bindtap="goDetail" hover-class="tap">查看详情 ›</view>
+      </view>
     </view>
   </view>
 </view>

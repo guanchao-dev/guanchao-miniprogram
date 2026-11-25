@@ -6,7 +6,11 @@ page {
   --yellow: #F6D081;
   --cream: #F6E9D3;
   --ink: #1C1C1C;
+  --ink-soft: #4F6787;
   --muted: #6B7C8A;
+  --line: rgba(28, 28, 28, 0.08);
+  --danger: #D9463F;
+  --success: #2E9E5B;
   --card: #FFFFFF;
   --bg: #FFFFFF;
   --shadow: 3rpx 3rpx 0 rgba(28, 28, 28, 0.85);
@@ -201,38 +205,44 @@ page {
 
 .section-title {
   font-size: 34rpx;
-  font-weight: 800;
+  font-weight: 850;
+  letter-spacing: 0.5rpx;
 }
 
 .section-more {
   color: var(--blue);
-  font-size: 24rpx;
-  font-weight: 650;
+  font-size: 23rpx;
+  font-weight: 700;
 }
 
 .tag {
   display: inline-flex;
   align-items: center;
-  padding: 6rpx 14rpx;
+  padding: 5rpx 14rpx;
   border: 3rpx solid var(--ink);
   border-radius: 999rpx;
-  font-size: 20rpx;
-  font-weight: 700;
+  font-size: 19rpx;
+  font-weight: 750;
 }
 
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0 28rpx;
-  height: 64rpx;
+  padding: 0 26rpx;
+  height: 72rpx;
   border: 3rpx solid var(--ink);
   border-radius: 999rpx;
   background: var(--yellow);
   color: var(--ink);
-  font-size: 24rpx;
-  font-weight: 750;
+  font-size: 25rpx;
+  font-weight: 800;
   box-shadow: 3rpx 3rpx 0 rgba(28, 28, 28, 0.85);
+}
+
+.btn:active {
+  transform: translate(2rpx, 2rpx);
+  box-shadow: 1rpx 1rpx 0 rgba(28, 28, 28, 0.85);
 }
 
 .btn::after {
@@ -243,7 +253,7 @@ page {
   padding: 80rpx 20rpx;
   color: var(--muted);
   text-align: center;
-  font-size: 26rpx;
+  font-size: 24rpx;
 }
 
 /* 加载中：数据没回来之前就转圈，不显示占位假数据 */
@@ -254,7 +264,7 @@ page {
   justify-content: center;
   padding: 100rpx 20rpx;
   color: var(--muted);
-  font-size: 26rpx;
+  font-size: 24rpx;
 }
 
 .spinner {
@@ -273,7 +283,7 @@ page {
 
 .list-card {
   margin-bottom: 18rpx;
-  padding: 22rpx;
+  padding: 20rpx 22rpx;
 }
 
 .list-title {
@@ -296,11 +306,11 @@ page {
 }
 
 .chip {
-  padding: 8rpx 18rpx;
+  padding: 7rpx 18rpx;
   border: 3rpx solid #1C1C1C;
   border-radius: 999rpx;
-  font-size: 22rpx;
-  font-weight: 700;
+  font-size: 21rpx;
+  font-weight: 750;
   background: #FFFFFF;
 }
 

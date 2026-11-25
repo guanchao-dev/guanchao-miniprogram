@@ -8,8 +8,8 @@
 .faq-q-row {
   display: flex;
   align-items: center;
-  gap: 14rpx;
-  padding: 24rpx 22rpx;
+  gap: 12rpx;
+  padding: 20rpx 22rpx;
 }
 
 .faq-q-icon {
@@ -29,16 +29,19 @@
 .faq-q-text {
   flex: 1;
   min-width: 0;
-  font-size: 28rpx;
+  font-size: 27rpx;
   font-weight: 800;
   color: #1C1C1C;
-  line-height: 1.4;
+  line-height: 1.45;
 }
 
 .faq-arrow {
   flex-shrink: 0;
-  font-size: 40rpx;
+  width: 32rpx;
+  text-align: center;
+  font-size: 36rpx;
   font-weight: 300;
+  line-height: 1;
   color: #1888BF;
   transition: transform 0.25s ease;
 }
@@ -51,10 +54,9 @@
 .faq-a-row {
   display: flex;
   align-items: flex-start;
-  gap: 14rpx;
-  padding: 0 22rpx 24rpx;
+  gap: 12rpx;
+  padding: 16rpx 22rpx 20rpx;
   border-top: 2rpx solid rgba(28, 28, 28, 0.08);
-  padding-top: 18rpx;
 }
 
 .faq-a-icon {
@@ -75,6 +77,6 @@
   flex: 1;
   min-width: 0;
   color: #4F6787;
-  font-size: 26rpx;
+  font-size: 25rpx;
   line-height: 1.7;
 }

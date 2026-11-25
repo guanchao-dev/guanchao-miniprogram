@@ -13,7 +13,7 @@
 
     <view class="card login-card">
       <view class="profile-row">
-        <button class="avatar-btn" open-type="chooseAvatar" bindchooseavatar="onChooseAvatar">
+        <button class="avatar-btn" open-type="chooseAvatar" bindchooseavatar="onChooseAvatar" hover-class="tap">
           <image class="avatar-img" src="{{avatarPreview || defaultAvatar}}" mode="aspectFill"></image>
           <text class="avatar-tip">{{avatarPreview ? '已选择头像' : '点击用微信头像'}}</text>
         </button>

@@ -3,14 +3,25 @@
   display: flex;
   align-items: center;
   gap: 12rpx;
-  padding: 16rpx;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
   margin-bottom: 20rpx;
 }
 
 .wiki-search input {
   flex: 1;
-  height: 64rpx;
-  padding: 0 16rpx;
+  height: 78rpx;
+  padding: 0 20rpx;
+  box-sizing: border-box;
+  border: 3rpx solid #1C1C1C;
+  border-radius: 999rpx;
+  background: #FFFFFF;
+  box-shadow: 2rpx 2rpx 0 rgba(28, 28, 28, 0.85);
+  color: #1C1C1C;
+  font-size: 24rpx;
+  font-weight: 650;
 }
 
 .species-grid {
@@ -23,14 +34,13 @@
   width: 48%;
   box-sizing: border-box;
   overflow: hidden;
-  margin-bottom: 18rpx;
+  margin-bottom: 20rpx;
+  border-radius: 20rpx;
   /* NEW 角标要绝对定位到右上角，需要这层做定位父级 */
   position: relative;
 }
 
-/* 新获得：右上角一个 NEW。
-   和金边（.unlocked）、呼吸光晕 + 扫光（.is-new）一起标识「这是刚拿到的」，
-   进过一次图鉴后三者一起消失，只留静态金边。 */
+/* 新获得：右上角一个 NEW，配合金边一起标识「这是刚拿到的」 */
 .new-badge {
   position: absolute;
   top: 0;
@@ -39,10 +49,10 @@
   padding: 4rpx 14rpx 6rpx;
   border-left: 3rpx solid #1C1C1C;
   border-bottom: 3rpx solid #1C1C1C;
-  border-bottom-left-radius: 16rpx;
-  background: #E8B84B;
+  border-bottom-left-radius: 14rpx;
+  background: #F6D081;
   color: #1C1C1C;
-  font-size: 20rpx;
+  font-size: 19rpx;
   font-weight: 850;
   line-height: 1.2;
   letter-spacing: 1rpx;
@@ -56,8 +66,8 @@
 }
 
 .species-name {
-  padding: 14rpx 18rpx 16rpx;
-  font-size: 28rpx;
+  padding: 14rpx 16rpx 16rpx;
+  font-size: 27rpx;
   font-weight: 800;
   line-height: 1.3;
 }
@@ -66,32 +76,33 @@
 .lit-progress {
   display: flex;
   align-items: center;
-  margin-bottom: 18rpx;
+  margin-bottom: 20rpx;
 }
 
 .lit-progress-track {
   flex: 1;
-  height: 16rpx;
-  border-radius: 8rpx;
-  background: #E9EFED;
+  height: 20rpx;
+  border: 3rpx solid #1C1C1C;
+  border-radius: 999rpx;
+  background: #FFFFFF;
   overflow: hidden;
 }
 
 .lit-progress-fill {
   height: 100%;
-  border-radius: 8rpx;
-  background: linear-gradient(90deg, #F6D081, #E8B84B);
+  background: #F6D081;
 }
 
 .lit-progress-text {
   margin-left: 16rpx;
-  font-size: 24rpx;
+  font-size: 22rpx;
   font-weight: 800;
-  color: #7A8A86;
+  color: #4F6787;
+  font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
 
-/* ===== 缩略图包裹层：扫光需要一个定位父级 ===== */
+/* ===== 缩略图包裹层 ===== */
 .species-thumb-wrap {
   position: relative;
   overflow: hidden;
@@ -105,55 +116,12 @@
 }
 
 .species-cell.locked .species-name {
-  color: #A8B3B0;
+  color: #9AA8B2;
 }
 
-/* ===== 已点亮：金边 + 呼吸光晕（常驻）=====
-   光晕是「已收集」的持续标识，不区分新旧。
-   注意：box-shadow 动画会触发重绘，点亮的物种多时低端机上可能吃力 ——
-   真机上如果发现图鉴页滑动发涩，把这里改成静态 box-shadow 即可。 */
+/* ===== 已点亮：金边 ===== */
 .species-cell.unlocked {
-  border: 3rpx solid #E8B84B;
-  animation: goldBreath 2.4s ease-in-out infinite;
-}
-
-/* ===== 新获得：在金边光晕之上再加扫光（以及右上角的 NEW 角标）=====
-   扫光只给新获得的 —— 满屏都在扫会很吵，而且会让「新」失去区分度。
-   判定在服务端（species_unlocks.seen），打开该物种详情页后就算看过。 */
-
-@keyframes goldBreath {
-  0%, 100% {
-    box-shadow: 3rpx 3rpx 0 rgba(28, 28, 28, 0.85), 0 0 10rpx 2rpx rgba(246, 208, 129, 0.55);
-  }
-  50% {
-    box-shadow: 3rpx 3rpx 0 rgba(28, 28, 28, 0.85), 0 0 26rpx 8rpx rgba(246, 208, 129, 0.95);
-  }
-}
-
-/* 不灵不灵：一道斜光周期性扫过缩略图。只有「新获得」的才扫 */
-.species-cell.unlocked.is-new .species-thumb-wrap::after {
-  content: '';
-  position: absolute;
-  top: -60%;
-  left: -80%;
-  width: 55%;
-  height: 220%;
-  transform: rotate(18deg);
-  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.9), transparent);
-  animation: shineSweep 2.8s ease-in-out infinite;
-  pointer-events: none;
-}
-
-@keyframes shineSweep {
-  0% {
-    left: -80%;
-  }
-  55% {
-    left: 130%;
-  }
-  100% {
-    left: 130%;
-  }
+  border: 4rpx solid #E0A83A;
 }
 
 /* ===== 分类 + 抽卡入口 ===== */
@@ -177,7 +145,7 @@
 }
 
 .species-placeholder-cat {
-  color: #2F6F6A;
+  color: #4F6787;
   font-size: 20rpx;
   font-weight: 800;
   letter-spacing: 1rpx;
@@ -199,12 +167,12 @@
 /* ===== 一级分类：大标签 + 下划线 ===== */
 .primary-tabs-wrap {
   margin: 2rpx 0 0;
-  border-bottom: 1rpx solid rgba(28, 28, 28, .12);
+  border-bottom: 2rpx solid rgba(28, 28, 28, .12);
 }
 
 .primary-tabs {
   width: 100%;
-  height: 84rpx;
+  height: 80rpx;
   white-space: nowrap;
 }
 
@@ -212,16 +180,17 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  height: 84rpx;
-  padding: 0 20rpx;
+  height: 80rpx;
+  box-sizing: border-box;
+  padding: 0 22rpx;
   border-bottom: 4rpx solid transparent;
-  color: #7A8A86;
-  font-size: 26rpx;
-  font-weight: 700;
+  color: #6B7C8A;
+  font-size: 25rpx;
+  font-weight: 800;
 }
 
 .primary-tab.active {
-  border-bottom-color: #2F7F86;
+  border-bottom-color: #34B8C5;
   color: #1C1C1C;
   font-weight: 900;
 }
@@ -231,18 +200,18 @@
   display: flex;
   align-items: flex-start;
   gap: 12rpx;
-  margin: 14rpx 0 0 20rpx;
-  padding: 10rpx 12rpx 10rpx 16rpx;
-  border-left: 4rpx solid #2F7F86;
-  border-radius: 0 12rpx 12rpx 0;
-  background: #F5F8F7;
+  margin: 16rpx 0 0 20rpx;
+  padding: 12rpx 12rpx 12rpx 16rpx;
+  border-left: 4rpx solid #34B8C5;
+  border-radius: 0 16rpx 16rpx 0;
+  background: #F3FBFA;
 }
 
 .sub-label {
   flex-shrink: 0;
-  padding-top: 10rpx;
-  color: #8A9996;
-  font-size: 20rpx;
+  padding-top: 8rpx;
+  color: #6B7C8A;
+  font-size: 21rpx;
   font-weight: 800;
   letter-spacing: 1rpx;
 }
@@ -250,33 +219,34 @@
 .sub-tabs {
   display: flex;
   flex-wrap: wrap;
-  gap: 8rpx;
+  gap: 10rpx;
 }
 
 .sub-tab {
-  padding: 8rpx 16rpx;
+  padding: 7rpx 18rpx;
+  border: 3rpx solid #1C1C1C;
   border-radius: 999rpx;
-  color: #4B6571;
+  background: #FFFFFF;
+  color: #4F6787;
   font-size: 22rpx;
-  font-weight: 700;
+  font-weight: 750;
 }
 
 .sub-tab.active {
-  background: #2F7F86;
-  color: #fff;
+  background: #34B8C5;
+  color: #FFFFFF;
+  font-weight: 800;
 }
 
 /* ===== 层级面包屑 ===== */
 .breadcrumb {
   margin: 14rpx 4rpx 10rpx;
-  color: #8A9996;
-  font-size: 20rpx;
-  font-weight: 600;
+  color: #6B7C8A;
+  font-size: 21rpx;
+  font-weight: 650;
 }
 
 .breadcrumb-current {
   color: #1C1C1C;
   font-weight: 800;
 }
-
-

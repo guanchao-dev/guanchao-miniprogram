@@ -1,24 +1,26 @@
 /* ==================== 入口 ==================== */
 .hero {
-  padding: 24rpx 8rpx 32rpx;
+  padding: 20rpx 8rpx 28rpx;
 }
 
 .hero-title {
-  font-size: 52rpx;
-  font-weight: 850;
-  letter-spacing: 2rpx;
+  color: var(--ink);
+  font-size: 46rpx;
+  font-weight: 900;
+  line-height: 1.2;
+  letter-spacing: 1rpx;
 }
 
 .entry-card {
   display: flex;
   align-items: center;
-  gap: 22rpx;
-  margin-bottom: 24rpx;
-  padding: 34rpx 26rpx;
-  border: 3rpx solid #1C1C1C;
+  gap: 20rpx;
+  margin-bottom: 20rpx;
+  padding: 26rpx 24rpx;
+  border: 4rpx solid var(--ink);
   border-radius: 28rpx;
   background: #FFFFFF;
-  box-shadow: 5rpx 5rpx 0 rgba(28, 28, 28, 0.85);
+  box-shadow: 4rpx 4rpx 0 rgba(28, 28, 28, 0.85);
 }
 
 .entry-card:active {
@@ -27,14 +29,15 @@
 }
 
 .entry-icon {
-  width: 104rpx;
-  height: 104rpx;
-  line-height: 98rpx;
+  width: 96rpx;
+  height: 96rpx;
+  line-height: 90rpx;
   text-align: center;
-  border: 3rpx solid #1C1C1C;
-  border-radius: 28rpx;
-  font-size: 50rpx;
+  border: 3rpx solid var(--ink);
+  border-radius: 24rpx;
+  font-size: 44rpx;
   flex-shrink: 0;
+  box-sizing: border-box;
 }
 
 .entry-icon.create { background: #D9EEF2; }
@@ -43,40 +46,44 @@
 .entry-body { flex: 1; min-width: 0; }
 
 .entry-title {
-  font-size: 34rpx;
+  color: var(--ink);
+  font-size: 30rpx;
   font-weight: 850;
 }
 
 .entry-desc {
-  margin-top: 10rpx;
-  color: #6B7C8A;
+  margin-top: 8rpx;
+  color: var(--muted);
   font-size: 23rpx;
+  font-weight: 650;
   line-height: 1.5;
 }
 
 .entry-arrow {
-  color: #9AA6B4;
-  font-size: 44rpx;
+  color: #9AA8B2;
+  font-size: 40rpx;
   font-weight: 300;
+  line-height: 1;
 }
 
 /* ==================== 我发起的签到 ==================== */
 .sec-head {
-  margin: 40rpx 8rpx 18rpx;
+  margin: 32rpx 8rpx 16rpx;
 }
 
 .sec-title {
+  color: var(--ink);
   font-size: 30rpx;
   font-weight: 850;
 }
 
 .sess-card {
   margin-bottom: 20rpx;
-  padding: 26rpx 24rpx;
-  border: 3rpx solid #1C1C1C;
+  padding: 24rpx;
+  border: 4rpx solid var(--ink);
   border-radius: 24rpx;
   background: #FFFFFF;
-  box-shadow: 4rpx 4rpx 0 rgba(28, 28, 28, 0.85);
+  box-shadow: 3rpx 3rpx 0 rgba(28, 28, 28, 0.85);
 }
 
 .sess-top {
@@ -89,7 +96,8 @@
 .sess-place {
   flex: 1;
   min-width: 0;
-  font-size: 30rpx;
+  color: var(--ink);
+  font-size: 28rpx;
   font-weight: 850;
   overflow: hidden;
   white-space: nowrap;
@@ -97,26 +105,29 @@
 }
 
 .sess-badge {
-  padding: 4rpx 18rpx;
+  flex-shrink: 0;
+  padding: 3rpx 14rpx;
+  border: 2rpx solid var(--ink);
   border-radius: 999rpx;
-  background: #E8EDF2;
-  color: #7A8794;
+  background: #F0F2F5;
+  color: var(--muted);
   font-size: 20rpx;
   font-weight: 750;
-  flex-shrink: 0;
+  line-height: 1.5;
 }
 
 .sess-badge.on {
   background: #D9F2E2;
-  color: #2E9E63;
+  color: #2E9E5B;
 }
 
 .sess-key {
-  margin-top: 14rpx;
-  color: #1878FF;
-  font-size: 40rpx;
-  font-weight: 850;
-  letter-spacing: 8rpx;
+  margin-top: 12rpx;
+  color: #1888BF;
+  font-size: 36rpx;
+  font-weight: 900;
+  letter-spacing: 6rpx;
+  font-variant-numeric: tabular-nums;
 }
 
 .sess-key.muted {
@@ -126,20 +137,22 @@
 
 .sess-meta {
   margin-top: 8rpx;
-  color: #6B7C8A;
-  font-size: 23rpx;
+  color: var(--muted);
+  font-size: 22rpx;
+  font-weight: 650;
 }
 
 .sess-num {
-  color: #1878FF;
+  color: #1888BF;
+  font-size: 26rpx;
   font-weight: 850;
-  font-size: 28rpx;
+  font-variant-numeric: tabular-nums;
 }
 
 .sess-actions {
   display: flex;
-  gap: 16rpx;
-  margin-top: 20rpx;
+  gap: 14rpx;
+  margin-top: 18rpx;
 }
 
 /* ==================== 顶部返回栏 ==================== */
@@ -147,78 +160,83 @@
   display: flex;
   align-items: center;
   gap: 8rpx;
-  padding: 12rpx 8rpx 24rpx;
+  padding: 8rpx 4rpx 20rpx;
 }
 
 .topbar-back {
-  font-size: 44rpx;
+  color: #1888BF;
+  font-size: 40rpx;
   font-weight: 300;
-  color: #1878FF;
   line-height: 1;
 }
 
 .topbar-title {
-  font-size: 38rpx;
-  font-weight: 850;
+  color: var(--ink);
+  font-size: 34rpx;
+  font-weight: 900;
 }
 
 /* ==================== 小节标题 ==================== */
 .step {
   display: flex;
   align-items: center;
-  margin: 34rpx 8rpx 16rpx;
+  margin: 30rpx 6rpx 14rpx;
 }
 
 .step-name {
-  padding-left: 18rpx;
-  border-left: 8rpx solid #1878FF;
-  font-size: 30rpx;
+  padding-left: 16rpx;
+  border-left: 6rpx solid #34B8C5;
+  color: var(--ink);
+  font-size: 28rpx;
   font-weight: 850;
   line-height: 1.2;
 }
 
 /* ==================== 面板 ==================== */
 .panel {
-  padding: 28rpx 24rpx;
-  border: 3rpx solid #1C1C1C;
-  border-radius: 26rpx;
+  padding: 24rpx;
+  border: 4rpx solid var(--ink);
+  border-radius: 24rpx;
   background: #FFFFFF;
-  box-shadow: 5rpx 5rpx 0 rgba(28, 28, 28, 0.85);
+  box-shadow: 3rpx 3rpx 0 rgba(28, 28, 28, 0.85);
 }
 
 .panel-tip {
   display: block;
-  margin-bottom: 16rpx;
-  color: #6B7C8A;
-  font-size: 23rpx;
+  margin-bottom: 14rpx;
+  color: var(--muted);
+  font-size: 22rpx;
+  font-weight: 650;
   line-height: 1.5;
 }
 
 .panel-empty {
-  padding: 28rpx 0;
+  padding: 24rpx 0;
   text-align: center;
-  color: #9AA6B4;
-  font-size: 25rpx;
+  color: #9AA8B2;
+  font-size: 24rpx;
+  font-weight: 650;
 }
 
 .panel-note {
   display: block;
-  margin-top: 16rpx;
-  color: #9AA6B4;
-  font-size: 21rpx;
+  margin-top: 14rpx;
+  color: #9AA8B2;
+  font-size: 20rpx;
+  font-weight: 650;
   text-align: center;
 }
 
 .panel-btn {
   width: 100%;
   height: 80rpx;
-  line-height: 74rpx;
+  line-height: 72rpx;
   margin-top: 16rpx;
   text-align: center;
-  border: 3rpx solid #1C1C1C;
+  border: 4rpx solid var(--ink);
   border-radius: 999rpx;
   background: #FFFFFF;
-  color: #1C1C1C;
+  color: var(--ink);
   font-size: 26rpx;
   font-weight: 800;
   box-sizing: border-box;
@@ -232,24 +250,26 @@
 /* ==================== 地点 ==================== */
 .place-row {
   display: flex;
-  gap: 14rpx;
+  gap: 12rpx;
 }
 
-.place-pin { font-size: 32rpx; line-height: 1.2; }
+.place-pin { font-size: 30rpx; line-height: 1.2; }
 
 .place-text { flex: 1; min-width: 0; }
 
 .place-name {
   display: block;
-  font-size: 30rpx;
+  color: var(--ink);
+  font-size: 28rpx;
   font-weight: 850;
 }
 
 .place-addr {
   display: block;
-  margin-top: 8rpx;
-  color: #7A8794;
-  font-size: 22rpx;
+  margin-top: 6rpx;
+  color: var(--muted);
+  font-size: 21rpx;
+  font-weight: 650;
   line-height: 1.5;
 }
 
@@ -257,15 +277,15 @@
 .fence-map {
   width: 100%;
   height: 640rpx;
-  border: 3rpx solid #1C1C1C;
-  border-radius: 20rpx;
+  border: 3rpx solid var(--ink);
+  border-radius: 18rpx;
   overflow: hidden;
 }
 
 .poly-actions {
   display: flex;
-  gap: 16rpx;
-  margin-top: 18rpx;
+  gap: 14rpx;
+  margin-top: 16rpx;
 }
 
 .ghost-btn {
@@ -273,33 +293,34 @@
   height: 72rpx;
   line-height: 66rpx;
   text-align: center;
-  border: 3rpx solid #1C1C1C;
+  border: 3rpx solid var(--ink);
   border-radius: 999rpx;
   background: #FFFFFF;
-  font-size: 24rpx;
+  color: var(--ink);
+  font-size: 23rpx;
   font-weight: 750;
   box-sizing: border-box;
 }
 
-.ghost-btn:active { background: #F0F4F8; }
+.ghost-btn:active { background: #F1F3F5; }
 
 /* ==================== 主按钮 ==================== */
 /* 用 flex 居中而不是 height + line-height：
    后者在文案变长或换行时会溢出、文字偏上。 */
 .main-btn {
   width: 100%;
-  min-height: 92rpx;
+  min-height: 88rpx;
   margin-top: 24rpx;
   padding: 0 28rpx;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
-  border: 3rpx solid #1C1C1C;
+  border: 4rpx solid var(--ink);
   border-radius: 999rpx;
-  background: #1878FF;
+  background: #1888BF;
   color: #FFFFFF;
-  font-size: 30rpx;
+  font-size: 28rpx;
   font-weight: 850;
   box-sizing: border-box;
   box-shadow: 4rpx 4rpx 0 rgba(28, 28, 28, 0.85);
@@ -310,9 +331,11 @@
   box-shadow: 2rpx 2rpx 0 rgba(28, 28, 28, 0.85);
 }
 
+/* 禁用态必须一眼可辨：灰底灰字、无阴影 */
 .main-btn.disabled {
-  background: #C9D2DA;
-  color: #8A959E;
+  background: #9AA8B2;
+  border-color: #9AA8B2;
+  color: #F2F4F5;
   box-shadow: none;
 }
 
@@ -320,97 +343,103 @@
 .mini-btn {
   height: 72rpx;
   line-height: 66rpx;
-  padding: 0 28rpx;
+  padding: 0 26rpx;
   text-align: center;
-  border: 3rpx solid #1C1C1C;
+  border: 3rpx solid var(--ink);
   border-radius: 999rpx;
   background: #FFFFFF;
-  font-size: 24rpx;
+  color: var(--ink);
+  font-size: 23rpx;
   font-weight: 750;
   box-sizing: border-box;
   flex-shrink: 0;
 }
 
-.mini-btn.primary { background: #1878FF; color: #FFFFFF; }
-.mini-btn.danger { color: #E64340; border-color: #E64340; }
+.mini-btn.primary { background: #1888BF; color: #FFFFFF; }
+.mini-btn.danger { color: var(--danger); border-color: var(--danger); }
 
 /* ==================== 成功结果 ==================== */
 .result-card {
-  padding: 44rpx 28rpx 32rpx;
-  border: 3rpx solid #1C1C1C;
+  padding: 36rpx 24rpx 28rpx;
+  border: 4rpx solid var(--ink);
   border-radius: 28rpx;
   background: #FFFFFF;
-  box-shadow: 5rpx 5rpx 0 rgba(28, 28, 28, 0.85);
+  box-shadow: 4rpx 4rpx 0 rgba(28, 28, 28, 0.85);
 }
 
 .result-badge {
-  width: 108rpx;
-  height: 108rpx;
-  line-height: 100rpx;
-  margin: 0 auto 20rpx;
+  width: 104rpx;
+  height: 104rpx;
+  line-height: 96rpx;
+  margin: 0 auto 18rpx;
   text-align: center;
-  border: 4rpx solid #1C1C1C;
+  border: 4rpx solid var(--ink);
   border-radius: 50%;
-  background: #20B85A;
+  background: #2E9E5B;
   color: #FFFFFF;
-  font-size: 58rpx;
+  font-size: 52rpx;
   font-weight: 850;
   box-sizing: border-box;
 }
 
 .result-title {
   text-align: center;
-  font-size: 38rpx;
-  font-weight: 850;
+  color: var(--ink);
+  font-size: 34rpx;
+  font-weight: 900;
 }
 
 .result-sub {
-  margin-top: 10rpx;
+  margin-top: 8rpx;
   text-align: center;
-  color: #6B7C8A;
-  font-size: 24rpx;
+  color: var(--muted);
+  font-size: 23rpx;
+  font-weight: 650;
 }
 
 .key-display {
-  margin: 32rpx 0 26rpx;
-  padding: 30rpx 0;
-  border: 4rpx dashed #1878FF;
-  border-radius: 22rpx;
-  background: #F2F8FF;
+  margin: 28rpx 0 24rpx;
+  padding: 26rpx 0;
+  border: 3rpx dashed #1888BF;
+  border-radius: 20rpx;
+  background: #F3FBFA;
   text-align: center;
 }
 
 .key-value {
   display: block;
-  color: #1878FF;
-  font-size: 68rpx;
-  font-weight: 850;
-  letter-spacing: 14rpx;
+  color: #1888BF;
+  font-size: 60rpx;
+  font-weight: 900;
+  letter-spacing: 12rpx;
+  font-variant-numeric: tabular-nums;
 }
 
 .key-hint {
   display: block;
-  margin-top: 12rpx;
-  color: #6B7C8A;
-  font-size: 22rpx;
+  margin-top: 10rpx;
+  color: var(--muted);
+  font-size: 21rpx;
+  font-weight: 650;
 }
 
 .qr-img {
   display: block;
-  width: 380rpx;
-  height: 380rpx;
+  width: 340rpx;
+  height: 340rpx;
   margin: 0 auto;
-  border: 3rpx solid #1C1C1C;
-  border-radius: 20rpx;
+  border: 3rpx solid var(--ink);
+  border-radius: 18rpx;
   background: #FFFFFF;
 }
 
 .qr-hint {
   display: block;
-  margin-top: 14rpx;
+  margin-top: 12rpx;
   text-align: center;
-  color: #6B7C8A;
-  font-size: 22rpx;
+  color: var(--muted);
+  font-size: 21rpx;
+  font-weight: 650;
 }
 
 /* 分组信息行：标签在左、值靠右对齐。
@@ -418,29 +447,30 @@
    这也是系统设置类列表的通行做法。
    分隔线用发丝级实线（原来是虚线，看着像没做完的稿子）。 */
 .info-list {
-  margin-top: 28rpx;
-  border-top: 2rpx solid #E6ECF2;
+  margin-top: 24rpx;
+  border-top: 2rpx solid var(--line);
 }
 
 .info-row {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  padding: 22rpx 0;
-  border-bottom: 2rpx solid #E6ECF2;
+  padding: 20rpx 0;
+  border-bottom: 2rpx solid var(--line);
 }
 
 /* 最后一行不画线 —— 收在卡片底边上更干净 */
 .info-row:last-child {
-  padding-bottom: 8rpx;
+  padding-bottom: 6rpx;
   border-bottom: 0;
 }
 
 .info-k {
   width: 118rpx;
   flex-shrink: 0;
-  color: #6B7C8A;
-  font-size: 25rpx;
+  color: var(--muted);
+  font-size: 24rpx;
+  font-weight: 650;
 }
 
 .info-v {
@@ -448,75 +478,81 @@
   min-width: 0;
   margin-left: 20rpx;
   text-align: right;
-  font-weight: 700;
-  word-break: break-all;
-  font-size: 27rpx;
+  color: var(--ink);
+  font-size: 25rpx;
   font-weight: 750;
   line-height: 1.5;
+  word-break: break-all;
 }
 
 /* ==================== 密钥输入 ==================== */
 .key-input-row {
   display: flex;
   align-items: center;
-  gap: 14rpx;
+  gap: 12rpx;
 }
 
 .key-field {
   flex: 1;
+  min-width: 0;
   height: 88rpx;
-  padding: 0 20rpx;
+  padding: 0 16rpx;
   text-align: center;
-  border: 3rpx solid #1C1C1C;
-  border-radius: 18rpx;
-  background: #F7FCFF;
-  font-size: 40rpx;
-  font-weight: 850;
-  letter-spacing: 10rpx;
+  border: 3rpx solid var(--ink);
+  border-radius: 16rpx;
+  background: #FFFFFF;
+  color: var(--ink);
+  font-size: 36rpx;
+  font-weight: 900;
+  letter-spacing: 8rpx;
   text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
   box-sizing: border-box;
 }
 
 .key-placeholder {
-  font-size: 26rpx;
-  letter-spacing: 0;
-  color: #9AA6B4;
+  color: #9AA8B2;
+  font-size: 24rpx;
   font-weight: 500;
+  letter-spacing: 0;
 }
 
 /* ==================== 活动信息 ==================== */
 .session-head {
-  padding-bottom: 22rpx;
-  border-bottom: 2rpx dashed #DCE6EE;
+  padding-bottom: 18rpx;
+  border-bottom: 2rpx solid var(--line);
 }
 
 .session-name {
   display: block;
-  font-size: 32rpx;
+  color: var(--ink);
+  font-size: 30rpx;
   font-weight: 850;
 }
 
 .session-place {
   display: block;
-  margin-top: 12rpx;
-  font-size: 25rpx;
+  margin-top: 10rpx;
   color: #3D4A54;
+  font-size: 24rpx;
+  font-weight: 650;
 }
 
 .session-owner {
   display: block;
   margin-top: 6rpx;
-  color: #7A8794;
-  font-size: 22rpx;
+  color: var(--muted);
+  font-size: 21rpx;
+  font-weight: 650;
 }
 
 /* ==================== 表单 ==================== */
 .form-row {
   display: flex;
   align-items: center;
-  gap: 20rpx;
-  padding: 24rpx 0;
-  border-bottom: 2rpx dashed #DCE6EE;
+  gap: 16rpx;
+  padding: 20rpx 0;
+  border-bottom: 2rpx solid var(--line);
 }
 
 .form-row:last-child { border-bottom: none; }
@@ -524,24 +560,27 @@
 .form-label {
   width: 88rpx;
   flex-shrink: 0;
-  font-size: 28rpx;
-  font-weight: 800;
+  color: var(--ink);
+  font-size: 27rpx;
+  font-weight: 750;
 }
 
 .form-input {
   flex: 1;
+  min-width: 0;
   height: 80rpx;
-  padding: 0 20rpx;
-  border: 3rpx solid #1C1C1C;
+  padding: 0 18rpx;
+  border: 3rpx solid var(--ink);
   border-radius: 16rpx;
-  background: #F7FCFF;
-  font-size: 28rpx;
+  background: #FFFFFF;
+  color: var(--ink);
+  font-size: 27rpx;
   font-weight: 700;
   box-sizing: border-box;
 }
 
 .form-ph {
-  color: #9AA6B4;
+  color: #9AA8B2;
   font-weight: 500;
 }
 
@@ -550,32 +589,33 @@
 
 .loc-state {
   display: flex;
-  gap: 14rpx;
-  margin-top: 20rpx;
-  padding: 22rpx 20rpx;
-  border-radius: 18rpx;
+  gap: 12rpx;
+  margin-top: 18rpx;
+  padding: 18rpx;
+  border-radius: 16rpx;
 }
 
 .loc-state.ok { background: #EAF9F1; }
 .loc-state.bad { background: #FFF3D6; }
 
-.loc-state-icon { font-size: 32rpx; line-height: 1.2; }
+.loc-state-icon { font-size: 30rpx; line-height: 1.2; }
 
 .loc-state-text { flex: 1; min-width: 0; }
 
 .loc-state-title {
   display: block;
-  font-size: 28rpx;
-  font-weight: 850;
+  font-size: 27rpx;
+  font-weight: 800;
 }
 
-.loc-state.ok .loc-state-title { color: #2E9E63; }
+.loc-state.ok .loc-state-title { color: var(--success); }
 .loc-state.bad .loc-state-title { color: #8A5B00; }
 
 .loc-state-desc {
   display: block;
-  margin-top: 8rpx;
-  font-size: 23rpx;
+  margin-top: 6rpx;
+  font-size: 22rpx;
+  font-weight: 650;
   line-height: 1.5;
 }
 
@@ -585,7 +625,8 @@
 /* ==================== 名单 ==================== */
 .records-place {
   display: block;
-  font-size: 34rpx;
+  color: var(--ink);
+  font-size: 30rpx;
   font-weight: 850;
 }
 
@@ -593,24 +634,26 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-top: 14rpx;
-  color: #6B7C8A;
-  font-size: 23rpx;
+  margin-top: 12rpx;
+  color: var(--muted);
+  font-size: 22rpx;
+  font-weight: 650;
 }
 
 .records-count {
-  color: #1878FF;
+  color: #1888BF;
+  font-size: 24rpx;
   font-weight: 850;
-  font-size: 26rpx;
+  font-variant-numeric: tabular-nums;
 }
 
 .name-card {
-  margin-top: 18rpx;
-  padding: 22rpx 24rpx;
-  border: 3rpx solid #1C1C1C;
-  border-radius: 22rpx;
+  margin-top: 16rpx;
+  padding: 20rpx 22rpx;
+  border: 3rpx solid var(--ink);
+  border-radius: 18rpx;
   background: #FFFFFF;
-  box-shadow: 4rpx 4rpx 0 rgba(28, 28, 28, 0.85);
+  box-shadow: 3rpx 3rpx 0 rgba(28, 28, 28, 0.85);
 }
 
 .name-row {
@@ -621,18 +664,23 @@
 }
 
 .name-main {
-  font-size: 30rpx;
-  font-weight: 850;
+  color: var(--ink);
+  font-size: 27rpx;
+  font-weight: 800;
 }
 
 .name-sub {
-  color: #6B7C8A;
-  font-size: 23rpx;
+  color: var(--muted);
+  font-size: 22rpx;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
 }
 
 .name-meta {
   display: block;
-  margin-top: 10rpx;
-  color: #7A8794;
-  font-size: 22rpx;
+  margin-top: 8rpx;
+  color: var(--muted);
+  font-size: 21rpx;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
 }

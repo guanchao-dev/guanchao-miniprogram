@@ -21,8 +21,8 @@
       </view>
       <!-- 底部通栏：跳过左下、下一步右下 -->
       <view class="onb-actions">
-        <view class="onb-skip" catchtap="onSkip">跳过</view>
-        <view class="onb-next" catchtap="onNext">{{current === total - 1 ? '开始使用' : '下一步'}}</view>
+        <view class="onb-skip" catchtap="onSkip" hover-class="tap">跳过</view>
+        <view class="onb-next" catchtap="onNext" hover-class="tap">{{current === total - 1 ? '开始使用' : '下一步'}}</view>
       </view>
     </view>
   </view>

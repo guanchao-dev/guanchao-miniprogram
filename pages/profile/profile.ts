@@ -1,10 +1,11 @@
-import { authApi, contentApi } from '../../services/api'
+import { authApi, contentApi, watchApi } from '../../services/api'
 import { getUser, isLoggedIn } from '../../utils/auth'
 import { showError } from '../../utils/format'
 import { flushUnlocks } from '../../utils/unlock'
 import { downloadImage, mediaUrl } from '../../utils/upload'
 import { isOnboarding, getOnboardingIndex, markOnboardingCompleted } from '../../utils/onboardingStore'
 import { ONBOARDING_STEPS } from '../../utils/onboardingSteps'
+import { fromApiRecord, listWatchGroups } from '../../utils/watchLog'
 
 const DEFAULT_AVATAR = 'https://www.blueakaiwu.cn/api/v1/static/assets/to-upload/mascot-avatar.png'
 
@@ -24,24 +25,22 @@ Page({
       // 宝藏点位放第一排第一个，加金边突出（新手教程按 id 定位，会跟着走）
       { title: '宝藏点位', icon: 'https://www.blueakaiwu.cn/api/v1/static/assets/home/home-nearby.png', tone: 'mint', url: '/pages/my-spots/my-spots', gold: true },
       { title: '潮汐表', icon: 'https://www.blueakaiwu.cn/api/v1/static/assets/home/home-calendar.png', tone: 'sky', url: '/pages/tide/tide' },
-      { title: '赶海地图', icon: '/assets/home/home-pin.png', tone: 'mint', url: '/pages/spot-map/spot-map' },
       { title: '潮汐日历', icon: 'https://www.blueakaiwu.cn/api/v1/static/assets/home/home-quiz1.png', tone: 'mint', url: '/pages/calendar/calendar' },
       { title: '赶海记录', icon: 'https://www.blueakaiwu.cn/api/v1/static/assets/profile/profile-records.png', tone: 'mint', url: '/pages/cards/cards' },
       { title: '生态净滩', icon: 'https://www.blueakaiwu.cn/api/v1/static/assets/home/home-gear.png', tone: 'pink', action: 'trash' },
-      { title: '海洋图鉴', icon: 'https://www.blueakaiwu.cn/api/v1/static/assets/home/home-fish.png', tone: 'yellow', url: '/pages/wiki/wiki' },
       { title: '我的潮池', icon: 'https://www.blueakaiwu.cn/api/v1/static/assets/badges/crab-star.png', tone: 'mint', url: '/pages/aquarium/aquarium' },
       { title: '抽卡', icon: 'https://www.blueakaiwu.cn/api/v1/static/assets/home/home-quiz1.png', tone: 'sky', url: '/pages/card-pack/card-pack' },
       { title: '知识科普', icon: 'https://www.blueakaiwu.cn/api/v1/static/assets/home/home-science.png', tone: 'pink', url: '/pages/knowledge/knowledge' },
-      { title: '成就', icon: 'https://www.blueakaiwu.cn/api/v1/static/assets/profile/profile-medal.png', tone: 'yellow', tab: '/pages/achieve/achieve' },
       { title: '装备推荐', icon: 'https://www.blueakaiwu.cn/api/v1/static/assets/profile/profile-gear.png', tone: 'pink', url: '/pages/gear/gear' },
       { title: '签到', icon: 'https://www.blueakaiwu.cn/api/v1/static/assets/profile/profile-booking.png', tone: 'sky', url: '/pages/checkin-form/checkin-form' },
       { title: '使用教学', icon: 'https://www.blueakaiwu.cn/api/v1/static/assets/home/home-quiz1.png', tone: 'mint', url: '/pages/tutorial/tutorial' },
-      { title: '赶海常见问题', icon: 'https://www.blueakaiwu.cn/api/v1/static/assets/profile/profile-help.png', tone: 'sky', url: '/pages/faq/faq' },
-      { title: '设置', icon: 'https://www.blueakaiwu.cn/api/v1/static/assets/profile/profile-settings.png', tone: 'yellow', url: '/pages/settings/settings' }
+      { title: '赶海常见问题', icon: 'https://www.blueakaiwu.cn/api/v1/static/assets/profile/profile-help.png', tone: 'sky', url: '/pages/faq/faq' }
     ],
     showOnboarding: false,
     onbStartIndex: 0,
-    onbRect: null as any
+    onbRect: null as any,
+    // 赶海足迹：来自本地 + 服务端记录
+    stats: { watchCount: 0, speciesCount: 0, dayCount: 0 }
   },
 
   onShow() {
@@ -58,6 +57,29 @@ Page({
     this.refreshUser()
     flushUnlocks(this)
     this.loadUnread()
+    this.loadStats()
+  },
+
+  /** 赶海足迹：先渲染本地记录，再用服务端记录刷新一次 */
+  loadStats() {
+    const paint = (extra: any[] = []) => {
+      const groups = listWatchGroups(extra as any)
+      let watchCount = 0
+      let speciesCount = 0
+      groups.forEach((group) => {
+        (group.items || []).forEach((record: any) => {
+          watchCount++
+          speciesCount += (record.species || []).filter((s: any) => s.kind !== 'trash').length
+        })
+      })
+      this.setData({
+        stats: { watchCount, speciesCount, dayCount: groups.length }
+      })
+    }
+    paint()
+    watchApi.list(1, 20)
+      .then((list) => paint((list || []).map(fromApiRecord).filter(Boolean)))
+      .catch(() => {})
   },
 
   /** 铃铛上的未读数。未登录就不显示红点 */
@@ -74,6 +96,10 @@ Page({
 
   goNotifications() {
     wx.navigateTo({ url: '/pages/notifications/notifications' })
+  },
+
+  goSettings() {
+    wx.navigateTo({ url: '/pages/settings/settings' })
   },
 
   onOnboardingFinish() {

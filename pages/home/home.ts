@@ -226,9 +226,15 @@ Page({
     }
   },
 
-  /** 首页主按钮：直接看当前位置最近的潮汐表（没保存过点位时由潮汐表页自己选最近的点） */
+  /** 首页主按钮：赶海中直接回到正在赶海的点位；否则先选一个赶海点 */
   goTide() {
-    // 先选一个赶海点，再进入对应点位的潮汐表
+    const session = getWatchSession()
+    const spotId = session && session.spot && session.spot.spotId
+    // 赶海进行中：不再让用户重选地点，直接回到那次赶海的潮汐表
+    if (spotId) {
+      wx.navigateTo({ url: `/pages/tide/tide?spotId=${spotId}` })
+      return
+    }
     this.openSpotPicker()
   },
 

@@ -36,7 +36,6 @@
       <view class="locate-mark">◎</view>
       <view class="locate-main">
         <view class="locate-title">{{locating ? '正在定位…' : '使用当前位置'}}</view>
-        <view class="locate-desc">根据定位自动匹配青岛 / 海南版本</view>
       </view>
     </view>
 

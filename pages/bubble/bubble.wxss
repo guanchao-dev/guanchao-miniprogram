@@ -19,23 +19,24 @@
   border: 3rpx solid #1C1C1C;
   border-radius: 999rpx;
   background: #FFD9E4;
-  box-shadow: 3rpx 3rpx 0 #1C1C1C;
-  font-size: 20rpx;
+  box-shadow: 3rpx 3rpx 0 rgba(28, 28, 28, 0.85);
+  font-size: 19rpx;
   font-weight: 800;
   color: #1C1C1C;
 }
 
 .intro-name {
   margin-top: 14rpx;
-  font-size: 56rpx;
+  font-size: 46rpx;
   font-weight: 900;
-  letter-spacing: 4rpx;
+  line-height: 1.15;
+  letter-spacing: 2rpx;
   color: #1C1C1C;
 }
 
 .intro-role {
-  margin-top: 6rpx;
-  color: #7C8A96;
+  margin-top: 8rpx;
+  color: #6B7C8A;
   font-size: 22rpx;
   font-weight: 650;
 }
@@ -172,12 +173,12 @@
   border: 4rpx solid #1C1C1C;
   border-radius: 26rpx;
   background: #FFFFFF;
-  box-shadow: 6rpx 6rpx 0 rgba(28, 28, 28, 0.18);
+  box-shadow: 4rpx 4rpx 0 rgba(28, 28, 28, 0.85);
 }
 
 .speech-text {
   color: #1C1C1C;
-  font-size: 26rpx;
+  font-size: 25rpx;
   font-weight: 650;
   line-height: 1.55;
 }
@@ -200,35 +201,37 @@
 .affinity-fill {
   height: 100%;
   border-radius: 999rpx;
-  background: linear-gradient(90deg, #FF8AAA 0%, #FFC53D 60%, #34B8C5 100%);
+  background: linear-gradient(90deg, #FF8AAA, #34B8C5);
   transition: width 0.35s ease;
 }
 
 .affinity-text {
   display: block;
   margin-top: 8rpx;
-  color: #8A99A6;
+  color: #6B7C8A;
   font-size: 20rpx;
   font-weight: 650;
+  font-variant-numeric: tabular-nums;
 }
 
 /* 互动按钮 */
 .actions {
   display: flex;
-  gap: 16rpx;
-  margin: 26rpx 0 24rpx;
+  gap: 14rpx;
+  margin: 24rpx 0;
 }
 
 .action {
   flex: 1;
   height: 84rpx;
-  line-height: 78rpx;
+  line-height: 76rpx;
+  box-sizing: border-box;
   border: 4rpx solid #1C1C1C;
-  border-radius: 24rpx;
-  box-shadow: 5rpx 5rpx 0 #1C1C1C;
+  border-radius: 999rpx;
+  box-shadow: 5rpx 5rpx 0 rgba(28, 28, 28, 0.85);
   text-align: center;
   font-size: 26rpx;
-  font-weight: 800;
+  font-weight: 850;
   color: #1C1C1C;
 }
 
@@ -237,8 +240,8 @@
 .action.song { background: #CDEFF2; }
 
 .action.tap {
-  transform: translate(3rpx, 3rpx);
-  box-shadow: 2rpx 2rpx 0 #1C1C1C;
+  transform: translate(2rpx, 2rpx);
+  box-shadow: 2rpx 2rpx 0 rgba(28, 28, 28, 0.85);
 }
 
 /* 小档案 */
@@ -251,12 +254,12 @@
   justify-content: space-between;
   gap: 24rpx;
   padding: 16rpx 0;
-  border-bottom: 2rpx dashed rgba(28, 28, 28, 0.14);
+  border-bottom: 2rpx dashed rgba(28, 28, 28, 0.12);
 }
 
 .profile-key {
-  color: #8A99A6;
-  font-size: 24rpx;
+  color: #6B7C8A;
+  font-size: 22rpx;
   font-weight: 700;
 }
 
@@ -264,19 +267,20 @@
   flex: 1;
   color: #1C1C1C;
   font-size: 24rpx;
-  font-weight: 700;
+  font-weight: 650;
+  line-height: 1.5;
   text-align: right;
 }
 
 .tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 12rpx;
+  gap: 10rpx;
   margin-top: 20rpx;
 }
 
 .tag {
-  padding: 6rpx 16rpx;
+  padding: 7rpx 18rpx;
   border: 3rpx solid #1C1C1C;
   border-radius: 999rpx;
   background: #FFF3F6;
@@ -288,18 +292,18 @@
 .quote {
   margin-top: 22rpx;
   padding: 18rpx 20rpx;
-  border-left: 8rpx solid #FF8AAA;
-  border-radius: 12rpx;
+  border-left: 4rpx solid #FF8AAA;
+  border-radius: 16rpx;
   background: #FFF7FA;
   color: #46525C;
-  font-size: 24rpx;
+  font-size: 25rpx;
   font-weight: 650;
-  line-height: 1.5;
+  line-height: 1.6;
 }
 
 .profile-tip {
   margin-top: 16rpx;
-  color: #8A99A6;
-  font-size: 20rpx;
+  color: #6B7C8A;
+  font-size: 19rpx;
   font-weight: 650;
 }

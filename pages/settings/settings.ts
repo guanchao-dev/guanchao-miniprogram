@@ -6,7 +6,12 @@ import { resetOnboarding } from '../../utils/onboardingStore'
 Page({
   data: {
     version: '',
-    loggedIn: false
+    loggedIn: false,
+    // 从「我的服务」移到设置的两个入口
+    moreServices: [
+      { label: '赶海地图', url: '/pages/spot-map/spot-map' },
+      { label: '海洋图鉴', url: '/pages/wiki/wiki' }
+    ]
   },
 
   onShow() {
@@ -26,6 +31,11 @@ Page({
 
   goAbout() {
     wx.navigateTo({ url: '/pages/about/about' })
+  },
+
+  onMoreService(e: any) {
+    const url = e.currentTarget.dataset.url
+    if (url) wx.navigateTo({ url })
   },
 
   onLogout() {

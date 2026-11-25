@@ -56,6 +56,8 @@ export function drawTideChart(page: any, points: TidePoint[], currentHeightM?: n
   nowRatio?: number
   /** 最佳赶海时段（当天的分钟数，0~1440）；用于在曲线背景铺色块 */
   bestRange?: { from: number; to: number }
+  /** 画完导出成图片，交给页面用 image 展示（避免原生 canvas 盖住悬浮层） */
+  exportImage?: boolean
 }): void {
   const canvasId = (opts && opts.canvasId) || '#tideCanvas'
   const dark = !!(opts && opts.dark)
@@ -265,5 +267,17 @@ export function drawTideChart(page: any, points: TidePoint[], currentHeightM?: n
           ctx.fillText(label, pt.x, height - 8)
         }
       })
+
+      if (opts && opts.exportImage && page && typeof page.setData === 'function') {
+        wx.canvasToTempFilePath({
+          canvas,
+          success: (res: any) => page.setData({
+            chartImage: res.tempFilePath,
+            chartCanvas: false
+          }),
+          // 导出失败就保留画布，宁可层级有问题也不能让曲线消失
+          fail: () => page.setData({ chartCanvas: true })
+        })
+      }
     })
 }

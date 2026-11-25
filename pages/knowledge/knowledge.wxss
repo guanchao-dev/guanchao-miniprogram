@@ -1,30 +1,27 @@
-.intro {
-  padding: 20rpx 22rpx;
-  margin-bottom: 18rpx;
-  background: #F3FBFA;
-  color: #4F6787;
-  font-size: 24rpx;
-  line-height: 1.55;
-}
-
 .spot-item {
   display: flex;
   align-items: center;
-  gap: 18rpx;
-  margin-bottom: 18rpx;
-  padding: 26rpx 24rpx;
+  gap: 16rpx;
+  margin-bottom: 16rpx;
+  padding: 22rpx 22rpx;
+}
+
+.spot-item.tap {
+  transform: translate(2rpx, 2rpx);
+  box-shadow: 1rpx 1rpx 0 rgba(28, 28, 28, 0.85);
 }
 
 .item-rank {
-  width: 52rpx;
-  height: 52rpx;
+  width: 48rpx;
+  height: 48rpx;
   border: 3rpx solid #1C1C1C;
   border-radius: 50%;
   background: #F6D081;
   text-align: center;
-  line-height: 52rpx;
-  font-size: 25rpx;
-  font-weight: 850;
+  line-height: 42rpx;
+  font-size: 24rpx;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
   flex-shrink: 0;
 }
 
@@ -34,21 +31,24 @@
 }
 
 .item-name {
-  font-size: 34rpx;
+  font-size: 30rpx;
   font-weight: 850;
-  line-height: 1.35;
+  line-height: 1.4;
 }
 
 .item-arrow {
+  flex-shrink: 0;
+  font-size: 34rpx;
+  font-weight: 400;
+  line-height: 1;
   color: #1888BF;
-  font-size: 40rpx;
-  font-weight: 300;
 }
 
 .mask {
   position: fixed;
   inset: 0;
-  z-index: 80;
+  /* 高于悬浮赶海球（90） */
+  z-index: 95;
   display: flex;
   align-items: flex-end;
   justify-content: center;
@@ -61,8 +61,8 @@
   overflow: hidden;
   border: 4rpx solid #1C1C1C;
   border-bottom: 0;
-  border-radius: 36rpx 36rpx 0 0;
-  background: #EAF3FF;
+  border-radius: 32rpx 32rpx 0 0;
+  background: #FBF7EF;
   box-sizing: border-box;
 }
 
@@ -70,19 +70,37 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 24rpx 28rpx 8rpx;
-  font-size: 34rpx;
+  gap: 16rpx;
+  padding: 22rpx 24rpx 10rpx;
+  font-size: 30rpx;
   font-weight: 850;
+  color: #1C1C1C;
+}
+
+.sheet-head text:first-child {
+  flex: 1;
+  min-width: 0;
 }
 
 .sheet-close {
-  font-size: 44rpx;
-  font-weight: 300;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56rpx;
+  height: 56rpx;
+  border: 3rpx solid #1C1C1C;
+  border-radius: 50%;
+  background: #FFFFFF;
+  font-size: 34rpx;
+  font-weight: 800;
+  line-height: 1;
+  color: #1C1C1C;
 }
 
 .sheet-body {
   max-height: 72vh;
-  padding: 8rpx 28rpx 0;
+  padding: 8rpx 24rpx 0;
   box-sizing: border-box;
 }
 
@@ -92,9 +110,9 @@
 
 .hint {
   display: block;
-  margin-top: 10rpx;
-  color: #33475B;
-  font-size: 27rpx;
-  line-height: 1.85;
+  margin-top: 12rpx;
+  color: #3C556B;
+  font-size: 25rpx;
+  line-height: 1.8;
   white-space: pre-wrap;
 }

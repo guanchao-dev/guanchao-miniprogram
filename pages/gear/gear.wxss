@@ -1,0 +1,72 @@
+/* 装备清单：筛选胶囊 + 卡片列表（基础描边/阴影沿用 app.wxss） */
+
+/* 场景筛选：一行 4 个胶囊，高度与其它页签一致 */
+.chip-row {
+  gap: 12rpx;
+  margin: 0 0 20rpx;
+}
+
+.chip {
+  height: 64rpx;
+  padding: 0 24rpx;
+  line-height: 58rpx;
+  box-sizing: border-box;
+  border: 3rpx solid var(--ink);
+  border-radius: 999rpx;
+  background: #FFFFFF;
+  color: var(--ink);
+  font-size: 22rpx;
+  font-weight: 750;
+  box-shadow: 2rpx 2rpx 0 rgba(28, 28, 28, 0.85);
+}
+
+.chip:active {
+  transform: translate(1rpx, 1rpx);
+  box-shadow: 1rpx 1rpx 0 rgba(28, 28, 28, 0.85);
+}
+
+.chip.active {
+  background: #34B8C5;
+  color: #FFFFFF;
+}
+
+/* 单品卡：名称 + 推荐理由 */
+.list-card {
+  margin-bottom: 16rpx;
+  padding: 22rpx 24rpx;
+}
+
+.list-card .list-title {
+  color: var(--ink);
+  font-size: 28rpx;
+  font-weight: 850;
+  line-height: 1.35;
+}
+
+.list-card .list-meta {
+  margin-top: 6rpx;
+  color: var(--ink-soft);
+  font-size: 23rpx;
+  font-weight: 650;
+  line-height: 1.55;
+}
+
+/* 卡内的「必带」：金底墨字，比筛选胶囊小一档 */
+.list-card .chip-row {
+  margin: 14rpx 0 0;
+}
+
+.list-card .chip {
+  height: auto;
+  padding: 3rpx 14rpx;
+  line-height: 1.5;
+  border-width: 2rpx;
+  font-size: 20rpx;
+  font-weight: 800;
+  box-shadow: none;
+}
+
+.list-card .chip.active {
+  background: #F6D081;
+  color: var(--ink);
+}
