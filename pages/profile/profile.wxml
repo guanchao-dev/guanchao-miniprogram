@@ -39,20 +39,6 @@
 
     <view class="page profile-body">
       <view class="section-head">
-        <text class="section-title">观潮记录</text>
-      </view>
-      <view class="record-banner card" bindtap="goRecords" hover-class="tap">
-        <view class="record-banner-deco"></view>
-        <view class="record-banner-icon">
-          <image src="https://www.blueakaiwu.cn/api/v1/static/assets/profile/profile-records.png" mode="aspectFit"></image>
-        </view>
-        <view class="record-banner-copy">
-          <text class="record-banner-desc">回顾每一次观潮的时间与收获</text>
-        </view>
-        <text class="record-banner-arrow">›</text>
-      </view>
-
-      <view class="section-head">
         <text class="section-title">我的服务</text>
       </view>
       <view class="service-grid card">
@@ -63,6 +49,7 @@
           id="{{item.title === '宝藏点位' ? 'onb-spot-entry' : ''}}"
           data-url="{{item.url}}"
           data-tab="{{item.tab}}"
+          data-action="{{item.action}}"
           bindtap="onService"
          hover-class="tap">
           <view class="service-icon {{item.tone}}">

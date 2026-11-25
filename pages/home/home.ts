@@ -1,9 +1,11 @@
 import { DEFAULT_SPOT_ID } from '../../config/env'
 import { achieveApi, aiApi, contentApi, homeApi, watchApi } from '../../services/api'
 import { requireLogin } from '../../utils/auth'
-import { nowISO, nowTime, showError, todayDate, toast } from '../../utils/format'
+import { nowISO, nowTime, showError, toast } from '../../utils/format'
 import { chooseImage, mediaUrl, preloadImage, uploadImage } from '../../utils/upload'
-import { getCachedLocation, loadGuideSpots, rankWatchSpots, requestLocation } from '../../utils/spotGuide'
+import { getCachedLocation, haversineM, loadGuideSpots, rankWatchSpots, requestLocation } from '../../utils/spotGuide'
+import { enableShareMenu } from '../../utils/share'
+import { getRegion, getRegionKey, getSavedSpotId, saveSpotId } from '../../utils/region'
 import { enqueueUnlocks, flushUnlocks } from '../../utils/unlock'
 import { shouldShowOnboarding, markOnboardingCompleted, isOnboarding, getOnboardingIndex } from '../../utils/onboardingStore'
 import { ONBOARDING_STEPS } from '../../utils/onboardingSteps'
@@ -21,7 +23,7 @@ import { endWatchNow, notifyWatchBall, subscribeWatchBall } from '../../utils/wa
 const ASSET = 'https://www.blueakaiwu.cn/api/v1/static/assets'
 
 const DEFAULT_ACTIVITIES = [
-  { id: 'theme-science', tag: '科普', title: '潮间带科普课', desc: '认识小螃蟹和贝类朋友', theme: 'teal', icon: `${ASSET}/home/home-fish.png`, url: '/pages/knowledge/knowledge' },
+  { id: 'theme-science', tag: '小科普', title: '潮间带小科普', desc: '认识小螃蟹和贝类朋友', theme: 'teal', icon: `${ASSET}/home/home-fish.png`, url: '/pages/knowledge/knowledge' },
   { id: 'theme-study', tag: '研学', title: '赶海研学营', desc: '跟着导师探索潮间带', theme: 'yellow', icon: `${ASSET}/home/home-hero-mascot.png`, url: '' },
   { id: 'theme-deepblue', tag: '科普', title: '深蓝百万里', desc: '全民参与的海洋科学十年行动', theme: 'banner', icon: `${ASSET}/home/home-deepblue.png`, appId: 'wxc625ddd20a55f6cd', miniPath: '' }
 ]
@@ -32,35 +34,6 @@ const DEFAULT_ACTIVITIES = [
  */
 const MINI_APP_BY_TITLE: Record<string, { appId: string; miniPath: string }> = {
   '深蓝百万里': { appId: 'wxc625ddd20a55f6cd', miniPath: '' }
-}
-
-/** 与赶海无关的句子：天气、穿戴、泛化安全叮嘱 */
-const SKIP_SENTENCE_RE = /(天气|气温|温度|\d+\s*℃|\d+\s*°|东南风|西南风|西北风|东北风|东风|南风|西风|北风|风力|风\s*\d+\s*级|轻浪|中浪|大浪|多云|晴天|阴天|小雨|中雨|大雨|阵雨|雷阵|防滑|穿鞋|雨具|雨伞|保暖|外套|体感|防晒|牵好|牵紧|大人的手|家长|大人陪|陪同|独自|湿滑|涨潮线|离岸流)/
-
-/** 把后端整段建议拆成句，丢掉天气/穿戴/套话句，只保留潮汐与赶海时机 */
-function filterAdviceBody(body: string): string {
-  if (!body) return ''
-  const sentences = body.match(/[^。！？!?]+[。！？!?]?/g) || []
-  return sentences
-    .map((s) => s.trim())
-    .filter((s) => s && !SKIP_SENTENCE_RE.test(s))
-    .join('')
-}
-
-/** 涨潮时间：优先后端 nextChange；缺失时用今日潮汐点位里下一个高/低潮补位 */
-function nextTideText(advice: any, points: any[]): string {
-  const nc = advice && advice.nextChange
-  if (nc && nc.time) return `${nc.time} ${nc.label || '潮位变化'}`
-  if (!Array.isArray(points) || !points.length) return ''
-  const now = new Date()
-  const current = now.getHours() * 60 + now.getMinutes()
-  const toMin = (t: string) => {
-    const parts = String(t).split(':')
-    return Number(parts[0]) * 60 + Number(parts[1] || 0)
-  }
-  const next = points.find((p) => p && p.time && toMin(p.time) >= current)
-  if (!next) return ''
-  return `${next.time} ${next.type === 'high' ? '涨至最高潮' : '退到最低潮'}`
 }
 
 type GuessCandidate = {
@@ -166,17 +139,15 @@ Page({
   _lastWatching: false,
 
   data: {
-    // 顶部「当前城市」：按缓存定位反查后填入；未定位时显示「点击定位」，点击后才申请位置权限
-    place: '点击定位',
-    locating: false,
-    watchLabel: '开始观潮',
+    // 顶部地址：展示当前地区（青岛 / 海南），点击可切换或使用当前位置自动判断
+    place: getRegion().label,
+    regionKey: getRegionKey(),
+    watchLabel: '开始赶海',
     watchClass: '',
-    advice: {},
     recommended: [],
     recLoading: true,
     activities: DEFAULT_ACTIVITIES,
     activityIndex: 0,
-    showAdvice: false,
     showGuess: false,
     showTrash: false,
     trash: {},
@@ -193,7 +164,7 @@ Page({
     onbStartIndex: 0,
     // 新手教程当前锚点的测量结果（{index, rect}，rect=null 表示居中步）
     onbRect: null as any,
-    // 开始观潮前的地点选择弹窗
+    // 开始赶海前的地点选择弹窗
     spotPickerVisible: false,
     watchSpots: [] as any[],
     watchSpotsLoading: false
@@ -202,9 +173,15 @@ Page({
   onShow() {
     const app = getApp()
     const self = this as any
-    const spotId = (app.globalData && app.globalData.spotId) || this.data.spotId
+    enableShareMenu()
+    const savedSpot = getSavedSpotId()
+    const spotId = savedSpot || (getRegionKey() === 'qingdao' ? DEFAULT_SPOT_ID : '')
+    if (app.globalData) app.globalData.spotId = spotId
     this.setData({ spotId })
-    this.refreshPlace()
+    // 从地区切换页返回时，清掉旧地区的推荐，等新数据回来
+    if (this.refreshPlace()) {
+      this.setData({ recommended: [] })
+    }
     // 新手教程：首次启动 或 跨页续接到 home
     if (isOnboarding()) {
       const idx = getOnboardingIndex()
@@ -235,14 +212,36 @@ Page({
     this.preloadEncyclopedia()
     // 预加载已在 app.onLaunch 启动（与首页请求、图片并行），这里不再重复触发
     flushUnlocks(this)
+    // 从潮汐表浮标或「我的服务 → 生态净滩」跳回首页：自动拉起对应的拍照识别
+    const pendingAi = wx.getStorageSync('home_open_guess')
+      ? 'guess'
+      : (wx.getStorageSync('home_open_trash') ? 'trash' : '')
+    if (pendingAi) {
+      wx.removeStorageSync('home_open_guess')
+      wx.removeStorageSync('home_open_trash')
+      setTimeout(() => {
+        if (pendingAi === 'guess') this.onGuess()
+        else this.onTrashGuess()
+      }, 350)
+    }
+  },
+
+  /** 首页主按钮：直接看当前位置最近的潮汐表（没保存过点位时由潮汐表页自己选最近的点） */
+  goTide() {
+    // 先选一个赶海点，再进入对应点位的潮汐表
+    this.openSpotPicker()
+  },
+
+  onShareAppMessage() {
+    return { title: '追潮记 · 赶海看潮汐', path: '/pages/home/home' }
   },
 
   syncWatchBtn() {
     if (isWatching()) {
-      this.setData({ watchLabel: '观潮中', watchClass: 'is-on' })
+      this.setData({ watchLabel: '赶海中', watchClass: 'is-on' })
       return
     }
-    this.setData({ watchLabel: '开始观潮', watchClass: '' })
+    this.setData({ watchLabel: '开始赶海', watchClass: '' })
   },
 
   /** 新手教程关闭回调：写完成标记并隐藏 */
@@ -308,10 +307,10 @@ Page({
     doMeasure()
   },
 
-  /** 结束观潮：本地落记录 + 同步服务端，全局复位（按钮与悬浮球共用） */
+  /** 结束赶海：本地落记录 + 同步服务端，全局复位（按钮与悬浮球共用） */
   doEndWatch() {
     const record = endWatchNow()
-    toast(record ? '已记入观潮记录' : '没有进行中的观潮')
+    toast(record ? '已记入赶海记录' : '没有进行中的赶海')
     this.syncWatchBtn()
   },
 
@@ -325,10 +324,10 @@ Page({
 
   onWatchToggle() {
     if (isWatching()) {
-      // 按钮保持“观潮中”，不做中间态切换；是否结束由弹窗确认
+      // 按钮保持“赶海中”，不做中间态切换；是否结束由弹窗确认
       wx.showModal({
-        title: '结束观潮',
-        content: '确认结束这次观潮吗？起止时间会写入观潮记录。',
+        title: '结束赶海',
+        content: '确认结束这次赶海吗？起止时间会写入赶海记录。',
         confirmText: '结束',
         cancelText: '继续',
         success: (res) => {
@@ -341,9 +340,9 @@ Page({
       })
       return
     }
-    // 未开始：开始新观潮要写服务端记录，后端已要求登录；
+    // 未开始：开始新赶海要写服务端记录，后端已要求登录；
     // 先拦在选点之前，避免用户选完地点/拍完照才 401。
-    // 已有本地会话的“结束观潮”不受影响，仍可先结束。
+    // 已有本地会话的“结束赶海”不受影响，仍可先结束。
     if (!requireLogin()) return
     this.openSpotPicker()
   },
@@ -364,17 +363,18 @@ Page({
     this.setData({ spotPickerVisible: false })
   },
 
-  /** 选中一个推荐点位 → 直接开始观潮 */
+  /** 选中一个推荐点位 → 进入该点位的潮汐表 */
   onPickWatchSpot(e: any) {
     const row = this.data.watchSpots[Number(e.currentTarget.dataset.index)]
     if (!row) return
-    this.beginWatch({
-      spotId: row.id,
-      name: row.name,
-      latitude: row.latitude || undefined,
-      longitude: row.longitude || undefined,
-      source: 'recommend'
-    })
+    this.setData({ spotPickerVisible: false })
+    wx.navigateTo({ url: `/pages/tide/tide?spotId=${row.id}` })
+  },
+
+  /** 打开赶海地图，直接进入拖动选点模式 */
+  goSpotMap() {
+    this.setData({ spotPickerVisible: false })
+    wx.navigateTo({ url: '/pages/spot-map/spot-map?pick=1' })
   },
 
   /** 在微信内置地图上自选点位（gcj02 坐标，与潮汐接口一致） */
@@ -385,11 +385,27 @@ Page({
       longitude: cached.lng,
       success: (res: any) => {
         if (!res || (!res.name && !res.address)) return
-        this.beginWatch({
+        const spot: WatchSpot = {
           name: res.name || res.address || '自选点位',
           latitude: res.latitude,
           longitude: res.longitude,
           source: 'custom'
+        }
+        this.checkBeachArea(res.latitude, res.longitude).then((nearBeach) => {
+          if (nearBeach) {
+            this.beginWatch(spot)
+            return
+          }
+          wx.showModal({
+            title: '这里可能不是海边',
+            content: '你选的位置离已知赶海点较远，可能不在潮间带。为了安全，建议回到赶海点附近再开始。',
+            confirmText: '仍要继续',
+            cancelText: '重新选择',
+            success: (r) => {
+              if (r.confirm) this.beginWatch(spot)
+              else this.onChooseCustomSpot()
+            }
+          })
         })
       },
       fail: (err: any) => {
@@ -407,14 +423,32 @@ Page({
     })
   },
 
-  /** 选定地点后开始观潮：写本地会话（悬浮球随之出现）+ 上报服务端 */
+  /**
+   * 自选点是否在海边：没有海陆边界数据，用「离已知赶海点不超过 3km」做近似判断。
+   * 点位数据为空时不做武断拦截。
+   */
+  checkBeachArea(lat: number, lng: number): Promise<boolean> {
+    if (typeof lat !== 'number' || typeof lng !== 'number') return Promise.resolve(true)
+    return loadGuideSpots(true)
+      .then((list) => {
+        const rows = (list || []).filter((item) => item.latitude && item.longitude)
+        if (!rows.length) return true
+        const nearest = Math.min.apply(null, rows.map((item) => (
+          haversineM(lat, lng, item.latitude, item.longitude)
+        )))
+        return nearest <= 3000
+      })
+      .catch(() => true)
+  },
+
+  /** 选定地点后开始赶海：写本地会话（悬浮球随之出现）+ 上报服务端 */
   beginWatch(spot: WatchSpot) {
     const startedAt = nowISO()
     this.setData({ spotPickerVisible: false })
     startWatchSession(startedAt, undefined, spot)
     notifyWatchBall()
     this.syncWatchBtn()
-    toast(`已在${spot.name}开始观潮`)
+    toast(`已在${spot.name}开始赶海`)
     watchApi.start({
       startedAt,
       spotId: spot.spotId || this.data.spotId,
@@ -429,81 +463,36 @@ Page({
       .catch(() => {})
   },
 
-  /**
-   * 顶部「当前城市」：只用已缓存定位反查城市，不在页面加载时主动拉起定位授权。
-   * 没有缓存时显示「点击定位」，由用户点击芯片后再申请位置权限。
-   */
-  refreshPlace() {
-    const loc = getCachedLocation()
-    if (!loc) {
-      this.setData({ place: '点击定位' })
-      return
-    }
-    this.paintPlace(loc)
+  /** 顶部地址芯片展示当前地区；返回 true 表示地区相比上次发生了变化 */
+  refreshPlace(): boolean {
+    const key = getRegionKey()
+    const changed = key !== this.data.regionKey
+    this.setData({ place: getRegion().label, regionKey: key })
+    return changed
   },
 
-  /** 反查城市名并写入顶部芯片，失败时回到「点击定位」 */
-  paintPlace(loc: { lat: number; lng: number }) {
-    contentApi.resolveCity(loc.lat, loc.lng)
-      .then((geo: any) => this.setData({ place: (geo && geo.city) || '点击定位' }))
-      .catch(() => this.setData({ place: '点击定位' }))
-  },
-
-  /**
-   * 点击顶部「当前城市」：主动申请位置权限。
-   * 首次点击会弹出微信的位置授权弹窗；此前拒绝过则引导去设置页重新开启。
-   */
+  /** 点击顶部地址：进入地区切换页 */
   onTapPlace() {
-    if (this.data.locating) return
-    this.setData({ locating: true, place: '定位中' })
-    requestLocation(true)
-      .then((loc) => {
-        if (!loc) {
-          this.setData({ place: '点击定位' })
-          this.guideOpenSetting()
-          return
-        }
-        this.paintPlace(loc)
-        // 定位拿到后立刻刷新热度榜距离，不用用户再手动刷新
-        this.loadRecommended()
-      })
-      .catch(() => this.setData({ place: '点击定位' }))
-      .finally(() => this.setData({ locating: false }))
-  },
-
-  /** 用户拒绝过授权后微信不会再弹窗，只能引导去设置页手动开启 */
-  guideOpenSetting() {
-    wx.getSetting({
-      success: (res: any) => {
-        if (res.authSetting['scope.userLocation'] === false) {
-          wx.showModal({
-            title: '需要位置权限',
-            content: '开启后才能推荐你附近的赶海点位，是否前往设置？',
-            confirmText: '去设置',
-            success: (r: any) => {
-              if (r.confirm) wx.openSetting({})
-            }
-          })
-          return
-        }
-        toast('定位失败，请稍后重试')
-      }
-    })
+    wx.navigateTo({ url: '/pages/region-select/region-select' })
   },
 
   loadToday() {
-    homeApi.today({ spotId: this.data.spotId })
+    // 没有选中点位时只传当前地区的默认城市，由后端返回该城市的默认点位
+    const params: Record<string, any> = this.data.spotId
+      ? { spotId: this.data.spotId }
+      : { city: getRegion().defaultCity }
+    homeApi.today(params)
       .then((data) => {
         const place = (data && data.place) || {}
         const tide = (data && data.tide) || {}
         const height = tide.currentHeightM != null ? tide.currentHeightM : 0.8
         const trend = tide.trend || 'falling'
+        const spotId = place.spotId || this.data.spotId
+        if (spotId) saveSpotId(spotId)
         const app = getApp()
-        if (app.globalData) {
-          app.globalData.spotId = place.spotId || this.data.spotId
-        }
+        if (app.globalData) app.globalData.spotId = spotId
         this.setData({
-          spotId: place.spotId || this.data.spotId,
+          spotId,
           tideHeightM: height,
           tideTrend: trend,
           tidePoints: Array.isArray(tide.points) ? tide.points : []
@@ -626,10 +615,6 @@ Page({
     wx.navigateTo({ url: '/pages/search/search' })
   },
 
-  goCardPack() {
-    wx.navigateTo({ url: '/pages/card-pack/card-pack' })
-  },
-
   goRecommend() {
     wx.navigateTo({ url: '/pages/spot-guide/spot-guide' })
   },
@@ -643,66 +628,6 @@ Page({
       return
     }
     wx.navigateTo({ url: `/pages/wiki-detail/wiki-detail?id=${id}` })
-  },
-
-  onRefreshAdvice() {
-    // 获取用户当前坐标传给后端，拿推荐时间与推荐地点
-    requestLocation().then((loc) => {
-      // 其他入口拿到定位后，顶部芯片同步补上城市名
-      if (loc && this.data.place === '点击定位') this.paintPlace(loc)
-      // 这里也可能首次拿到坐标，顺手把首页热度榜距离刷新出来
-      if (loc) this.loadRecommended()
-      const spotId = this.data.spotId || DEFAULT_SPOT_ID
-      const date = todayDate()
-      const lat = loc ? loc.lat : undefined
-      const lng = loc ? loc.lng : undefined
-      aiApi.tideAdvice(lat, lng, date, spotId)
-        .then((data) => {
-          this.setData({ advice: this.normalizeAdvice(data), showAdvice: true })
-        })
-        .catch((err) => {
-          // 接口失败时不展示任何建议，避免伪造赶海时机误导用户
-          this.setData({ showAdvice: false })
-          showError(err, '赶海建议加载失败，请稍后重试')
-        })
-    })
-  },
-
-  /** 把后端数据规整成弹窗渲染结构 */
-  normalizeAdvice(raw: any) {
-    // 前端默认适合赶海，只有后端明确返回 suitableNow: false 才判为不适合
-    const suitable = (raw && raw.suitableNow) !== false
-    const from = (raw && raw.bestTimeFrom) || ''
-    const to = (raw && raw.bestTimeTo) || ''
-    const spot = raw && raw.recommendedSpot
-    const spots = spot ? [{
-      id: spot.id || '',
-      name: spot.name || '',
-      distance: spot.distanceText || '',
-      reason: spot.district ? spot.district : ''
-    }] : []
-    return {
-      suitableNow: suitable,
-      verdict: suitable ? `${from}适合赶海` : '目前不适合赶海',
-      bestWindow: from && to ? `${from}-${to}` : '',
-      leaveBefore: to || '',
-      recommendedSpots: spots,
-      // 后端每天 4 点预生成的建议文案（headline 标题 / body 正文），库里没有时为空
-      headline: (raw && raw.headline) || '',
-      body: (raw && raw.body) || ''
-    }
-  },
-
-  /** 弹窗里点击推荐地点：跳详情页 */
-  onAdviceSpot(e: any) {
-    const id = e.currentTarget.dataset.id
-    if (!id) return
-    this.setData({ showAdvice: false })
-    wx.navigateTo({ url: `/pages/spot-detail/spot-detail?id=${id}` })
-  },
-
-  closeAdvice() {
-    this.setData({ showAdvice: false })
   },
 
   onGuess() {
@@ -731,7 +656,7 @@ Page({
       .then((guess) => {
         this.lastGuessId = guess && guess.guessId
         // 图里有几个生物就渲染几条，每条默认只展示自己的首选，其余折叠；
-        // 候选**不自动**写进观潮记录，等用户点「就是这个物种」再记那一种。
+        // 候选**不自动**写进赶海记录，等用户点「就是这个物种」再记那一种。
         // 必须先关掉 loading：成功分支漏了这句的话，弹窗出来了转圈还一直转。
         wx.hideLoading()
         this.setData({
@@ -801,7 +726,7 @@ Page({
   },
 
   /**
-   * 「就是这个物种」：把用户确认的这一种写进观潮记录。
+   * 「就是这个物种」：把用户确认的这一种写进赶海记录。
    * 图里有几个生物就能各记一条；同一个生物只能确认一次。
    */
   onConfirmSpecies(e: any) {
@@ -815,7 +740,7 @@ Page({
     }
     const session = getWatchSession()
     if (!session) {
-      toast('先点「开始观潮」，识别结果才会记录')
+      toast('先到潮汐表页开始赶海，识别结果才会记录')
       return
     }
     const entry = {
@@ -827,7 +752,7 @@ Page({
       label: item.label,
       count: item.count
     }
-    // 本地会话（必须带上完整字段，结束观潮时上报的就是它）
+    // 本地会话（必须带上完整字段，结束赶海时上报的就是它）
     addWatchItem(entry)
     // 同步到服务端。响应会带回「本次新点亮的图鉴物种」—— 后端只在这个物种此前
     // 没点亮过时才返回它，所以直接拿去弹庆祝弹窗即可，前端不用另外去重。
@@ -842,7 +767,7 @@ Page({
               medalId: lit.id,   // 解锁队列按 medalId 去重
               id: lit.id,
               title: lit.name,
-              description: '已收录进你的观潮图鉴',
+              description: '已收录进你的图鉴',
               icon: mediaUrl(lit.coverUrl || ''),
               source: 'species'
             }], 'species')
@@ -852,11 +777,11 @@ Page({
         .catch(() => {})
     }
     this.setData({ [`guessItems[${oi}].confirmedRank`]: cand.rank })
-    toast('已记入观潮记录：' + cand.name)
+    toast('已记入赶海记录：' + cand.name)
   },
 
   /**
-   * 「就是它」：把这件垃圾记进观潮记录。
+   * 「就是它」：把这件垃圾记进赶海记录。
    * 每件垃圾各记一条，重复点同一件只记一次。
    */
   onConfirmTrash(e: any) {
@@ -865,7 +790,7 @@ Page({
     if (!item || item.confirmed) return
     const session = getWatchSession()
     if (!session) {
-      toast('先点「开始观潮」，识别结果才会记录')
+      toast('先到潮汐表页开始赶海，识别结果才会记录')
       return
     }
     // 垃圾每天只允许记一次（拍照识别的生物不受限制）。
@@ -883,12 +808,12 @@ Page({
       categoryLabel: item.categoryLabel,
       label: item.label,
       count: item.count,
-      // 这张照片的垃圾总量档位，观潮记录里要展示「垃圾量」
+      // 这张照片的垃圾总量档位，赶海记录里要展示「垃圾量」
       amount: (this.data.trash as any)?.amount || ''
     }
     const done = () => {
       this.setData({ [`trashItems[${oi}].confirmed`]: true })
-      toast('已记入观潮记录：' + item.name)
+      toast('已记入赶海记录：' + item.name)
     }
     // 有服务端会话就先问服务端：它拒了（今日已记过）就不写本地，
     // 免得本地留一条服务端没有的记录，结束后合并时又对不上。
@@ -905,7 +830,7 @@ Page({
           done()
         })
         .catch(() => {
-          // 网络失败也记本地，保证这次观潮的收获不丢
+          // 网络失败也记本地，保证这次赶海的收获不丢
           addWatchItem(entry)
           done()
         })

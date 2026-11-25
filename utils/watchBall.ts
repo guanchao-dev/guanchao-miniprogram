@@ -5,8 +5,8 @@ import { spotVisitApi, watchApi } from '../services/api'
 
 /**
  * 全局悬浮球状态：模块级单例计时器 + 监听器。
- * 页面/组件只负责渲染，观潮状态与计时统一在这里维护，
- * 跨页面、切后台、重进小程序都能续上，直到结束观潮。
+ * 页面/组件只负责渲染，赶海状态与计时统一在这里维护，
+ * 跨页面、切后台、重进小程序都能续上，直到结束赶海。
  */
 export interface WatchBallState {
   watching: boolean
@@ -69,20 +69,20 @@ export function subscribeWatchBall(fn: Listener): () => void {
   }
 }
 
-/** 观潮开始/结束时调用：所有页面的悬浮球同步显示/隐藏 */
+/** 赶海开始/结束时调用：所有页面的悬浮球同步显示/隐藏 */
 export function notifyWatchBall() {
   if (isWatching()) startTimer()
   else stopTimer()
   emit()
 }
 
-/** 结束观潮：本地落记录 + 同步服务端，全局复位（按钮与悬浮球共用） */
+/** 结束赶海：本地落记录 + 同步服务端，全局复位（按钮与悬浮球共用） */
 export function endWatchNow(): any {
   const session = getWatchSession()
   const endedAt = nowISO()
   const record = endWatchSession(endedAt)
 
-  // 结束观潮即点亮所选推荐赶海点（账号维度）。接口幂等，同一点位只点亮一次；
+  // 结束赶海即点亮所选推荐赶海点（账号维度）。接口幂等，同一点位只点亮一次；
   // 自选点位没有 spotId，不点亮；未登录不发送。
   const spotId = session && session.spot && session.spot.spotId
   if (spotId && isLoggedIn()) {
@@ -94,7 +94,7 @@ export function endWatchNow(): any {
       endedAt,
       species: record.species
     }).then(() => {
-      // 服务端已经记下这次观潮 → 删掉本地那条，否则观潮记录里会重复显示两条
+      // 服务端已经记下这次赶海 → 删掉本地那条，否则赶海记录里会重复显示两条
       removeWatchRecord(record.id)
       emit()
     }).catch(() => {
@@ -122,13 +122,19 @@ export function getBallMetrics() {
 
 /** 悬浮球位置全局共享：跨页面、跨拖拽保持一致，重启小程序才回默认 */
 export function getBallPos() {
+  const m = getBallMetrics()
   if (!pos) {
-    const m = getBallMetrics()
     pos = {
       left: m.winW - m.ballSize - m.ballMargin,
       top: m.winH - m.ballSize - Math.round(220 * (m.ballSize / 150))
     }
   }
+  // 位置跨页面共享：换到窗口更小的页面（如带原生 TabBar 的页面）时，
+  // 旧坐标可能落在底部 TabBar 下面，这里统一收回到可视区内。
+  const maxLeft = Math.max(m.ballMargin, m.winW - m.ballSize - m.ballMargin)
+  const maxTop = Math.max(m.ballMargin, m.winH - m.ballSize - m.ballMargin)
+  pos.left = Math.min(Math.max(pos.left, m.ballMargin), maxLeft)
+  pos.top = Math.min(Math.max(pos.top, m.ballMargin), maxTop)
   return pos
 }
 

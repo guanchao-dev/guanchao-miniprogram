@@ -1,5 +1,5 @@
 {
-  "navigationBarTitleText": "观潮记录",
+  "navigationBarTitleText": "赶海记录",
   "usingComponents": {
     "watch-ball": "/components/watch-ball/watch-ball"
   }

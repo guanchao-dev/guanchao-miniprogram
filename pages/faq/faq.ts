@@ -20,7 +20,7 @@ Page({
       })
       .catch((err) => {
         this.setData({ faq: [] })
-        showError(err, '常见问题加载失败')
+        showError(err, '赶海常见问题加载失败')
       })
       .finally(() => this.setData({ loading: false }))
   },

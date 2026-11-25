@@ -1,6 +1,7 @@
 import { contentApi, homeApi } from '../../services/api'
 import { trendText } from '../../utils/format'
 import { GuideSpot, loadGuideSpots } from '../../utils/spotGuide'
+import { getRegion } from '../../utils/region'
 import { navigateSpot } from '../../utils/amapNav'
 
 function tideLabel(type?: string): string {
@@ -32,6 +33,7 @@ Page({
   },
 
   onShow() {
+    wx.setNavigationBarTitle({ title: `${getRegion().label}赶海点` })
     this.setData({ loading: true })
     loadGuideSpots()
       .then((list) => {

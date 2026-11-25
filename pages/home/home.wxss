@@ -47,6 +47,13 @@
   font-weight: 700;
 }
 
+.place-caret {
+  margin-left: 2rpx;
+  color: #6B7C8A;
+  font-size: 18rpx;
+  line-height: 1;
+}
+
 .search-chip {
   flex: 1;
   justify-content: space-between;
@@ -131,7 +138,31 @@
   min-width: 180rpx;
 }
 
-/* 未开始观潮时，按钮呼吸动效吸引点击 */
+/* 主按钮现在是「查看潮汐表」，不需要呼吸动效 */
+.watch-btn.tide-btn {
+  animation: none;
+}
+
+.watch-link {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 12rpx;
+  padding: 6rpx 16rpx;
+  border: 2rpx solid #34B8C5;
+  border-radius: 999rpx;
+  background: rgba(52, 184, 197, 0.08);
+  color: #1888BF;
+  font-size: 22rpx;
+  font-weight: 700;
+}
+
+.watch-link.is-on {
+  border-color: #1C1C1C;
+  background: #34B8C5;
+  color: #FFFFFF;
+}
+
+/* 未开始赶海时，按钮呼吸动效吸引点击 */
 .watch-btn:not(.is-on):not(.is-end) {
   animation: watchPulse 2s ease-in-out infinite;
 }
@@ -1044,7 +1075,7 @@
   font-weight: 900;
 }
 
-/* ===== 开始观潮：地点选择弹窗 ===== */
+/* ===== 开始赶海：地点选择弹窗 ===== */
 .spot-mask {
   position: fixed;
   inset: 0;
@@ -1221,38 +1252,3 @@
   color: #4F6787;
 }
 
-/* ===== 海洋卡包入口 ===== */
-.pack-entry {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16rpx;
-  margin-top: 18rpx;
-  padding: 22rpx 24rpx;
-  background: linear-gradient(135deg, #EAF7F8, #D8F0F2);
-}
-
-.pack-entry-copy { flex: 1; min-width: 0; }
-
-.pack-entry-title {
-  color: #1C1C1C;
-  font-size: 30rpx;
-  font-weight: 900;
-}
-
-.pack-entry-desc {
-  margin-top: 6rpx;
-  color: #4B6571;
-  font-size: 20rpx;
-  line-height: 1.5;
-}
-
-.pack-entry-btn {
-  flex-shrink: 0;
-  padding: 12rpx 20rpx;
-  border-radius: 999rpx;
-  background: #2F7F86;
-  color: #fff;
-  font-size: 22rpx;
-  font-weight: 800;
-}

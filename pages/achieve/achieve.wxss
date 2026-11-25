@@ -62,6 +62,24 @@
   transform-origin: 100% 100%;
 }
 
+/* 泡泡身后的粉色光圈 */
+.hero-mascot-halo {
+  position: absolute;
+  right: -46rpx;
+  bottom: -46rpx;
+  width: 320rpx;
+  height: 320rpx;
+  z-index: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 138, 170, 0.55) 0%, rgba(255, 182, 203, 0.26) 48%, rgba(255, 182, 203, 0) 72%);
+  animation: mascotGlow 3.2s ease-in-out infinite;
+}
+
+@keyframes mascotGlow {
+  0%, 100% { opacity: 0.72; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.07); }
+}
+
 /* 成就进度卡：黑边 + 暖白渐变底 */
 .progress {
   padding: 22rpx 24rpx 20rpx;

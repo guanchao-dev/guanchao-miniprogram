@@ -11,3 +11,51 @@
   height: 64rpx;
   padding: 0 16rpx;
 }
+
+/* 结果分类：赶海点 / 图鉴 */
+.type-tabs {
+  display: flex;
+  gap: 16rpx;
+  margin-bottom: 20rpx;
+}
+
+.type-tab {
+  flex: 1;
+  padding: 16rpx 0;
+  border: 3rpx solid #1C1C1C;
+  border-radius: 999rpx;
+  background: #FFFFFF;
+  box-shadow: 3rpx 3rpx 0 rgba(28, 28, 28, 0.85);
+  color: #3D4A54;
+  text-align: center;
+  font-size: 26rpx;
+  font-weight: 800;
+}
+
+.type-tab.on {
+  background: #34B8C5;
+  color: #FFFFFF;
+}
+
+/* 赶海点下的二级地点，可横向滚动 */
+.city-tabs {
+  margin-bottom: 20rpx;
+  white-space: nowrap;
+}
+
+.city-chip {
+  display: inline-block;
+  margin-right: 14rpx;
+  padding: 10rpx 26rpx;
+  border: 3rpx solid #1C1C1C;
+  border-radius: 999rpx;
+  background: #FFFFFF;
+  box-shadow: 3rpx 3rpx 0 rgba(28, 28, 28, 0.85);
+  color: #1C1C1C;
+  font-size: 23rpx;
+  font-weight: 700;
+}
+
+.city-chip.on {
+  background: #F6D081;
+}

@@ -28,10 +28,6 @@ Page({
     wx.navigateTo({ url: '/pages/about/about' })
   },
 
-  goFaq() {
-    wx.navigateTo({ url: '/pages/faq/faq' })
-  },
-
   onLogout() {
     wx.showModal({
       title: '退出登录',

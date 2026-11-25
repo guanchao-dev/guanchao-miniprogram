@@ -2,7 +2,7 @@ import { achieveApi, authApi } from '../../services/api'
 import { getUser, isLoggedIn } from '../../utils/auth'
 import { flushUnlocks } from '../../utils/unlock'
 import { decorateMedal, sortMedals, MEDAL_LIMIT_ON_ACHIEVE } from '../../utils/medals'
-import { downloadImage, mediaUrl } from '../../utils/upload'
+import { mediaUrl } from '../../utils/upload'
 import { isOnboarding, getOnboardingIndex, markOnboardingCompleted } from '../../utils/onboardingStore'
 import { ONBOARDING_STEPS } from '../../utils/onboardingSteps'
 
@@ -112,6 +112,11 @@ Page({
     wx.navigateTo({ url: '/pages/medal-wall/medal-wall' })
   },
 
+  /** 点泡泡进入角色介绍，可查看档案并互动 */
+  goBubble() {
+    wx.navigateTo({ url: '/pages/bubble/bubble' })
+  },
+
   goMedalDetail(e: any) {
     const medal = this.data.medals[e.currentTarget.dataset.index]
     if (!medal || !medal.id) return
@@ -125,23 +130,21 @@ Page({
   loadLeaderboard() {
     const paint = (list: any[]) => {
       this.setData({
-        friends: list.slice(0, 3).map((item: any, i: number) => ({
-          key: `${item.userId || i}_${i}`,
-          rank: item.rank || i + 1,
-          name: item.nickname || item.name,
-          level: `Lv.${item.level || 1}`,
-          score: item.score || 0,
-          avatar: item.avatar || 'https://www.blueakaiwu.cn/api/v1/static/assets/badges/crab-cloud.png',
-          me: !!item.me
-        }))
-      })
-      list.slice(0, 3).forEach((item: any, i: number) => {
-        const url = item.avatarUrl
-        if (url && url.indexOf('/users/') === 0) {
-          downloadImage(mediaUrl(url)).then((src) => {
-            if (src) this.setData({ [`friends[${i}].avatar`]: src })
-          })
-        }
+        friends: list.slice(0, 3).map((item: any, i: number) => {
+          // 后端返回完整 COS 签名地址或 /users/… 相对路径，统一拼成可渲染地址
+          const rawAvatar = String(item.avatarUrl || item.avatar || '')
+          return {
+            key: `${item.userId || i}_${i}`,
+            rank: item.rank || i + 1,
+            name: item.nickname || item.name,
+            level: `Lv.${item.level || 1}`,
+            score: item.score || 0,
+            avatar: rawAvatar
+              ? mediaUrl(rawAvatar)
+              : 'https://www.blueakaiwu.cn/api/v1/static/assets/badges/crab-cloud.png',
+            me: !!item.me
+          }
+        })
       })
     }
     this.setData({ boardLoading: true })

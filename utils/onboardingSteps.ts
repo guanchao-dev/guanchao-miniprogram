@@ -21,8 +21,8 @@ export const ONBOARDING_STEPS: OnboardingStep[] = [
   {
     selector: '#onb-watch',
     tab: 'home',
-    title: '开始观潮',
-    desc: '选好地点，一键计时'
+    title: '查看潮汐表',
+    desc: '直接看当前位置最近的潮汐'
   },
   {
     selector: '#onb-spots',
@@ -43,12 +43,6 @@ export const ONBOARDING_STEPS: OnboardingStep[] = [
     desc: '垃圾四分类守护海洋'
   },
   {
-    selector: '#onb-advice',
-    tab: 'home',
-    title: '出门建议',
-    desc: '潮汐天气安全提醒'
-  },
-  {
     selector: '#onb-activity',
     tab: 'home',
     title: '海洋活动',
@@ -58,7 +52,7 @@ export const ONBOARDING_STEPS: OnboardingStep[] = [
     selector: null,
     tab: 'achieve',
     title: '你的成就',
-    desc: '观潮记录徽章都在这里'
+    desc: '赶海记录徽章都在这里'
   },
   {
     selector: '#onb-spot-entry',

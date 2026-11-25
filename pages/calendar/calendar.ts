@@ -1,6 +1,6 @@
-import { DEFAULT_SPOT_ID } from '../../config/env'
 import { homeApi } from '../../services/api'
 import { showError, toast, todayDate } from '../../utils/format'
+import { loadGuideSpots, resolveRegionSpotId } from '../../utils/spotGuide'
 
 /** 月份偏移，如 ('2026-09', -1) -> '2026-08' */
 function shiftMonth(month: string, offset: number): string {
@@ -17,9 +17,12 @@ Page({
   monthCache: {} as Record<string, Array<Array<any>>>,
   touchStartX: 0,
   touchStartY: 0,
+  resolvingSpot: false,
+  spotNameCache: {} as Record<string, string>,
 
   data: {
-    spotId: DEFAULT_SPOT_ID,
+    spotId: '',
+    spotName: '',
     month: todayDate().slice(0, 7),
     monthText: '',
     weekLabels: ['日', '一', '二', '三', '四', '五', '六'],
@@ -28,9 +31,8 @@ Page({
   },
 
   onLoad() {
-    this.syncSpot()
     this.setData({ monthText: this.monthLabel(this.data.month) })
-    this.load()
+    this.syncSpot()
   },
 
   monthLabel(month: string): string {
@@ -75,16 +77,60 @@ Page({
   },
 
   onShow() {
-    const prev = this.data.spotId
     this.syncSpot()
-    if (this.data.spotId !== prev) this.load()
   },
 
+  /** 点位跟随地区：青岛用记住的点位，海南首次进入按热度最高的点位补齐 */
   syncSpot() {
     const app = getApp()
-    this.setData({
-      spotId: (app.globalData && app.globalData.spotId) || DEFAULT_SPOT_ID
-    })
+    const spotId = (app.globalData && app.globalData.spotId) || ''
+    if (spotId) {
+      if (spotId !== this.data.spotId) {
+        this.setData({ spotId })
+        this.load()
+      } else if (!this.data.weeks.length) {
+        this.load()
+      }
+      this.resolveSpotName(spotId)
+      return
+    }
+    if (this.resolvingSpot) return
+    this.resolvingSpot = true
+    resolveRegionSpotId()
+      .then((id) => {
+        if (!id) {
+          this.setData({ loading: false })
+          showError(null, '暂未获取到当前地区的赶海点位')
+          return
+        }
+        if (id === this.data.spotId && this.data.weeks.length) return
+        this.setData({ spotId: id })
+        this.load()
+        this.resolveSpotName(id)
+      })
+      .finally(() => { this.resolvingSpot = false })
+  },
+
+  /** 日历不知道自己展示的是哪个点位：用点位列表把 id 还原成名字 */
+  resolveSpotName(id: string) {
+    if (!id) {
+      this.setData({ spotName: '' })
+      return
+    }
+    const cached = this.spotNameCache[id]
+    if (cached) {
+      this.setData({ spotName: cached })
+      return
+    }
+    this.setData({ spotName: '' })
+    loadGuideSpots(true)
+      .then((list) => {
+        (list || []).forEach((spot) => { this.spotNameCache[spot.id] = spot.name })
+        if (this.data.spotId === id && this.spotNameCache[id]) {
+          this.setData({ spotName: this.spotNameCache[id] })
+        }
+      })
+      .catch(() => {})
   },
 
   onMonth(e: any) {
@@ -94,6 +140,7 @@ Page({
   },
 
   load() {
+    if (!this.data.spotId) return
     const key = `${this.data.spotId}|${this.data.month}`
 
     // 看过这个「地点+月份」：直接渲染，不转圈

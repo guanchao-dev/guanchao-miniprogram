@@ -1,5 +1,5 @@
 {
-  "navigationBarTitleText": "青岛赶海点",
+  "navigationBarTitleText": "赶海点",
   "usingComponents": {
     "watch-ball": "/components/watch-ball/watch-ball"
   }

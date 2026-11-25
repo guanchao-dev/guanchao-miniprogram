@@ -2,6 +2,7 @@ import { contentApi } from '../../services/api'
 import { isLoggedIn, requireLogin } from '../../utils/auth'
 import { showError } from '../../utils/format'
 import { mediaUrl, preloadImage } from '../../utils/upload'
+import { enableShareMenu } from '../../utils/share'
 
 // 特殊分类：查看我收藏的图鉴
 const FAV = '__fav'
@@ -17,6 +18,10 @@ const CATEGORY_NAMES: Record<string, string> = {
 }
 
 Page({
+  lastScrollTop: 0,
+  pendingRestore: false,
+  restoreAfterLoad: false,
+
   data: {
     group: 'forage',
     category: '',
@@ -48,7 +53,32 @@ Page({
   },
 
   onShow() {
+    enableShareMenu()
+    // 从详情返回：重新拉取后恢复到离开时的滚动位置
+    this.restoreAfterLoad = this.pendingRestore
+    this.pendingRestore = false
     this.load()
+  },
+
+  onPageScroll(e: any) {
+    // 返回本页恢复数据期间，列表高度变化会让系统把滚动位置压到 0，
+    // 这里的 0 不能覆盖离开时记住的位置
+    if (this.restoreAfterLoad) return
+    this.lastScrollTop = e.scrollTop || 0
+  },
+
+  onShareAppMessage() {
+    return { title: '追潮记 · 海洋图鉴', path: '/pages/wiki/wiki' }
+  },
+
+  /** 列表渲染完成后，如果需要恢复滚动位置则滚回去 */
+  afterLoad() {
+    this.setData({ loading: false }, () => {
+      if (!this.restoreAfterLoad) return
+      const top = this.lastScrollTop
+      wx.pageScrollTo({ scrollTop: top, duration: 0 })
+      this.restoreAfterLoad = false
+    })
   },
 
   onCat(e: any) {
@@ -130,7 +160,8 @@ Page({
     const keyword = (this.data.keyword || '').trim()
     this.setData({
       loading: true,
-      list: [],
+      // 从详情返回时保留原列表，避免列表被清空导致页面变矮、滚动位置被重置到顶部
+      list: this.restoreAfterLoad ? this.data.list : [],
       emptyText: keyword ? '没有找到相关内容' : '暂无图鉴'
     })
     const params: Record<string, any> = { page: 1, pageSize: 50 }
@@ -147,23 +178,28 @@ Page({
         this.setData({ list: [] })
         showError(err, '图鉴加载失败')
       })
-      .finally(() => this.setData({ loading: false }))
+      .finally(() => this.afterLoad())
   },
 
   loadFavorites() {
     if (!isLoggedIn()) {
+      this.restoreAfterLoad = false
       this.setData({ loading: false, list: [], emptyText: '登录后可查看收藏的图鉴' })
       requireLogin()
       return
     }
-    this.setData({ loading: true, list: [], emptyText: '还没有收藏的图鉴' })
+    this.setData({
+      loading: true,
+      list: this.restoreAfterLoad ? this.data.list : [],
+      emptyText: '还没有收藏的图鉴'
+    })
     contentApi.favorites()
       .then((data) => this.paint((data && data.list) || []))
       .catch((err) => {
         this.setData({ list: [] })
         showError(err, '收藏加载失败')
       })
-      .finally(() => this.setData({ loading: false }))
+      .finally(() => this.afterLoad())
   },
 
   paint(raw: any[]) {
@@ -187,6 +223,7 @@ Page({
   },
 
   openDetail(e: any) {
+    this.pendingRestore = true
     wx.navigateTo({ url: `/pages/wiki-detail/wiki-detail?id=${e.currentTarget.dataset.id}` })
   }
 })

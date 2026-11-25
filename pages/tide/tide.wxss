@@ -2,6 +2,73 @@
   padding-top: 20rpx;
 }
 
+.tide-page .page-content {
+  /* 给右下角的 AI 浮标和赶海悬浮球留出空间，避免盖住最后一屏内容 */
+  padding-bottom: 250rpx;
+}
+
+.swipe-hint {
+  margin: 4rpx 6rpx 0;
+  color: #8A99A6;
+  text-align: center;
+  font-size: 20rpx;
+  font-weight: 650;
+}
+
+/* 开始 / 结束赶海 */
+.tide-watch-btn {
+  margin: 4rpx 0 16rpx;
+  height: 92rpx;
+  line-height: 92rpx;
+  border: 4rpx solid #1C1C1C;
+  border-radius: 46rpx;
+  background: #F6D081;
+  box-shadow: 6rpx 6rpx 0 #1C1C1C;
+  color: #1C1C1C;
+  font-size: 32rpx;
+  font-weight: 900;
+  text-align: center;
+}
+
+.tide-watch-btn.is-on {
+  background: #34B8C5;
+  color: #FFF;
+}
+
+.tide-watch-btn:active {
+  transform: translate(2rpx, 2rpx);
+  box-shadow: 4rpx 4rpx 0 #1C1C1C;
+}
+
+.ai-fab {
+  position: fixed;
+  right: 26rpx;
+  bottom: 120rpx;
+  z-index: 50;
+  width: 108rpx;
+  height: 108rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 3rpx solid #1C1C1C;
+  border-radius: 50%;
+  background: #F6D081;
+  box-shadow: 5rpx 5rpx 0 rgba(28, 28, 28, 0.85);
+}
+
+.ai-fab-icon {
+  width: 46rpx;
+  height: 46rpx;
+}
+
+.ai-fab-label {
+  margin-top: 2rpx;
+  color: #1C1C1C;
+  font-size: 19rpx;
+  font-weight: 800;
+}
+
 .tide-top {
   position: relative;
   z-index: 2;
@@ -79,6 +146,7 @@
 }
 
 .leg.teal::before,
+.leg.best::before,
 .leg.gold::before {
   content: '';
   display: inline-block;
@@ -88,6 +156,11 @@
   border-radius: 50%;
   background: #1888BF;
   vertical-align: middle;
+}
+
+.leg.best::before {
+  background: rgba(255, 197, 61, 0.28);
+  box-shadow: inset 0 0 0 2rpx #FFC53D;
 }
 
 .leg.gold::before {
@@ -279,4 +352,276 @@
   padding: 12rpx 0 16rpx;
   color: #6B7C8A;
   font-size: 22rpx;
+}
+
+.tide-meta {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10rpx;
+  margin-top: 16rpx;
+}
+
+.meta-chip {
+  padding: 8rpx 18rpx;
+  border: 3rpx solid #1C1C1C;
+  border-radius: 999rpx;
+  background: #FFFFFF;
+  box-shadow: 3rpx 3rpx 0 rgba(28, 28, 28, 0.85);
+  color: #1C1C1C;
+  font-size: 21rpx;
+  font-weight: 800;
+}
+
+.meta-chip.type {
+  background: #E7FBFC;
+  color: #1888BF;
+}
+
+.meta-chip.season.live {
+  background: #FFF6E0;
+  color: #8A5B00;
+}
+
+.meta-chip.best {
+  background: #F6D081;
+}
+
+.tutorial-entry {
+  position: relative;
+  z-index: 2;
+  margin: 12rpx 4rpx 2rpx;
+  color: #1888BF;
+  text-align: right;
+  font-size: 22rpx;
+  font-weight: 700;
+}
+
+/* ===== 出门建议（原首页弹窗迁移到此，改为页内卡片） ===== */
+.advice-empty,
+.advice-loading {
+  padding: 10rpx 0 14rpx;
+  color: #6B7C8A;
+  font-size: 23rpx;
+  line-height: 1.6;
+}
+
+.adv-verdict {
+  margin-top: 6rpx;
+  padding: 6rpx 0 12rpx;
+  text-align: center;
+  font-size: 40rpx;
+  font-weight: 900;
+}
+
+.adv-verdict.go {
+  color: #1888BF;
+}
+
+.adv-verdict.no {
+  color: #5A6878;
+}
+
+.adv-copy {
+  margin-top: 4rpx;
+  padding: 16rpx 20rpx;
+  border: 3rpx solid #E4DDCF;
+  border-radius: 18rpx;
+  background: #FFFFFF;
+}
+
+.adv-copy-headline {
+  display: block;
+  color: #102A3D;
+  font-size: 28rpx;
+  font-weight: 900;
+}
+
+.adv-copy-body {
+  display: block;
+  margin-top: 6rpx;
+  color: #46566A;
+  font-size: 25rpx;
+  line-height: 1.55;
+}
+
+.adv-stats {
+  display: flex;
+  gap: 14rpx;
+  margin-top: 14rpx;
+}
+
+.adv-stat {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 18rpx 10rpx;
+  border: 3rpx solid #1C1C1C;
+  border-radius: 18rpx;
+  background: #FFFFFF;
+  box-shadow: 3rpx 3rpx 0 rgba(28, 28, 28, 0.85);
+}
+
+.adv-stat.alert {
+  background: #FFF2F2;
+}
+
+.adv-stat-num {
+  color: #1C1C1C;
+  font-size: 28rpx;
+  font-weight: 900;
+  text-align: center;
+  line-height: 1.3;
+}
+
+.adv-stat.alert .adv-stat-num {
+  color: #D63031;
+}
+
+.adv-stat-label {
+  margin-top: 6rpx;
+  color: #6B7B8B;
+  font-size: 21rpx;
+  font-weight: 700;
+  text-align: center;
+}
+
+.adv-stat.alert .adv-stat-label {
+  color: #D63031;
+}
+
+.adv-spot {
+  display: flex;
+  align-items: center;
+  margin-top: 14rpx;
+  padding: 16rpx 18rpx;
+  border: 3rpx solid #1C1C1C;
+  border-radius: 18rpx;
+  background: #FFFFFF;
+  box-shadow: 3rpx 3rpx 0 rgba(28, 28, 28, 0.85);
+}
+
+.adv-spot-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.adv-spot-name {
+  color: #1C1C1C;
+  font-size: 26rpx;
+  font-weight: 900;
+}
+
+.adv-spot-reason {
+  margin-top: 2rpx;
+  color: #6B7B8B;
+  font-size: 21rpx;
+}
+
+.adv-spot-dist {
+  flex-shrink: 0;
+  margin-left: 12rpx;
+  color: #34B8C5;
+  font-size: 22rpx;
+  font-weight: 800;
+}
+
+.advice-btn {
+  height: 76rpx;
+  margin-top: 18rpx;
+  border: 3rpx solid #1C1C1C;
+  border-radius: 999rpx;
+  background: #1888BF;
+  box-shadow: 4rpx 4rpx 0 rgba(28, 28, 28, 0.85);
+  color: #FFFFFF;
+  text-align: center;
+  line-height: 70rpx;
+  font-size: 26rpx;
+  font-weight: 800;
+}
+
+.advice-btn.disabled {
+  background: #9AA8B2;
+}
+
+.tutorial-mask {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(14, 22, 33, 0.55);
+}
+
+.tutorial-dialog {
+  width: 560rpx;
+  padding: 40rpx 36rpx 32rpx;
+  border: 3rpx solid #1C1C1C;
+  border-radius: 26rpx;
+  background: #FFFDF7;
+  box-shadow: 8rpx 8rpx 0 rgba(28, 28, 28, 0.85);
+}
+
+.tutorial-badge {
+  width: 72rpx;
+  height: 72rpx;
+  margin: 0 auto;
+  border: 3rpx solid #1C1C1C;
+  border-radius: 50%;
+  background: #F6D081;
+  text-align: center;
+  line-height: 68rpx;
+  font-size: 38rpx;
+  font-weight: 850;
+}
+
+.tutorial-dialog-title {
+  margin-top: 20rpx;
+  text-align: center;
+  font-size: 34rpx;
+  font-weight: 850;
+}
+
+.tutorial-dialog-body {
+  margin-top: 16rpx;
+  color: #4F6787;
+  font-size: 25rpx;
+  line-height: 1.7;
+}
+
+.tutorial-actions {
+  display: flex;
+  gap: 18rpx;
+  margin-top: 30rpx;
+}
+
+.tutorial-skip,
+.tutorial-go {
+  flex: 1;
+  height: 78rpx;
+  border: 3rpx solid #1C1C1C;
+  border-radius: 999rpx;
+  text-align: center;
+  line-height: 72rpx;
+  font-size: 26rpx;
+  font-weight: 800;
+}
+
+.tutorial-skip {
+  background: #FFFFFF;
+  color: #3D4A54;
+}
+
+.tutorial-go {
+  background: #1888BF;
+  color: #FFFFFF;
+  box-shadow: 4rpx 4rpx 0 rgba(28, 28, 28, 0.85);
 }

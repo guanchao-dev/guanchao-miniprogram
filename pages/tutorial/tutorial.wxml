@@ -1,0 +1,31 @@
+<view class="page memphis-bg tutorial-page">
+  <view class="memphis-layer">
+    <view class="geo-circle lg" style="top: 20rpx; right: -70rpx; background:#A7D9C7;"></view>
+    <view class="geo-circle sm" style="top: 520rpx; left: -60rpx; background:#F6D081;"></view>
+  </view>
+
+  <view class="page-content">
+    <view class="tutorial-intro">
+      <view class="tutorial-heading">使用教学</view>
+      <view class="tutorial-sub">看一遍就会用，赶海前先花一分钟</view>
+    </view>
+
+    <view class="card video-card" wx:for="{{videos}}" wx:key="id">
+      <view class="video-title">{{item.title}}</view>
+      <view class="video-desc">{{item.desc}}</view>
+      <video
+        wx:if="{{item.ready}}"
+        class="video-box"
+        src="{{item.src}}"
+        controls
+        show-center-play-btn
+        enable-play-gesture
+        object-fit="contain"
+      ></video>
+      <view class="video-placeholder" wx:else>
+        <view class="placeholder-mark">视频制作中</view>
+        <view class="placeholder-text">上线后在这里观看</view>
+      </view>
+    </view>
+  </view>
+</view>

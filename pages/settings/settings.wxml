@@ -50,11 +50,6 @@
           <text class="row-label">关于我们</text>
           <text class="row-arrow">›</text>
         </view>
-        <view class="row-divider"></view>
-        <view class="settings-row" bindtap="goFaq" hover-class="tap">
-          <text class="row-label">常见问题</text>
-          <text class="row-arrow">›</text>
-        </view>
       </view>
     </view>
 

@@ -24,15 +24,19 @@ Page({
       // 宝藏点位放第一排第一个，加金边突出（新手教程按 id 定位，会跟着走）
       { title: '宝藏点位', icon: 'https://www.blueakaiwu.cn/api/v1/static/assets/home/home-nearby.png', tone: 'mint', url: '/pages/my-spots/my-spots', gold: true },
       { title: '潮汐表', icon: 'https://www.blueakaiwu.cn/api/v1/static/assets/home/home-calendar.png', tone: 'sky', url: '/pages/tide/tide' },
+      { title: '赶海地图', icon: '/assets/home/home-pin.png', tone: 'mint', url: '/pages/spot-map/spot-map' },
       { title: '潮汐日历', icon: 'https://www.blueakaiwu.cn/api/v1/static/assets/home/home-quiz1.png', tone: 'mint', url: '/pages/calendar/calendar' },
+      { title: '赶海记录', icon: 'https://www.blueakaiwu.cn/api/v1/static/assets/profile/profile-records.png', tone: 'mint', url: '/pages/cards/cards' },
+      { title: '生态净滩', icon: 'https://www.blueakaiwu.cn/api/v1/static/assets/home/home-gear.png', tone: 'pink', action: 'trash' },
       { title: '海洋图鉴', icon: 'https://www.blueakaiwu.cn/api/v1/static/assets/home/home-fish.png', tone: 'yellow', url: '/pages/wiki/wiki' },
       { title: '我的潮池', icon: 'https://www.blueakaiwu.cn/api/v1/static/assets/badges/crab-star.png', tone: 'mint', url: '/pages/aquarium/aquarium' },
+      { title: '抽卡', icon: 'https://www.blueakaiwu.cn/api/v1/static/assets/home/home-quiz1.png', tone: 'sky', url: '/pages/card-pack/card-pack' },
       { title: '知识科普', icon: 'https://www.blueakaiwu.cn/api/v1/static/assets/home/home-science.png', tone: 'pink', url: '/pages/knowledge/knowledge' },
       { title: '成就', icon: 'https://www.blueakaiwu.cn/api/v1/static/assets/profile/profile-medal.png', tone: 'yellow', tab: '/pages/achieve/achieve' },
       { title: '装备推荐', icon: 'https://www.blueakaiwu.cn/api/v1/static/assets/profile/profile-gear.png', tone: 'pink', url: '/pages/gear/gear' },
       { title: '签到', icon: 'https://www.blueakaiwu.cn/api/v1/static/assets/profile/profile-booking.png', tone: 'sky', url: '/pages/checkin-form/checkin-form' },
-      { title: '常见问题', icon: 'https://www.blueakaiwu.cn/api/v1/static/assets/profile/profile-help.png', tone: 'sky', url: '/pages/faq/faq' },
-      { title: '关于我们', icon: 'https://www.blueakaiwu.cn/api/v1/static/assets/badges/crab-hero.png', tone: 'mint', url: '/pages/about/about' },
+      { title: '使用教学', icon: 'https://www.blueakaiwu.cn/api/v1/static/assets/home/home-quiz1.png', tone: 'mint', url: '/pages/tutorial/tutorial' },
+      { title: '赶海常见问题', icon: 'https://www.blueakaiwu.cn/api/v1/static/assets/profile/profile-help.png', tone: 'sky', url: '/pages/faq/faq' },
       { title: '设置', icon: 'https://www.blueakaiwu.cn/api/v1/static/assets/profile/profile-settings.png', tone: 'yellow', url: '/pages/settings/settings' }
     ],
     showOnboarding: false,
@@ -172,12 +176,14 @@ Page({
     wx.navigateTo({ url: '/pages/profile-edit/profile-edit' })
   },
 
-  goRecords() {
-    wx.navigateTo({ url: '/pages/cards/cards' })
-  },
-
   onService(e: any) {
-    const { url, tab } = e.currentTarget.dataset
+    const { url, tab, action } = e.currentTarget.dataset
+    // 生态净滩的识别流程在首页，这里回到首页并让首页自动拉起拍照识别
+    if (action === 'trash') {
+      wx.setStorageSync('home_open_trash', 1)
+      wx.switchTab({ url: '/pages/home/home' })
+      return
+    }
     if (tab) {
       wx.switchTab({ url: tab })
     } else if (url) {

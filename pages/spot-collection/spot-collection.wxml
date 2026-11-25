@@ -24,12 +24,38 @@
 
     <view class="empty-tip" wx:elif="{{!list.length}}">暂无赶海点数据</view>
 
-    <!-- 点亮墙：去过的像成就页一样金边点亮，没去过的置灰；纯文本，不用图标 -->
-    <view class="spot-grid card" wx:else>
-      <view class="spot-cell {{item.visited ? 'lit' : ''}}" wx:for="{{list}}" wx:key="id">
-        <text class="spot-cell-name">{{item.name}}</text>
+    <!-- 城市 → 区两级筛选，和搜索结果同一套分类交互 -->
+    <block wx:else>
+      <scroll-view class="filter-tabs" scroll-x enhanced show-scrollbar="{{false}}">
+        <view
+          class="filter-chip {{city === item ? 'on' : ''}}"
+          wx:for="{{cities}}"
+          wx:key="*this"
+          data-city="{{item}}"
+          bindtap="onCity"
+          hover-class="tap"
+        >{{item}}</view>
+      </scroll-view>
+
+      <scroll-view class="filter-tabs" scroll-x enhanced show-scrollbar="{{false}}" wx:if="{{districts.length > 1}}">
+        <view
+          class="filter-chip sub {{district === item.id ? 'on' : ''}}"
+          wx:for="{{districts}}"
+          wx:key="id"
+          data-id="{{item.id}}"
+          bindtap="onDistrict"
+          hover-class="tap"
+        >{{item.name}}</view>
+      </scroll-view>
+
+      <!-- 点亮墙：去过的像成就页一样金边点亮，没去过的置灰 -->
+      <view class="spot-grid card" wx:if="{{visibleSpots.length}}">
+        <view class="spot-cell {{item.visited ? 'lit' : ''}}" wx:for="{{visibleSpots}}" wx:key="id" data-id="{{item.id}}" bindtap="openSpot" hover-class="tap">
+          <text class="spot-cell-name">{{item.name}}</text>
+        </view>
       </view>
-    </view>
+      <view class="empty-tip" wx:else>该城市暂无赶海点</view>
+    </block>
   </view>
 
   <watch-ball />

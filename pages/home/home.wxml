@@ -28,9 +28,10 @@
       <view class="place-chip" bindtap="onTapPlace" hover-class="tap">
         <image class="place-icon" src="https://www.blueakaiwu.cn/api/v1/static/assets/home/home-pin.png" mode="aspectFit"></image>
         <text>{{place}}</text>
+        <text class="place-caret">▾</text>
       </view>
       <view class="search-chip" bindtap="onSearch" hover-class="tap">
-        <text>搜索潮汐 / 点位</text>
+        <text>搜索赶海点 / 图鉴</text>
         <image class="search-icon" src="https://www.blueakaiwu.cn/api/v1/static/assets/home/home-search.png" mode="aspectFit"></image>
       </view>
     </view>
@@ -38,10 +39,9 @@
     <view class="hero card">
       <view class="hero-glow"></view>
       <view class="hero-copy">
-        <view class="hero-kicker">追潮记 · 今日</view>
         <view class="hero-title">跟泡泡一起</view>
-        <view class="hero-title">出发探索</view>
-        <view id="onb-watch" class="btn watch-btn {{watchClass}}" bindtap="onWatchToggle" hover-class="tap">{{watchLabel}}</view>
+        <view class="hero-title">出发赶海</view>
+        <view id="onb-watch" class="btn watch-btn tide-btn" bindtap="goTide" hover-class="tap">查看潮汐表</view>
       </view>
       <view class="hero-visual">
         <image class="hero-mascot" src="https://www.blueakaiwu.cn/api/v1/static/assets/to-upload/paopao-q-2x.png" mode="aspectFit"></image>
@@ -77,19 +77,6 @@
         <image class="ai-icon" src="https://www.blueakaiwu.cn/api/v1/static/assets/home/home-gear.png" mode="aspectFit"></image>
         <text class="ai-name">生态净滩</text>
       </view>
-      <view id="onb-advice" class="ai-card advice" bindtap="onRefreshAdvice" hover-class="tap">
-        <view class="ai-orb"></view>
-        <image class="ai-icon" src="https://www.blueakaiwu.cn/api/v1/static/assets/home/home-nearby.png" mode="aspectFit"></image>
-        <text class="ai-name">出门建议</text>
-      </view>
-    </view>
-
-    <view class="pack-entry card" bindtap="goCardPack" hover-class="tap">
-      <view class="pack-entry-copy">
-        <view class="pack-entry-title">海洋卡包</view>
-        <view class="pack-entry-desc">用代币抽取物理海洋、海洋科技与其他海洋生物图鉴卡</view>
-      </view>
-      <view class="pack-entry-btn">去抽卡</view>
     </view>
 
     <swiper
@@ -97,8 +84,8 @@
       class="activity-swiper"
       autoplay
       circular
-      interval="3500"
-      duration="500"
+      interval="2200"
+      duration="450"
       bindchange="onActivityChange"
     >
       <swiper-item wx:for="{{activities}}" wx:key="id">
@@ -124,66 +111,6 @@
         wx:for="{{activities}}"
         wx:key="id"
       ></view>
-    </view>
-  </view>
-
-  <!-- 出门建议弹窗 -->
-  <view class="ai-mask" wx:if="{{showAdvice}}" bindtap="closeAdvice" catchtouchmove="noop">
-    <view class="adv-card" catchtap="noop">
-      <!-- 顶部：透明背景人物 + 标题 + 关闭 -->
-      <view class="adv-header">
-        <image class="adv-mascot" src="https://www.blueakaiwu.cn/api/v1/static/assets/to-upload/mascot-girl.png" mode="aspectFit"></image>
-        <view class="adv-header-right">
-          <text class="adv-sub">泡泡的赶海小提醒</text>
-        </view>
-        <text class="adv-close" bindtap="closeAdvice" hover-class="tap">×</text>
-      </view>
-
-      <!-- 核心判断：一句话告诉游客现在能不能去 -->
-      <view class="adv-verdict {{advice.suitableNow ? 'go' : 'no'}}">{{advice.verdict}}</view>
-
-      <!-- 后端每天预生成的建议文案 -->
-      <view class="adv-copy" wx:if="{{advice.headline || advice.body}}">
-        <text class="adv-copy-headline" wx:if="{{advice.headline}}">{{advice.headline}}</text>
-        <text class="adv-copy-body" wx:if="{{advice.body}}">{{advice.body}}</text>
-      </view>
-
-      <!-- 适合赶海时才显示具体时间和推荐地点 -->
-      <block wx:if="{{advice.suitableNow}}">
-        <!-- 关键数据：最佳窗口 + 截止离场 -->
-        <view class="adv-stats">
-          <view class="adv-stat">
-            <text class="adv-stat-num">{{advice.bestWindow}}</text>
-            <text class="adv-stat-label">最佳赶海窗口</text>
-          </view>
-          <view class="adv-stat adv-stat-alert">
-            <text class="adv-stat-num">{{advice.leaveBefore}}</text>
-            <text class="adv-stat-label">涨潮前必须离场</text>
-          </view>
-        </view>
-
-        <!-- 推荐地点 -->
-        <view class="adv-spots" wx:if="{{advice.recommendedSpots.length}}">
-          <view class="adv-spots-title">推荐赶海地点</view>
-          <view
-            class="adv-spot-item"
-            wx:for="{{advice.recommendedSpots}}"
-            wx:key="id"
-            data-id="{{item.id}}"
-            bindtap="onAdviceSpot"
-            hover-class="tap"
-          >
-            <view class="adv-spot-info">
-              <text class="adv-spot-name">{{item.name}}</text>
-              <text class="adv-spot-reason">{{item.reason}}</text>
-            </view>
-            <view class="adv-spot-right">
-              <text class="adv-spot-dist">{{item.distance}}</text>
-              <text class="adv-spot-arrow">›</text>
-            </view>
-          </view>
-        </view>
-      </block>
     </view>
   </view>
 
@@ -231,7 +158,7 @@
                     data-item="{{cand}}"
                     data-oi="{{oi}}"
                     catchtap="onConfirmSpecies"
-                  >{{obj.confirmedRank === cand.rank ? '已记入观潮记录 ✓' : '就是这个物种'}}</view>
+                  >{{obj.confirmedRank === cand.rank ? '已记入赶海记录 ✓' : '就是这个物种'}}</view>
                 </view>
               </block>
 
@@ -298,7 +225,7 @@
                 class="confirm-species {{obj.confirmed ? 'done' : ''}}"
                 data-oi="{{oi}}"
                 catchtap="onConfirmTrash"
-              >{{obj.confirmed ? '已记入观潮记录 ✓' : '就是它，记进观潮记录'}}</view>
+              >{{obj.confirmed ? '已记入赶海记录 ✓' : '就是它，记进赶海记录'}}</view>
             </view>
           </block>
         </block>
@@ -308,15 +235,15 @@
   <unlock-popup id="unlockPopup"></unlock-popup>
 </view>
 
-<!-- 开始观潮前的地点选择：推荐点位（距离+热度）或地图自选 -->
 <view class="spot-mask" wx:if="{{spotPickerVisible}}" bindtap="closeSpotPicker" catchtouchmove="noop">
   <view class="spot-sheet" catchtap="noop">
     <view class="spot-sheet-head">
-      <text class="spot-sheet-title">选择观潮地点</text>
+      <text class="spot-sheet-title">选择潮汐点位</text>
       <text class="spot-sheet-close" bindtap="closeSpotPicker" hover-class="tap">×</text>
     </view>
+    <view class="spot-sheet-tip">选一个赶海点，直接查看它的潮汐表和最佳赶海时段</view>
 
-    <view class="spot-loading" wx:if="{{watchSpotsLoading}}">推荐地点加载中…</view>
+    <view class="spot-loading" wx:if="{{watchSpotsLoading}}">正在加载附近赶海点…</view>
     <block wx:else>
       <view class="spot-list">
         <view
@@ -325,25 +252,26 @@
           wx:key="id"
           data-index="{{index}}"
           bindtap="onPickWatchSpot"
-         hover-class="tap">
+          hover-class="tap"
+        >
           <view class="spot-rank">{{index + 1}}</view>
           <view class="spot-row-main">
             <text class="spot-row-name">{{item.name}}</text>
             <view class="spot-row-tags">
-              <text class="spot-tag dist">{{item.distanceText}}</text>
+              <text class="spot-tag dist" wx:if="{{item.distanceText}}">{{item.distanceText}}</text>
               <text class="spot-tag heat">热度 {{item.heat}}</text>
             </view>
           </view>
           <text class="spot-row-go">›</text>
         </view>
-        <view class="spot-empty" wx:if="{{!watchSpots.length}}">暂时没有推荐点位，可以从地图自选</view>
+        <view class="spot-empty" wx:if="{{!watchSpots.length}}">附近暂时没有可查看的赶海点</view>
       </view>
 
-      <view class="spot-custom" bindtap="onChooseCustomSpot" hover-class="tap">
-        <text class="spot-custom-icon">📍</text>
+      <view class="spot-custom" bindtap="goSpotMap" hover-class="tap">
+        <text class="spot-custom-icon">◎</text>
         <view class="spot-custom-main">
-          <text class="spot-custom-title">地图上自己选</text>
-          <text class="spot-custom-sub">打开地图挑选当前位置或任意赶海点</text>
+          <text class="spot-custom-title">打开赶海地图自己选</text>
+          <text class="spot-custom-sub">拖动地图准星，吸附最近的收录点位看潮汐</text>
         </view>
         <text class="spot-row-go">›</text>
       </view>

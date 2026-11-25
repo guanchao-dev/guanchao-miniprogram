@@ -24,7 +24,7 @@ const DOCS: Record<string, Doc> = {
       {
         title: '账号标识（微信 OpenID）',
         lines: [
-          { label: '用途', value: '创建和识别你的账号，同步观潮记录、成就与探索进度' },
+          { label: '用途', value: '创建和识别你的账号，同步赶海记录、成就与探索进度' },
           { label: '方式', value: '你在登录页选择微信登录时，通过微信登录接口自动获取' },
           { label: '必要性', value: '使用登录相关功能时必要' }
         ]

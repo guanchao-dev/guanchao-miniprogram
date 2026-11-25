@@ -1,0 +1,305 @@
+.bubble-page {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #FFF3F6 0%, #FFF9F2 46%, #F4FBFB 100%);
+}
+
+.bubble-page .page-content {
+  padding: 24rpx 28rpx 60rpx;
+}
+
+/* 顶部标题 */
+.intro-top {
+  padding: 8rpx 6rpx 0;
+  text-align: center;
+}
+
+.intro-kicker {
+  display: inline-block;
+  padding: 6rpx 16rpx;
+  border: 3rpx solid #1C1C1C;
+  border-radius: 999rpx;
+  background: #FFD9E4;
+  box-shadow: 3rpx 3rpx 0 #1C1C1C;
+  font-size: 20rpx;
+  font-weight: 800;
+  color: #1C1C1C;
+}
+
+.intro-name {
+  margin-top: 14rpx;
+  font-size: 56rpx;
+  font-weight: 900;
+  letter-spacing: 4rpx;
+  color: #1C1C1C;
+}
+
+.intro-role {
+  margin-top: 6rpx;
+  color: #7C8A96;
+  font-size: 22rpx;
+  font-weight: 650;
+}
+
+/* 角色舞台 */
+.stage {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 26rpx 0 10rpx;
+}
+
+.stage-halo {
+  position: absolute;
+  top: 10rpx;
+  left: 50%;
+  width: 440rpx;
+  height: 440rpx;
+  margin-left: -220rpx;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 138, 170, 0.55) 0%, rgba(255, 190, 208, 0.26) 46%, rgba(255, 190, 208, 0) 72%);
+  animation: haloPulse 3.6s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.stage-halo.happy {
+  opacity: 1;
+  transform: scale(1.06);
+}
+
+.stage-halo.shy {
+  background: radial-gradient(circle, rgba(255, 120, 160, 0.62) 0%, rgba(255, 170, 195, 0.3) 46%, rgba(255, 190, 208, 0) 72%);
+  transform: scale(1.03);
+}
+
+@keyframes haloPulse {
+  0%, 100% { opacity: 0.7; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.06); }
+}
+
+.stage-bubbles {
+  position: absolute;
+  top: 30rpx;
+  left: 50%;
+  width: 480rpx;
+  height: 400rpx;
+  margin-left: -240rpx;
+  pointer-events: none;
+}
+
+.mini-bubble {
+  position: absolute;
+  border: 3rpx solid rgba(28, 28, 28, 0.18);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.55);
+  animation: miniFloat 5s ease-in-out infinite;
+}
+
+.mini-bubble.m1 { left: 24rpx; top: 120rpx; width: 26rpx; height: 26rpx; }
+.mini-bubble.m2 { right: 30rpx; top: 70rpx; width: 36rpx; height: 36rpx; animation-delay: 0.8s; }
+.mini-bubble.m3 { right: 70rpx; bottom: 40rpx; width: 22rpx; height: 22rpx; animation-delay: 1.6s; }
+.mini-bubble.m4 { left: 60rpx; bottom: 80rpx; width: 30rpx; height: 30rpx; animation-delay: 2.2s; }
+
+@keyframes miniFloat {
+  0%, 100% { transform: translateY(0); opacity: 0.75; }
+  50% { transform: translateY(-18rpx); opacity: 1; }
+}
+
+/* 人形态泡泡 */
+.bubble-avatar {
+  position: relative;
+  z-index: 2;
+  width: 360rpx;
+  height: 360rpx;
+  animation: avatarFloat 4.6s ease-in-out infinite;
+}
+
+.bubble-avatar.bounce {
+  animation: avatarBounce 0.52s ease;
+}
+
+@keyframes avatarFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-14rpx); }
+}
+
+@keyframes avatarBounce {
+  0% { transform: scale(1); }
+  35% { transform: scale(1.08) translateY(-16rpx); }
+  70% { transform: scale(0.97); }
+  100% { transform: scale(1); }
+}
+
+/* 点击光点 */
+.spark-layer {
+  position: absolute;
+  top: 44%;
+  left: 50%;
+  z-index: 3;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.spark {
+  position: absolute;
+  width: 16rpx;
+  height: 16rpx;
+  border-radius: 50%;
+  background: #FF8AAA;
+  animation: sparkUp 0.9s ease-out forwards;
+}
+
+.spark.sp1 { left: -130rpx; --dx: -40rpx; background: #FF8AAA; }
+.spark.sp2 { left: -70rpx; --dx: -18rpx; background: #F6D081; animation-delay: 0.06s; }
+.spark.sp3 { left: 20rpx; --dx: 10rpx; background: #34B8C5; animation-delay: 0.02s; }
+.spark.sp4 { left: 90rpx; --dx: 36rpx; background: #FF8AAA; animation-delay: 0.1s; }
+.spark.sp5 { left: -20rpx; --dx: 0rpx; background: #FFC53D; animation-delay: 0.14s; }
+.spark.sp6 { left: 140rpx; --dx: 26rpx; background: #FFB3C9; animation-delay: 0.04s; }
+
+@keyframes sparkUp {
+  0% { opacity: 1; transform: translate(0, 0) scale(0.6); }
+  100% { opacity: 0; transform: translate(var(--dx, 0), -150rpx) scale(1.15); }
+}
+
+/* 对话气泡 */
+.speech {
+  position: relative;
+  z-index: 2;
+  max-width: 560rpx;
+  margin-top: 18rpx;
+  padding: 20rpx 24rpx;
+  border: 4rpx solid #1C1C1C;
+  border-radius: 26rpx;
+  background: #FFFFFF;
+  box-shadow: 6rpx 6rpx 0 rgba(28, 28, 28, 0.18);
+}
+
+.speech-text {
+  color: #1C1C1C;
+  font-size: 26rpx;
+  font-weight: 650;
+  line-height: 1.55;
+}
+
+/* 默契值 */
+.affinity {
+  width: 100%;
+  margin-top: 22rpx;
+  padding: 0 6rpx;
+}
+
+.affinity-track {
+  height: 20rpx;
+  border: 3rpx solid #1C1C1C;
+  border-radius: 999rpx;
+  background: #FFFFFF;
+  overflow: hidden;
+}
+
+.affinity-fill {
+  height: 100%;
+  border-radius: 999rpx;
+  background: linear-gradient(90deg, #FF8AAA 0%, #FFC53D 60%, #34B8C5 100%);
+  transition: width 0.35s ease;
+}
+
+.affinity-text {
+  display: block;
+  margin-top: 8rpx;
+  color: #8A99A6;
+  font-size: 20rpx;
+  font-weight: 650;
+}
+
+/* 互动按钮 */
+.actions {
+  display: flex;
+  gap: 16rpx;
+  margin: 26rpx 0 24rpx;
+}
+
+.action {
+  flex: 1;
+  height: 84rpx;
+  line-height: 78rpx;
+  border: 4rpx solid #1C1C1C;
+  border-radius: 24rpx;
+  box-shadow: 5rpx 5rpx 0 #1C1C1C;
+  text-align: center;
+  font-size: 26rpx;
+  font-weight: 800;
+  color: #1C1C1C;
+}
+
+.action.pat { background: #FFD9E4; }
+.action.feed { background: #FBE3A6; }
+.action.song { background: #CDEFF2; }
+
+.action.tap {
+  transform: translate(3rpx, 3rpx);
+  box-shadow: 2rpx 2rpx 0 #1C1C1C;
+}
+
+/* 小档案 */
+.profile {
+  padding: 24rpx 26rpx 26rpx;
+}
+
+.profile-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 24rpx;
+  padding: 16rpx 0;
+  border-bottom: 2rpx dashed rgba(28, 28, 28, 0.14);
+}
+
+.profile-key {
+  color: #8A99A6;
+  font-size: 24rpx;
+  font-weight: 700;
+}
+
+.profile-value {
+  flex: 1;
+  color: #1C1C1C;
+  font-size: 24rpx;
+  font-weight: 700;
+  text-align: right;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+  margin-top: 20rpx;
+}
+
+.tag {
+  padding: 6rpx 16rpx;
+  border: 3rpx solid #1C1C1C;
+  border-radius: 999rpx;
+  background: #FFF3F6;
+  font-size: 20rpx;
+  font-weight: 750;
+  color: #1C1C1C;
+}
+
+.quote {
+  margin-top: 22rpx;
+  padding: 18rpx 20rpx;
+  border-left: 8rpx solid #FF8AAA;
+  border-radius: 12rpx;
+  background: #FFF7FA;
+  color: #46525C;
+  font-size: 24rpx;
+  font-weight: 650;
+  line-height: 1.5;
+}
+
+.profile-tip {
+  margin-top: 16rpx;
+  color: #8A99A6;
+  font-size: 20rpx;
+  font-weight: 650;
+}

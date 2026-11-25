@@ -1,7 +1,11 @@
 {
   "pages": [
     "pages/home/home",
+    "pages/region-select/region-select",
+    "pages/tutorial/tutorial",
+    "pages/spot-map/spot-map",
     "pages/achieve/achieve",
+    "pages/bubble/bubble",
     "pages/medal-wall/medal-wall",
     "pages/medal-detail/medal-detail",
     "pages/spot-collection/spot-collection",

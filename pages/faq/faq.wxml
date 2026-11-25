@@ -9,7 +9,7 @@
       <text>加载中…</text>
     </view>
 
-    <view class="empty-tip" wx:elif="{{!faq.length}}">暂无常见问题</view>
+    <view class="empty-tip" wx:elif="{{!faq.length}}">暂无赶海常见问题</view>
 
     <!-- 手风琴列表 -->
     <view wx:for="{{faq}}" wx:key="id" class="faq-item card">

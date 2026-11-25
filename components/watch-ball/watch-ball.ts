@@ -2,9 +2,9 @@ import { endWatchNow, getBallMetrics, getBallPos, getWatchBallState, setBallPos,
 import { toast } from '../../utils/format'
 
 /**
- * 观潮计时悬浮球（全局组件）：
- * 在所有页面显示，位置跨页面共享；点一下弹「结束 / 继续观潮」。
- * 计时与观潮状态由 utils/watchBall 单例维护。
+ * 赶海计时悬浮球（全局组件）：
+ * 在所有页面显示，位置跨页面共享；点一下弹「结束 / 继续赶海」。
+ * 计时与赶海状态由 utils/watchBall 单例维护。
  */
 Component({
   data: {
@@ -122,15 +122,15 @@ Component({
       self.modalShown = true
       this.setData({ visible: false })
       wx.showModal({
-        title: '观潮进行中',
-        content: `已观潮 ${this.data.duration}，要结束这次观潮吗？`,
-        confirmText: '结束观潮',
-        cancelText: '继续观潮',
+        title: '赶海进行中',
+        content: `已赶海 ${this.data.duration}，要结束这次赶海吗？`,
+        confirmText: '结束赶海',
+        cancelText: '继续赶海',
         success: (res) => {
           self.modalShown = false
           if (res.confirm) {
             const record = endWatchNow()
-            toast(record ? '已记入观潮记录' : '没有进行中的观潮')
+            toast(record ? '已记入赶海记录' : '没有进行中的赶海')
           } else {
             this.setData({ visible: true })
           }

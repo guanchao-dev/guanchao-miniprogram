@@ -1,0 +1,57 @@
+<view class="map-page">
+  <map
+    id="spotMap"
+    class="spot-map"
+    latitude="{{latitude}}"
+    longitude="{{longitude}}"
+    scale="{{scale}}"
+    markers="{{markers}}"
+    circles="{{circles}}"
+    show-location
+    enable-satellite="{{satellite}}"
+    bindmarkertap="onMarkerTap"
+    bindregionchange="onRegionChange"
+  ></map>
+
+  <view class="pick-cross" wx:if="{{picking}}">
+    <view class="cross-line h"></view>
+    <view class="cross-line v"></view>
+    <view class="cross-dot"></view>
+  </view>
+
+  <view class="map-top">
+    <view class="map-title">
+      <text class="map-title-main">赶海地图</text>
+      <text class="map-title-sub">{{regionLabel}} · {{spotCount}} 个赶海点</text>
+    </view>
+    <view class="map-loading" wx:if="{{loading}}">点位加载中…</view>
+  </view>
+
+  <view class="map-side">
+    <view class="map-fab {{satellite ? 'on' : ''}}" bindtap="toggleSatellite" hover-class="tap">
+      {{satellite ? '卫星' : '普通'}}
+    </view>
+    <view class="map-fab locate {{locating ? 'on' : ''}}" bindtap="locate" hover-class="tap">定位</view>
+    <view class="map-fab pick {{picking ? 'on' : ''}}" bindtap="togglePick" hover-class="tap">{{picking ? '选点中' : '选点'}}</view>
+  </view>
+
+  <view class="pick-card" wx:if="{{picking}}">
+    <block wx:if="{{pickSpot}}">
+      <view class="pick-copy">
+        <text class="pick-name">{{pickSpot.name}}</text>
+        <text class="pick-sub">离地图中心 {{pickDistanceText}}，在这片赶海点范围内</text>
+      </view>
+      <view class="pick-go" bindtap="goPickSpot" hover-class="tap">看潮汐</view>
+    </block>
+    <block wx:else>
+      <view class="pick-copy">
+        <text class="pick-name">附近没有收录的赶海点</text>
+        <text class="pick-sub" wx:if="{{pickFarText}}">{{pickFarText}}</text>
+        <text class="pick-sub" wx:else>拖动地图，把中心点对准海边再试</text>
+      </view>
+    </block>
+  </view>
+
+  <view class="map-tip" wx:if="{{!picking && !loading && !markers.length}}">当前地区暂无可用的赶海点位</view>
+  <view class="map-tip" wx:elif="{{!picking && markers.length}}">点击地图上的点位，查看该点位的潮汐表</view>
+</view>

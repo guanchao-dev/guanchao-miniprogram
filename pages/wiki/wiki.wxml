@@ -30,7 +30,7 @@
       <text class="lit-progress-text">已点亮 {{litCount}} / {{totalCount}}</text>
     </view>
 
-    <view class="page-loading" wx:if="{{loading}}">
+    <view class="page-loading" wx:if="{{loading && !list.length}}">
       <view class="spinner"></view>
       <text>加载中…</text>
     </view>

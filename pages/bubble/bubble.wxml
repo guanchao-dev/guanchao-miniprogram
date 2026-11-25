@@ -1,0 +1,80 @@
+<view class="page memphis-bg bubble-page">
+  <view class="memphis-layer">
+    <view class="geo-circle md" style="top: 20rpx; left: -60rpx; background:#FFC7D8;"></view>
+    <view class="geo-square sm" style="bottom: 220rpx; right: -36rpx; background:#34B8C5;"></view>
+  </view>
+
+  <view class="page-content">
+    <view class="intro-top">
+      <view class="intro-kicker">追潮记 · 海洋向导</view>
+      <view class="intro-name">泡泡</view>
+      <view class="intro-role">带你看懂潮汐、认识海洋的小伙伴</view>
+    </view>
+
+    <view class="stage">
+      <view class="stage-halo {{mood}}"></view>
+      <view class="stage-bubbles">
+        <view class="mini-bubble m1"></view>
+        <view class="mini-bubble m2"></view>
+        <view class="mini-bubble m3"></view>
+        <view class="mini-bubble m4"></view>
+      </view>
+
+      <image
+        class="bubble-avatar {{anim}}"
+        src="https://www.blueakaiwu.cn/api/v1/static/assets/to-upload/mascot-girl.png"
+        mode="aspectFit"
+        bindtap="onTapBubble"
+      ></image>
+
+      <view class="spark-layer" wx:if="{{burst}}">
+        <view class="spark sp1"></view>
+        <view class="spark sp2"></view>
+        <view class="spark sp3"></view>
+        <view class="spark sp4"></view>
+        <view class="spark sp5"></view>
+        <view class="spark sp6"></view>
+      </view>
+
+      <view class="speech">
+        <text class="speech-text">{{dialog}}</text>
+      </view>
+
+      <view class="affinity">
+        <view class="affinity-track">
+          <view class="affinity-fill" style="width: {{affinity}}%;"></view>
+        </view>
+        <text class="affinity-text">默契值 {{affinity}} / 100 · 点泡泡或和它互动都能涨</text>
+      </view>
+    </view>
+
+    <view class="actions">
+      <view class="action pat" bindtap="onPat" hover-class="tap">摸摸头</view>
+      <view class="action feed" bindtap="onFeed" hover-class="tap">喂小鱼干</view>
+      <view class="action song" bindtap="onSong" hover-class="tap">唱海浪歌</view>
+    </view>
+
+    <view class="card profile">
+      <view class="block-title">泡泡的小档案</view>
+      <view class="profile-row">
+        <text class="profile-key">身份</text>
+        <text class="profile-value">追潮记的海洋向导</text>
+      </view>
+      <view class="profile-row">
+        <text class="profile-key">喜欢</text>
+        <text class="profile-value">贝壳、晚霞、小鱼干</text>
+      </view>
+      <view class="profile-row">
+        <text class="profile-key">害怕</text>
+        <text class="profile-value">涨潮了还赖在礁石上的人</text>
+      </view>
+      <view class="tags">
+        <text class="tag">好奇心旺盛</text>
+        <text class="tag">爱讲潮汐</text>
+        <text class="tag">有点怕晒</text>
+      </view>
+      <view class="quote">“潮水会记得每一个脚印。”</view>
+      <view class="profile-tip">赶海前记得看潮汐表，泡泡会替你把时间盯好。</view>
+    </view>
+  </view>
+</view>

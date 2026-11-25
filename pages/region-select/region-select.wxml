@@ -1,0 +1,45 @@
+<view class="page memphis-bg region-page">
+  <view class="memphis-layer">
+    <view class="geo-circle lg" style="top: 30rpx; right: -70rpx; background:#A7D9C7;"></view>
+    <view class="geo-circle sm" style="top: 420rpx; left: -60rpx; background:#F6D081;"></view>
+  </view>
+
+  <view class="page-content">
+    <view class="region-intro">
+      <view class="region-title">切换地区</view>
+      <view class="region-sub">不同地区的赶海点与潮汐数据会分别展示</view>
+    </view>
+
+    <view class="region-list">
+      <view
+        class="region-item card {{item.key === regionKey ? 'is-active' : ''}}"
+        wx:for="{{regions}}"
+        wx:key="key"
+        data-key="{{item.key}}"
+        bindtap="onPickRegion"
+        hover-class="tap"
+      >
+        <view class="region-main">
+          <view class="region-name">{{item.label}}</view>
+          <view class="region-desc">{{item.desc}}</view>
+        </view>
+        <view class="region-badge" wx:if="{{item.key === regionKey}}">当前</view>
+        <view class="region-arrow" wx:else>›</view>
+      </view>
+    </view>
+
+    <view
+      class="locate-card card {{locating ? 'is-disabled' : ''}}"
+      bindtap="useCurrentLocation"
+      hover-class="tap"
+    >
+      <view class="locate-mark">◎</view>
+      <view class="locate-main">
+        <view class="locate-title">{{locating ? '正在定位…' : '使用当前位置'}}</view>
+        <view class="locate-desc">根据定位自动匹配青岛 / 海南版本</view>
+      </view>
+    </view>
+
+    <view class="region-tip">切换后首页潮汐、赶海点与推荐会自动更新</view>
+  </view>
+</view>

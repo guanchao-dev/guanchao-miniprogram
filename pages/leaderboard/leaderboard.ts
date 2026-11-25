@@ -1,6 +1,6 @@
 import { achieveApi } from '../../services/api'
 import { showError } from '../../utils/format'
-import { downloadImage, mediaUrl } from '../../utils/upload'
+import { mediaUrl } from '../../utils/upload'
 
 const DEFAULT_AVATAR = 'https://www.blueakaiwu.cn/api/v1/static/assets/badges/crab-cloud.png'
 const PAGE_SIZE = 20
@@ -28,16 +28,19 @@ Page({
       .then((data: any) => {
         const rows = (data && data.list) || []
         const total = (data && data.total) || 0
-        const mapped = rows.map((item: any, i: number) => ({
-          key: `${item.userId || i}_${page}_${i}`,
-          rank: item.rank || ((page - 1) * PAGE_SIZE + i + 1),
-          name: item.nickname || '寻潮探索者',
-          level: `Lv.${item.level || 1}`,
-          score: item.score || 0,
-          me: !!item.me,
-          avatar: DEFAULT_AVATAR,
-          avatarUrl: item.avatarUrl || ''
-        }))
+        const mapped = rows.map((item: any, i: number) => {
+          // 后端返回的是完整 COS 签名地址（也可能是 /users/… 相对路径），统一拼成可渲染地址
+          const rawAvatar = String(item.avatarUrl || item.avatar || '')
+          return {
+            key: `${item.userId || i}_${page}_${i}`,
+            rank: item.rank || ((page - 1) * PAGE_SIZE + i + 1),
+            name: item.nickname || '寻潮探索者',
+            level: `Lv.${item.level || 1}`,
+            score: item.score || 0,
+            me: !!item.me,
+            avatar: rawAvatar ? mediaUrl(rawAvatar) : DEFAULT_AVATAR
+          }
+        })
         const list = reset ? mapped : this.data.list.concat(mapped)
         this.setData({
           list,
@@ -45,16 +48,6 @@ Page({
           total,
           hasMore: list.length < total,
           emptyText: '暂无排行数据'
-        })
-        // 用户头像走网络：下载成临时文件再渲染
-        mapped.forEach((item: any, i: number) => {
-          const url = mediaUrl(item.avatarUrl)
-          if (!url || item.avatarUrl.indexOf('/users/') !== 0) return
-          downloadImage(url).then((src) => {
-            if (!src) return
-            const idx = reset ? i : this.data.list.length - mapped.length + i
-            this.setData({ [`list[${idx}].avatar`]: src })
-          })
         })
       })
       .catch((err) => {

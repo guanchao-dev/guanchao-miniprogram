@@ -1,4 +1,5 @@
 import { contentApi } from '../services/api'
+import { getRegionKey, getSavedSpotId, RegionKey, REGIONS, saveSpotId } from './region'
 
 export type GuideSpecies = {
   name: string
@@ -27,7 +28,8 @@ export type GuideSpot = {
   navName?: string
 }
 
-export const CITY = '青岛'
+/** 点位名前的城市前缀，如「青岛·石老人」「陵水·清水湾」「厦门·五缘湾」 */
+const CITY_PREFIX_RE = /^[\u4e00-\u9fa5A-Za-z]{2,8}\s*[·•]\s*/
 
 /**
  * 内置兜底赶海点。后端已收录全部点位，这里不再内置任何条目 ——
@@ -66,7 +68,7 @@ export function formatDistance(value?: number | string | null): string {
 }
 
 function cityName(name: string): string {
-  return String(name || '').replace(/^青岛\s*[·•]\s*/, '').trim()
+  return String(name || '').replace(CITY_PREFIX_RE, '').trim()
 }
 
 function photosOf(item: any, fallback: string[]): string[] {
@@ -92,14 +94,18 @@ function speciesOf(item: any, fallback: GuideSpecies[]): GuideSpecies[] {
  * 只以接口数据为准（不再合并本地写死的 CATALOG 假数据）。
  * 接口没返回就是空列表，页面显示转圈 / 空态，不显示占位内容。
  */
-export function mergeGuideSpots(apiList: any[], loc?: { lat: number; lng: number } | null): GuideSpot[] {
+export function mergeGuideSpots(
+  apiList: any[],
+  loc?: { lat: number; lng: number } | null,
+  fallbackCity = ''
+): GuideSpot[] {
   const map: Record<string, GuideSpot> = {}
   ;(apiList || []).forEach((item: any) => {
     if (!item || !item.id) return
     const base = map[item.id] || {
       id: item.id,
       name: cityName(item.name) || '赶海点',
-      city: item.city || CITY,
+      city: item.city || fallbackCity,
       heat: 50,
       latitude: Number(item.latitude || item.lat) || 0,
       longitude: Number(item.longitude || item.lng) || 0,
@@ -179,7 +185,7 @@ export function nearestGuideSpot(list: GuideSpot[]): GuideSpot | null {
   const withDist = rows
     .filter((item) => typeof item.distanceM === 'number' && !Number.isNaN(item.distanceM))
     .sort((a, b) => Number(a.distanceM) - Number(b.distanceM))
-  return withDist[0] || rows.find((item) => item.id === 'spot_qd_shilaoren') || rows[0]
+  return withDist[0] || rows[0]
 }
 
 export function getCachedLocation(): { lat: number; lng: number } | null {
@@ -239,16 +245,57 @@ export function withFallbackSpots(list: GuideSpot[], loc?: { lat: number; lng: n
  * silent=true 时只用已缓存定位，不主动申请位置权限。
  * 用于页面加载场景（如首页推荐位），避免一进页面就弹出定位授权。
  */
-export function loadGuideSpots(silent = false): Promise<GuideSpot[]> {
+export function loadGuideSpots(silent = false, regionKey: RegionKey = getRegionKey()): Promise<GuideSpot[]> {
   const ready = silent ? Promise.resolve(getCachedLocation()) : requestLocation()
   return ready.then((loc) => {
-    const params: Record<string, any> = { city: CITY, page: 1, pageSize: 50 }
-    if (loc) {
-      params.lat = loc.lat
-      params.lng = loc.lng
-    }
-    return contentApi.spots(params)
-      .then((res) => withFallbackSpots(mergeGuideSpots(res.list || [], loc), loc))
-      .catch(() => withFallbackSpots(mergeGuideSpots([], loc), loc))
+    const region = REGIONS[regionKey]
+    // 海南由多个城市组成，分别取回后按 id 合并；单个城市失败不影响其他城市
+    const requests = region.cities.map((city) => {
+      const params: Record<string, any> = { city, page: 1, pageSize: 100 }
+      if (loc) {
+        params.lat = loc.lat
+        params.lng = loc.lng
+      }
+      return contentApi.spots(params)
+        .then((res) => res.list || [])
+        .catch(() => [] as any[])
+    })
+    return Promise.all(requests).then((lists) => {
+      const merged: any[] = []
+      lists.forEach((list) => list.forEach((item) => merged.push(item)))
+      return withFallbackSpots(mergeGuideSpots(merged, loc, region.defaultCity), loc)
+    })
   })
+}
+
+/**
+ * 所有城市的点位（赶海足迹用）。
+ * /spots 不传 city 时返回全部收录城市（青岛、海南各市、厦门等），
+ * 与首页 / 地图只取当前地区不同，这里要的是完整底表。
+ */
+export function loadAllGuideSpots(): Promise<GuideSpot[]> {
+  return contentApi.spots({ page: 1, pageSize: 100 })
+    .then((res) => withFallbackSpots(mergeGuideSpots(res.list || []), null))
+    .catch(() => withFallbackSpots([], null))
+}
+
+/**
+ * 当前地区还没有选中点位时，用点位列表里热度最高（有定位则综合距离）的一处补齐。
+ * 潮汐日历、AI 建议这类必须带 spotId 的接口会用到。
+ */
+export function resolveRegionSpotId(): Promise<string> {
+  const saved = getSavedSpotId()
+  if (saved) return Promise.resolve(saved)
+  return loadGuideSpots(true)
+    .then((list) => {
+      const spot = nearestGuideSpot(list)
+      const id = spot ? spot.id : ''
+      if (id) {
+        saveSpotId(id)
+        const app = getApp()
+        if (app && app.globalData) app.globalData.spotId = id
+      }
+      return id
+    })
+    .catch(() => '')
 }

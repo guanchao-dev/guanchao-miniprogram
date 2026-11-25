@@ -53,11 +53,49 @@
   color: #fff;
 }
 
+/* 城市 / 区两级筛选 */
+.filter-tabs {
+  white-space: nowrap;
+  margin: 0 6rpx 14rpx;
+}
+
+.filter-chip {
+  display: inline-block;
+  margin-right: 14rpx;
+  padding: 12rpx 26rpx;
+  border: 3rpx solid #1C1C1C;
+  border-radius: 999rpx;
+  background: #FFF;
+  box-shadow: 3rpx 3rpx 0 rgba(28, 28, 28, 0.85);
+  color: #1C1C1C;
+  font-size: 24rpx;
+  font-weight: 850;
+}
+
+.filter-chip.on {
+  background: #F6D081;
+}
+
+.filter-chip.sub {
+  font-weight: 700;
+}
+
+.filter-chip.sub.on {
+  background: #34B8C5;
+  color: #FFF;
+}
+
+.empty-tip {
+  margin: 40rpx 6rpx;
+  color: #8A94A0;
+  font-size: 26rpx;
+  text-align: center;
+}
+
 /* 点亮墙：一排 2 个纯文本点位牌 */
 .spot-grid {
   display: flex;
   flex-wrap: wrap;
-  margin-top: 24rpx;
   padding: 20rpx 12rpx 12rpx;
 }
 

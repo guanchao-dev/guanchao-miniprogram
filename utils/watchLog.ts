@@ -38,7 +38,7 @@ function withKey(row: WatchSpecies): WatchSpecies {
   return { ...row, kind, count, key: `${kind}:${row.name}` }
 }
 
-/** 本次观潮选择的地点：推荐点位或地图自选 */
+/** 本次赶海选择的地点：推荐点位或地图自选 */
 export type WatchSpot = {
   /** 推荐点位的后端 id；自选点位没有 */
   spotId?: string
@@ -68,7 +68,7 @@ export type WatchRecord = {
   summary: string
   mascot: string
   spot?: WatchSpot | null
-  /** 观潮记录卡上的栏目（服务端详情接口给）。本地旧记录没有，按空串处理 */
+  /** 赶海记录卡上的栏目（服务端详情接口给）。本地旧记录没有，按空串处理 */
   seq?: number
   dateText?: string
   timeText?: string
@@ -83,7 +83,7 @@ export type WatchDayGroup = {
   items: WatchRecord[]
 }
 
-/** 一次观潮里按类别分好的发现（生物 / 垃圾各一组） */
+/** 一次赶海里按类别分好的发现（生物 / 垃圾各一组） */
 export type FindingGroup = {
   key: string
   title: string
@@ -91,7 +91,7 @@ export type FindingGroup = {
 }
 
 /**
- * 把一次观潮的发现按类别分成「生物」和「垃圾」两组，**组内按时间排序**。
+ * 把一次赶海的发现按类别分成「生物」和「垃圾」两组，**组内按时间排序**。
  *
  * 空组不返回（避免出现「捡到的垃圾（0）」这种空标题）。
  * 详情页按 groups 渲染，不要再直接用扁平的 species 列表——那样两类会混在一起。
@@ -116,18 +116,18 @@ export const TRASH_AMOUNT_TEXT: Record<string, string> = {
   much: '多'
 }
 
-/** 一次观潮里认出的生物**种数**（垃圾不算）。 */
+/** 一次赶海里认出的生物**种数**（垃圾不算）。 */
 export function creatureCount(species: WatchSpecies[] = []): number {
   return (species || []).filter((s) => s && s.name && (s.kind || 'species') === 'species').length
 }
 
-/** 一次观潮里认出的生物条目（观潮记录底部要展示它们的图鉴图）。 */
+/** 一次赶海里认出的生物条目（赶海记录底部要展示它们的图鉴图）。 */
 export function creatureItems(species: WatchSpecies[] = []): WatchSpecies[] {
   return (species || []).filter((s) => s && s.name && (s.kind || 'species') === 'species')
 }
 
 /**
- * 一次观潮的垃圾量档位（little / some / much / none）。
+ * 一次赶海的垃圾量档位（little / some / much / none）。
  *
  * 优先用记录里存好的 —— 那是 AI 综合件数与体积判断的。老记录没存 amount，
  * 就按件数兜底；兜底规则与后端 _trash_amount 保持一致，避免同一份数据
@@ -183,7 +183,7 @@ function dateLabel(date: string): string {
 function buildSummary(record: WatchRecord): string {
   const rows = (record.species || []).filter((s) => s && s.name)
   if (!rows.length) {
-    return `这次观潮从 ${record.startTime} 到 ${record.endTime}，一共 ${record.durationText}。还没有识别到生物，下次可以拍一张给小螃蟹认一认。`
+    return `这次赶海从 ${record.startTime} 到 ${record.endTime}，一共 ${record.durationText}。还没有识别到生物，下次可以拍一张给小螃蟹认一认。`
   }
   // 生物和垃圾分开说，别把塑料瓶也叫成「潮间带伙伴」
   const sp = rows.filter((s) => (s.kind || 'species') === 'species')
@@ -191,7 +191,7 @@ function buildSummary(record: WatchRecord): string {
   const parts: string[] = []
   if (sp.length) parts.push(`认出了 ${sp.length} 种潮间带伙伴：${sp.map((s) => s.name).join('、')}`)
   if (tr.length) parts.push(`还捡到 ${tr.length} 件垃圾：${tr.map((s) => s.name).join('、')}`)
-  return `这次观潮从 ${record.startTime} 到 ${record.endTime}，一共 ${record.durationText}。${parts.join('；')}。`
+  return `这次赶海从 ${record.startTime} 到 ${record.endTime}，一共 ${record.durationText}。${parts.join('；')}。`
 }
 
 export function getWatchSession(): WatchSession | null {
@@ -199,7 +199,7 @@ export function getWatchSession(): WatchSession | null {
 }
 
 /**
- * 今天是否已经往观潮记录里记过一次垃圾。
+ * 今天是否已经往赶海记录里记过一次垃圾。
  *
  * 垃圾每天只允许记一次（服务端 watch.py 里同样会拦）。本地先拦一道是为了
  * 点完「就是它」能立刻给答复，不用等一次往返才发现记不进去。
@@ -235,10 +235,10 @@ export function setWatchSessionId(id: string): void {
 }
 
 /**
- * 往当前观潮里记一条发现（生物或垃圾）。
+ * 往当前赶海里记一条发现（生物或垃圾）。
  *
  * 去重按 kind+name：同名的生物和垃圾各记一条；重复确认同一条只记一次。
- * 注意这里必须把 kind/category 等字段一并存进本地缓存——结束观潮时
+ * 注意这里必须把 kind/category 等字段一并存进本地缓存——结束赶海时
  * 上报给服务端的正是这条本地记录，只存 name/time 的话字段会在那一步丢掉。
  */
 export function addWatchItem(item: WatchSpecies): void {
@@ -279,8 +279,8 @@ export function endWatchSession(endedAt: string): WatchRecord | null {
 }
 
 /**
- * 删除本地某条观潮记录。
- * 服务端已经记下这次观潮时，把本地那条删掉，避免同一场观潮重复显示。
+ * 删除本地某条赶海记录。
+ * 服务端已经记下这次赶海时，把本地那条删掉，避免同一场赶海重复显示。
  */
 export function removeWatchRecord(id: string): void {
   if (!id) return
@@ -289,7 +289,7 @@ export function removeWatchRecord(id: string): void {
   if (next.length !== logs.length) wx.setStorageSync(LOGS_KEY, next)
 }
 
-/** 服务端观潮记录里的地点字段 → 本地 WatchSpot，兼容几种可能的字段命名 */
+/** 服务端赶海记录里的地点字段 → 本地 WatchSpot，兼容几种可能的字段命名 */
 function spotFromApi(item: any): WatchSpot | null {
   const raw = item.spot || {}
   const name = item.spotName || item.placeName || raw.name
@@ -318,7 +318,7 @@ export function fromApiRecord(item: any): WatchRecord | null {
         guessId: row.guessId || '',
         category: row.category || '',
         categoryLabel: row.categoryLabel || '',
-        // amount 漏了的话，服务端存好的垃圾量会被丢掉，观潮记录卡就只能走件数兜底
+        // amount 漏了的话，服务端存好的垃圾量会被丢掉，赶海记录卡就只能走件数兜底
         amount: row.amount || '',
         label: row.label || '',
         count: Number(row.count) > 1 ? Number(row.count) : 1
@@ -338,7 +338,7 @@ export function fromApiRecord(item: any): WatchRecord | null {
     // 后端字段名是 mascotKey，不是 mascot——之前只读 mascot，导致服务端记录永远显示默认图
     mascot: item.mascotKey || item.mascot || 'https://www.blueakaiwu.cn/api/v1/static/assets/badges/crab-star.png',
     spot: spotFromApi(item),
-    // 观潮记录卡的栏目。本地旧记录没有这些，保持空串，卡片那一格就留白
+    // 赶海记录卡的栏目。本地旧记录没有这些，保持空串，卡片那一格就留白
     seq: Number(item.seq) || 0,
     dateText: item.dateText || '',
     timeText: item.timeText || '',
@@ -354,8 +354,8 @@ export function fromApiRecord(item: any): WatchRecord | null {
 export function listWatchGroups(extra: WatchRecord[] = []): WatchDayGroup[] {
   const local: WatchRecord[] = wx.getStorageSync(LOGS_KEY) || []
 
-  // 同一次观潮可能同时存在「本地那条」和「服务端那条」（id 不同但 startedAt 相同），
-  // 这里按 startedAt 去重，避免一次观潮显示成两条。服务端的优先（extra 在前）。
+  // 同一次赶海可能同时存在「本地那条」和「服务端那条」（id 不同但 startedAt 相同），
+  // 这里按 startedAt 去重，避免一次赶海显示成两条。服务端的优先（extra 在前）。
   const merged: WatchRecord[] = []
   const seen: Record<string, boolean> = {}
   extra.concat(local).forEach((item) => {

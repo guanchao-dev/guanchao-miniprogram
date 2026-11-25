@@ -25,7 +25,7 @@ const EMPTY_DETAIL = {
   mascot: 'https://www.blueakaiwu.cn/api/v1/static/assets/badges/crab-star.png'
 }
 
-/** speciesId -> 图鉴封面地址。观潮记录里只存 speciesId，图鉴图要另外查。 */
+/** speciesId -> 图鉴封面地址。赶海记录里只存 speciesId，图鉴图要另外查。 */
 let coverMap: Record<string, string> = {}
 
 /**
@@ -49,7 +49,7 @@ function loadCovers(): Promise<void> {
     })
 }
 
-/** 给一条记录补上「观潮记录卡」需要的派生字段：生物种数 / 垃圾量 / 图鉴图 */
+/** 给一条记录补上「赶海记录卡」需要的派生字段：生物种数 / 垃圾量 / 图鉴图 */
 function decorate(record: any) {
   const species = (record && record.species) || []
   const seen: Record<string, boolean> = {}

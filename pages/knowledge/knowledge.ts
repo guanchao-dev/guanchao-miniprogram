@@ -1,5 +1,6 @@
 import { contentApi } from '../../services/api'
 import { showError } from '../../utils/format'
+import { enableShareMenu } from '../../utils/share'
 
 function normalize(item: any) {
   return {
@@ -27,7 +28,12 @@ Page({
   },
 
   onShow() {
+    enableShareMenu()
     this.load()
+  },
+
+  onShareAppMessage() {
+    return { title: '追潮记 · 海洋知识科普', path: '/pages/knowledge/knowledge' }
   },
 
   load() {

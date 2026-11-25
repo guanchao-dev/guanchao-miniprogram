@@ -10,20 +10,20 @@
 .spot-item {
   display: flex;
   align-items: center;
-  gap: 16rpx;
-  margin-bottom: 16rpx;
-  padding: 18rpx 20rpx;
+  gap: 18rpx;
+  margin-bottom: 18rpx;
+  padding: 26rpx 24rpx;
 }
 
 .item-rank {
-  width: 48rpx;
-  height: 48rpx;
+  width: 52rpx;
+  height: 52rpx;
   border: 3rpx solid #1C1C1C;
   border-radius: 50%;
   background: #F6D081;
   text-align: center;
-  line-height: 48rpx;
-  font-size: 24rpx;
+  line-height: 52rpx;
+  font-size: 25rpx;
   font-weight: 850;
   flex-shrink: 0;
 }
@@ -34,14 +34,9 @@
 }
 
 .item-name {
-  font-size: 32rpx;
+  font-size: 34rpx;
   font-weight: 850;
-}
-
-.item-meta {
-  margin-top: 6rpx;
-  color: #6B7C8A;
-  font-size: 22rpx;
+  line-height: 1.35;
 }
 
 .item-arrow {
@@ -98,7 +93,8 @@
 .hint {
   display: block;
   margin-top: 10rpx;
-  color: #4F6787;
-  font-size: 24rpx;
-  line-height: 1.55;
+  color: #33475B;
+  font-size: 27rpx;
+  line-height: 1.85;
+  white-space: pre-wrap;
 }

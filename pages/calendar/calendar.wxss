@@ -23,6 +23,44 @@
   padding: 8rpx 24rpx;
 }
 
+.cal-spot {
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+  margin: 16rpx 6rpx 0;
+  padding: 12rpx 18rpx;
+  border: 3rpx solid #1C1C1C;
+  border-radius: 999rpx;
+  background: #FFFFFF;
+  box-shadow: 3rpx 3rpx 0 rgba(28, 28, 28, 0.85);
+}
+
+.cal-spot-dot {
+  width: 14rpx;
+  height: 14rpx;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: #34B8C5;
+}
+
+.cal-spot-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  color: #1C1C1C;
+  font-size: 24rpx;
+  font-weight: 800;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.cal-spot-label {
+  flex-shrink: 0;
+  color: #6B7C8A;
+  font-size: 20rpx;
+  font-weight: 650;
+}
+
 .cal-swipe-tip {
   padding: 8rpx 8rpx 28rpx;
   color: #9AA6B4;

@@ -1,5 +1,6 @@
-import { BASE_URL, DEFAULT_SPOT_ID } from '../../config/env'
+import { BASE_URL } from '../../config/env'
 import { cardApi, homeApi } from '../../services/api'
+import { getRegion, getSavedSpotId } from '../../utils/region'
 import { isLoggedIn } from '../../utils/auth'
 import { showError, toast, todayDate, nowTime, toISO, trendText } from '../../utils/format'
 import { enqueueUnlocks, flushUnlocks } from '../../utils/unlock'
@@ -9,8 +10,8 @@ Page({
   prefilled: false,
 
   data: {
-    spotId: DEFAULT_SPOT_ID,
-    place: '青岛 · 石老人',
+    spotId: getSavedSpotId(),
+    place: getRegion().label,
     date: todayDate(),
     time: nowTime(),
     tideText: '',
@@ -30,7 +31,7 @@ Page({
       return
     }
     const app = getApp()
-    const spotId = (query && query.spotId) || (app.globalData && app.globalData.spotId) || DEFAULT_SPOT_ID
+    const spotId = (query && query.spotId) || (app.globalData && app.globalData.spotId) || getSavedSpotId()
     this.setData({ spotId })
   },
 
@@ -47,7 +48,8 @@ Page({
   },
 
   prefill(spotId: string) {
-    homeApi.today({ spotId })
+    const params: Record<string, any> = spotId ? { spotId } : { city: getRegion().defaultCity }
+    homeApi.today(params)
       .then((data) => {
         const place = (data && data.place) || {}
         const tide = (data && data.tide) || {}

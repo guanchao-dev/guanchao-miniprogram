@@ -8,6 +8,12 @@
       <view class="cal-nav" catchtap="goNextMonth">›</view>
     </view>
 
+    <view class="cal-spot">
+      <text class="cal-spot-dot"></text>
+      <text class="cal-spot-name">{{spotName || '正在获取当前点位…'}}</text>
+      <text class="cal-spot-label">潮汐归属</text>
+    </view>
+
     <view
       class="card cal-card"
       bindtouchstart="onTouchStart"
