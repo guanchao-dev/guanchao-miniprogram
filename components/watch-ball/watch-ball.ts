@@ -3,7 +3,8 @@ import { toast } from '../../utils/format'
 
 /**
  * 赶海计时悬浮球（全局组件）：
- * 在所有页面显示，位置跨页面共享；点一下弹「结束 / 继续赶海」。
+ * 在所有页面显示，位置跨页面共享；点一下在球旁展开操作菜单
+ * （生物识别 / 生态净滩 / 结束赶海），计时不中断。
  * 计时与赶海状态由 utils/watchBall 单例维护。
  */
 Component({
@@ -12,7 +13,11 @@ Component({
     duration: '00:00',
     ballLeft: 0,
     ballTop: 0,
-    snapping: false
+    snapping: false,
+    // 操作菜单：位置由球的坐标算出来，避免菜单跑到屏幕外
+    menuVisible: false,
+    menuLeft: 0,
+    menuTop: 0
   },
 
   lifetimes: {
@@ -26,6 +31,7 @@ Component({
       self.ballMargin = m.ballMargin
       self.pageVisible = true
       self.modalShown = false
+      self.detecting = false
       self.dragging = false
       self.startX = 0
       self.startY = 0
@@ -35,7 +41,10 @@ Component({
       this.setData({ ballLeft: pos.left, ballTop: pos.top })
       self.unsub = subscribeWatchBall((state) => {
         if (!self.pageVisible) return
-        self.setData({ visible: state.watching && !self.modalShown, duration: state.duration })
+        self.setData({
+          visible: state.watching && !self.modalShown && !self.detecting,
+          duration: state.duration
+        })
       })
     },
 
@@ -57,7 +66,7 @@ Component({
       this.setData({
         ballLeft: pos.left,
         ballTop: pos.top,
-        visible: state.watching && !self.modalShown,
+        visible: state.watching && !self.modalShown && !self.detecting,
         duration: state.duration
       })
     },
@@ -65,6 +74,8 @@ Component({
     hide() {
       const self = this as any
       self.pageVisible = false
+      // 离开页面时收起菜单，回来不残留
+      if (this.data.menuVisible) this.setData({ menuVisible: false })
     }
   },
 
@@ -105,7 +116,7 @@ Component({
       const dx = ct ? ct.clientX - self.startX : 0
       const dy = ct ? ct.clientY - self.startY : 0
       if (Math.abs(dx) + Math.abs(dy) < 8 && Date.now() - self.touchTime < 400) {
-        this.openModal()
+        this.openMenu()
         return
       }
       const m = getBallMetrics()
@@ -116,8 +127,63 @@ Component({
       this.setData({ ballLeft: left, snapping: true })
     },
 
-    /** 点击悬浮球：球暂时隐藏并弹窗；继续则恢复显示（计时不中断），结束则全局复位 */
-    openModal() {
+    /** 点击悬浮球：在球旁边展开操作菜单，球保持可见、计时不中断 */
+    openMenu() {
+      const m = getBallMetrics()
+      const r = m.winW / 750
+      // 与 wxss 里 .ball-menu 的 236rpx 宽 / 276rpx 高保持一致
+      const menuW = 236 * r
+      const menuH = 276 * r
+      const gap = 16 * r
+      const margin = 12 * r
+      // 球在左半边就向右展开，否则向左；再统一收进可视区
+      const openRight = this.data.ballLeft + m.ballSize + gap + menuW <= m.winW - margin
+      let left = openRight ? this.data.ballLeft + m.ballSize + gap : this.data.ballLeft - menuW - gap
+      left = Math.max(margin, Math.min(left, m.winW - menuW - margin))
+      const top = Math.max(margin, Math.min(
+        this.data.ballTop + m.ballSize / 2 - menuH / 2,
+        m.winH - menuH - margin
+      ))
+      this.setData({ menuVisible: true, menuLeft: left, menuTop: top })
+    },
+
+    closeMenu() {
+      if (this.data.menuVisible) this.setData({ menuVisible: false })
+    },
+
+    noop() {},
+
+    onMenuGuess() {
+      this.openDetect('guess')
+    },
+
+    onMenuTrash() {
+      this.openDetect('trash')
+    },
+
+    /** 识别流程和结果弹窗都在 ai-detect 组件里，当前页面就地完成，不跳首页 */
+    openDetect(mode: 'guess' | 'trash') {
+      this.closeMenu()
+      const comp: any = this.selectComponent('#aiDetect')
+      if (comp) comp.detect(mode)
+    },
+
+    /** 识别结果弹出来时先收起球，免得被遮罩压成一块暗色 */
+    onDetectShow() {
+      const self = this as any
+      self.detecting = true
+      this.setData({ visible: false })
+    },
+
+    onDetectClose() {
+      const self = this as any
+      self.detecting = false
+      this.setData({ visible: getWatchBallState().watching })
+    },
+
+    /** 菜单里结束赶海：保留二次确认，避免误触把这次记录结掉 */
+    onMenuEnd() {
+      this.closeMenu()
       const self = this as any
       self.modalShown = true
       this.setData({ visible: false })

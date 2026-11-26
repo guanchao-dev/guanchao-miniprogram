@@ -1,11 +1,10 @@
-import { authApi, contentApi, watchApi } from '../../services/api'
+import { authApi, contentApi } from '../../services/api'
 import { getUser, isLoggedIn } from '../../utils/auth'
 import { showError } from '../../utils/format'
 import { flushUnlocks } from '../../utils/unlock'
 import { downloadImage, mediaUrl } from '../../utils/upload'
 import { isOnboarding, getOnboardingIndex, markOnboardingCompleted } from '../../utils/onboardingStore'
 import { ONBOARDING_STEPS } from '../../utils/onboardingSteps'
-import { fromApiRecord, listWatchGroups } from '../../utils/watchLog'
 
 const DEFAULT_AVATAR = 'https://www.blueakaiwu.cn/api/v1/static/assets/to-upload/mascot-avatar.png'
 
@@ -38,9 +37,7 @@ Page({
     ],
     showOnboarding: false,
     onbStartIndex: 0,
-    onbRect: null as any,
-    // 赶海足迹：来自本地 + 服务端记录
-    stats: { watchCount: 0, speciesCount: 0, dayCount: 0 }
+    onbRect: null as any
   },
 
   onShow() {
@@ -57,29 +54,6 @@ Page({
     this.refreshUser()
     flushUnlocks(this)
     this.loadUnread()
-    this.loadStats()
-  },
-
-  /** 赶海足迹：先渲染本地记录，再用服务端记录刷新一次 */
-  loadStats() {
-    const paint = (extra: any[] = []) => {
-      const groups = listWatchGroups(extra as any)
-      let watchCount = 0
-      let speciesCount = 0
-      groups.forEach((group) => {
-        (group.items || []).forEach((record: any) => {
-          watchCount++
-          speciesCount += (record.species || []).filter((s: any) => s.kind !== 'trash').length
-        })
-      })
-      this.setData({
-        stats: { watchCount, speciesCount, dayCount: groups.length }
-      })
-    }
-    paint()
-    watchApi.list(1, 20)
-      .then((list) => paint((list || []).map(fromApiRecord).filter(Boolean)))
-      .catch(() => {})
   },
 
   /** 铃铛上的未读数。未登录就不显示红点 */

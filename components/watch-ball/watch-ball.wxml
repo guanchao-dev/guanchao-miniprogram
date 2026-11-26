@@ -9,3 +9,24 @@
   <image class="watch-ball-icon" src="https://www.blueakaiwu.cn/api/v1/static/assets/badges/crab-hero.png" mode="aspectFit"></image>
   <text class="watch-ball-time">{{duration}}</text>
 </view>
+
+<!-- 点球后的操作菜单：识别生物 / 生态净滩 / 结束赶海。点空白处收起，计时不中断 -->
+<view
+  wx:if="{{menuVisible}}"
+  class="ball-menu-mask"
+  catchtap="closeMenu"
+  catchtouchmove="noop"
+></view>
+<view
+  wx:if="{{menuVisible}}"
+  class="ball-menu"
+  style="left: {{menuLeft}}px; top: {{menuTop}}px;"
+  catchtouchmove="noop"
+>
+  <view class="ball-menu-item" catchtap="onMenuGuess" hover-class="tap">生物识别</view>
+  <view class="ball-menu-item" catchtap="onMenuTrash" hover-class="tap">生态净滩</view>
+  <view class="ball-menu-item danger" catchtap="onMenuEnd" hover-class="tap">结束赶海</view>
+</view>
+
+<!-- 识别结果就地弹窗：流程全在这个组件里，不跳首页 -->
+<ai-detect id="aiDetect" bind:show="onDetectShow" bind:close="onDetectClose" />

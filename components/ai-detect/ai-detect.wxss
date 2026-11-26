@@ -1,0 +1,348 @@
+/* 生物识别 / 生态净滩结果弹窗（从首页抽出来的全局版本） */
+
+/* 组件内样式是隔离的，app.wxss 里的 .tap 与入场动画不会生效，这里各补一份 */
+.tap {
+  opacity: 0.68;
+}
+
+@keyframes ai-mask-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes ai-panel-in {
+  from { opacity: 0; transform: translateY(28rpx) scale(0.96); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.ai-mask {
+  position: fixed;
+  inset: 0;
+  /* 必须高过赶海悬浮球（z-index 90）与页面浮层 */
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32rpx 24rpx;
+  background: rgba(11, 31, 56, 0.56);
+  animation: ai-mask-in 0.22s ease-out both;
+}
+
+/* 图鉴按钮的定位层。它本身不带 overflow:hidden，按钮才能探出弹窗边框。 */
+.ai-modal-wrap {
+  position: relative;
+  width: 100%;
+}
+
+.ai-modal {
+  width: 100%;
+  max-height: 80vh;
+  overflow: hidden;
+  border: 4rpx solid #1C1C1C;
+  border-radius: 32rpx;
+  background: #EAF3FF;
+  /* flex 列布局：内容区自适应收缩并在内部滚动 */
+  display: flex;
+  flex-direction: column;
+  animation: ai-panel-in 0.26s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.ai-modal-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24rpx 28rpx 8rpx;
+  font-size: 32rpx;
+  font-weight: 850;
+}
+
+/* 识别弹窗的头部只剩关闭按钮，改成靠右 */
+.ai-modal-head.only-close {
+  justify-content: flex-end;
+}
+
+.ai-close {
+  font-size: 44rpx;
+  font-weight: 300;
+}
+
+/* 图鉴入口：贴屏幕左缘、压在弹窗左上角上方的大按钮 */
+.wiki-entry {
+  position: absolute;
+  top: -110rpx;
+  left: -24rpx;
+  width: 288rpx;
+  height: 288rpx;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: rotate(-20deg);
+}
+
+.wiki-entry-hover {
+  opacity: 0.6;
+}
+
+.wiki-entry-img {
+  width: 100%;
+  height: 100%;
+}
+
+.ai-modal-body {
+  flex: 1;
+  min-height: 0;
+  max-height: 68vh;
+  padding: 8rpx 32rpx 32rpx;
+  box-sizing: border-box;
+}
+
+.guess-photo {
+  width: 100%;
+  height: 220rpx;
+  margin-bottom: 8rpx;
+  border-radius: 16rpx;
+  background: #fff;
+}
+
+.candidate {
+  margin-top: 14rpx;
+  padding: 16rpx;
+  border-radius: 16rpx;
+  background: rgba(255, 255, 255, 0.86);
+}
+
+.candidate-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.candidate-name {
+  font-size: 28rpx;
+  font-weight: 800;
+}
+
+.candidate-tag {
+  padding: 4rpx 12rpx;
+  border-radius: 999rpx;
+  background: #D6EAF8;
+  color: #1878FF;
+  font-size: 20rpx;
+}
+
+.candidate-prob {
+  font-size: 26rpx;
+  font-weight: 850;
+  color: #1878FF;
+}
+
+.candidate-bar {
+  margin-top: 8rpx;
+  height: 10rpx;
+  border-radius: 999rpx;
+  background: #E3EEF7;
+  overflow: hidden;
+}
+
+.candidate-bar-fill {
+  height: 100%;
+  border-radius: 999rpx;
+  background: linear-gradient(90deg, #34B8C5, #1878FF);
+}
+
+.candidate-latin {
+  display: block;
+  margin-top: 4rpx;
+  color: #8A97A3;
+  font-size: 20rpx;
+  font-style: italic;
+}
+
+.candidate-wiki {
+  display: inline-block;
+  margin-top: 8rpx;
+  color: #1878FF;
+  font-size: 20rpx;
+}
+
+.more-guess {
+  margin-top: 16rpx;
+  padding: 18rpx 0;
+  text-align: center;
+  color: #1878FF;
+  font-size: 24rpx;
+  font-weight: 750;
+  border-top: 2rpx dashed #DCE6EE;
+}
+
+.confirm-species {
+  margin-top: 14rpx;
+  height: 64rpx;
+  line-height: 58rpx;
+  text-align: center;
+  border: 3rpx solid #1878FF;
+  border-radius: 999rpx;
+  color: #1878FF;
+  font-size: 24rpx;
+  font-weight: 750;
+  box-sizing: border-box;
+}
+
+.confirm-species.done {
+  background: #20B85A;
+  border-color: #20B85A;
+  color: #FFFFFF;
+}
+
+.confirm-species.muted {
+  border-color: #C9D2DA;
+  color: #A8B3BD;
+}
+
+.not-sea {
+  margin-top: 20rpx;
+  padding: 24rpx 20rpx;
+  border-radius: 16rpx;
+  background: rgba(246, 208, 129, 0.28);
+  text-align: center;
+}
+
+.not-sea-title {
+  display: block;
+  font-size: 32rpx;
+  font-weight: 850;
+  color: #8A5B00;
+}
+
+.not-sea-tip {
+  display: block;
+  margin-top: 12rpx;
+  font-size: 24rpx;
+  line-height: 1.6;
+  color: #7A6A4A;
+}
+
+/* ===== 多物品：照片里的每个发现各占一组 ===== */
+.guess-item {
+  margin-top: 18rpx;
+  padding-top: 14rpx;
+  border-top: 2rpx dashed #DCE6EE;
+}
+
+.guess-item-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6rpx;
+}
+
+.guess-item-label {
+  color: #1C1C1C;
+  font-size: 26rpx;
+  font-weight: 850;
+}
+
+.guess-item-count {
+  color: #7A6A4A;
+  font-size: 22rpx;
+  font-weight: 800;
+}
+
+.trash-item {
+  margin-top: 18rpx;
+}
+
+/* ===== 垃圾识别：这次的垃圾量（少 / 中等 / 多）===== */
+.trash-amount {
+  display: flex;
+  align-items: center;
+  margin: 16rpx 0 2rpx;
+}
+
+.trash-amount-k {
+  font-size: 26rpx;
+  font-weight: 800;
+  color: #4F6787;
+}
+
+.trash-amount-v {
+  margin-left: 14rpx;
+  padding: 4rpx 22rpx;
+  border-radius: 999rpx;
+  border: 2rpx solid #1C1C1C;
+  font-size: 26rpx;
+  font-weight: 850;
+}
+
+/* 越严重越暖：少=青绿，中等=琥珀，多=砖红 */
+.trash-amount-v.lv-little {
+  background: #D9F2E6;
+  color: #1F7A55;
+}
+
+.trash-amount-v.lv-some {
+  background: #FDF0D0;
+  color: #9A6B12;
+}
+
+.trash-amount-v.lv-much {
+  background: #FBDDD6;
+  color: #B03A22;
+}
+
+/* ===== 垃圾识别：国标四分类配色 ===== */
+.trash-cat {
+  display: inline-block;
+  margin-top: 8rpx;
+  padding: 4rpx 16rpx;
+  border-radius: 999rpx;
+  font-size: 22rpx;
+  font-weight: 800;
+}
+
+.cat-recyclable {
+  background: #D6EAF8;
+  color: #1163C7;
+}
+
+.cat-hazardous {
+  background: #FBE0E0;
+  color: #C22B2B;
+}
+
+.cat-kitchen {
+  background: #DCF3E5;
+  color: #1F7F49;
+}
+
+.cat-other {
+  background: #E6EBF0;
+  color: #55636F;
+}
+
+.trash-block {
+  margin-top: 16rpx;
+  padding: 18rpx 20rpx;
+  border-radius: 16rpx;
+  background: rgba(255, 255, 255, 0.86);
+}
+
+.trash-block.hazard {
+  background: rgba(251, 224, 224, 0.5);
+}
+
+.trash-block-label {
+  display: block;
+  font-size: 24rpx;
+  font-weight: 850;
+  color: #1C1C1C;
+}
+
+.trash-block-text {
+  display: block;
+  margin-top: 8rpx;
+  font-size: 24rpx;
+  line-height: 1.55;
+  color: #4F6787;
+}

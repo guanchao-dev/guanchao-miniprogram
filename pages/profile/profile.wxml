@@ -43,29 +43,8 @@
     </view>
 
     <view class="page profile-body">
-      <!-- 赶海足迹：次数 / 生物 / 天数 -->
-      <view class="stat-card card">
-        <view class="stat-cell">
-          <text class="stat-num">{{stats.watchCount}}</text>
-          <text class="stat-label">赶海次数</text>
-        </view>
-        <view class="stat-divider"></view>
-        <view class="stat-cell">
-          <text class="stat-num">{{stats.speciesCount}}</text>
-          <text class="stat-label">识别生物</text>
-        </view>
-        <view class="stat-divider"></view>
-        <view class="stat-cell">
-          <text class="stat-num">{{stats.dayCount}}</text>
-          <text class="stat-label">记录天数</text>
-        </view>
-      </view>
-
       <view class="section-head">
-        <view class="section-head-main">
-          <view class="title-dot"></view>
-          <text class="section-title">我的服务</text>
-        </view>
+        <text class="section-title">我的服务</text>
       </view>
       <view class="service-grid card">
         <view
@@ -83,11 +62,6 @@
           </view>
           <text class="service-label">{{item.title}}</text>
         </view>
-      </view>
-
-      <view class="profile-footer">
-        <view class="footer-rule"></view>
-        <text class="footer-text">追潮记 · 和泡泡一起赶海</text>
       </view>
     </view>
   </view>
